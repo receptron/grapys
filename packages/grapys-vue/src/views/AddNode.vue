@@ -21,6 +21,7 @@ import { defineComponent, ref, watch } from "vue";
 import { useStore } from "../store";
 import { agentProfilesCategory, agentProfiles } from "../utils/gui/data";
 import { getDefaultParams } from "../utils/gui/utils";
+// import { graphs } from "../graph";
 
 export default defineComponent({
   components: {},
@@ -57,6 +58,7 @@ export default defineComponent({
             guiAgentId: agent.value,
             params,
             ...(targetAgent.agents ? { agentIndex: 0 } : {}),
+            ...(targetAgent.isNestedGraph || targetAgent.isMap ? { nestedGraphIndex: 0, nestedGraphId: store.nestedGraphs[0].id } : {}),
           };
 
       store.pushNode({

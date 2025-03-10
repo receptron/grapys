@@ -186,5 +186,23 @@ export const graphData = {
         loopType: "none",
       },
     },
+    forNested: {
+      output: {
+        stream_message: ".stream.message",
+        stream2_message: ".stream2.message",
+        stream3_message: ".stream3.message",
+      },
+      outputs: [
+        {
+          name: "stream_message",
+        },
+        {
+          name: "stream2_message",
+        },
+        {
+          name: "stream3_message",
+        },
+      ],
+    },
   },
 };

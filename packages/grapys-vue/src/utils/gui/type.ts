@@ -138,6 +138,8 @@ export type AgentProfile = {
   agents?: string[];
   inputSchema?: unknown;
   output?: Record<string, string>;
+  isNestedGraph?: boolean;
+  isMap?: boolean;
 };
 
 export type LoopDataType = "while" | "count" | "none";
@@ -158,3 +160,5 @@ export type GUIMessage = {
   content: string;
   nodeId: string;
 };
+
+export type NestedGraphList = { name: string; graph: GraphData }[];

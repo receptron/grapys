@@ -11,6 +11,7 @@ import {
 } from "../utils/gui/type";
 import { store2graphData } from "../utils/gui/graph";
 import { defineStore } from "pinia";
+import { graphs } from "../graph";
 
 export const useStore = defineStore("store", () => {
   const histories = ref<HistoryData[]>([]);
@@ -46,7 +47,7 @@ export const useStore = defineStore("store", () => {
     }, {});
   });
   const graphData = computed(() => {
-    return store2graphData(currentData.value);
+    return store2graphData(currentData.value, graphs);
   });
   const streamNodes = computed(() => {
     return nodes.value
@@ -230,5 +231,8 @@ export const useStore = defineStore("store", () => {
     // graphAIResult
     setResult,
     graphAIResults,
+
+    // for nested agent
+    nestedGraphs: graphs,
   };
 });

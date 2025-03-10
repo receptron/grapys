@@ -442,5 +442,59 @@ export const graphData = {
         loopType: "none",
       },
     },
+    forNested: {
+      output: {
+        stream_message: ".stream.message",
+        stream2_message: ".stream2.message",
+        stream3_message: ".stream3.message",
+        "2_message": ".2.message",
+        "3_message": ".3.message",
+        "4_message": ".4.message",
+        "5_message": ".5.message",
+        "6_message": ".6.message",
+        "7_message": ".7.message",
+        "8_message": ".8.message",
+        "9_message": ".9.message",
+        "1_message": ".1.message",
+      },
+      outputs: [
+        {
+          name: "stream_message",
+        },
+        {
+          name: "stream2_message",
+        },
+        {
+          name: "stream3_message",
+        },
+        {
+          name: "2_message",
+        },
+        {
+          name: "3_message",
+        },
+        {
+          name: "4_message",
+        },
+        {
+          name: "5_message",
+        },
+        {
+          name: "6_message",
+        },
+        {
+          name: "7_message",
+        },
+        {
+          name: "8_message",
+        },
+        {
+          name: "9_message",
+        },
+        {
+          name: "1_message",
+        },
+      ],
+    },
   },
 };

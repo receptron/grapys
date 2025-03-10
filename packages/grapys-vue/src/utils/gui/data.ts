@@ -367,15 +367,17 @@ export const testAgentProfiles: Record<string, AgentProfile> = {
 export const nestedAgentProfiles: Record<string, AgentProfile> = {
   nestedAgent: {
     agent: "nestedAgent",
-    inputs: [{ name: "message", type: "text" }],
-    outputs: [{ name: "message" }],
-    params: [
-      { name: "message", type: "string" },
-      { name: "sleep", type: "int" },
-      { name: "stream", type: "boolean", defaultValue: true },
-      { name: "isResult", type: "boolean", defaultValue: true },
-    ],
-    // presetParams: { isResult: true, stream: true },
+    inputs: [],
+    outputs: [{ name: "result" }],
+    params: [],
+    isNestedGraph: true,
+  },
+  mapAgent: {
+    agent: "mapAgent",
+    inputs: [{ name: "rows", type: "array" }],
+    outputs: [{ name: "result" }],
+    params: [],
+    isMap: true,
   },
 };
 
@@ -385,6 +387,7 @@ export const agentProfilesCategory: Record<string, Record<string, AgentProfile>>
   service: serviceAgentProfiles,
   test: testAgentProfiles,
   compare: compareAgentProfiles,
+  graph: nestedAgentProfiles,
   data: dataAgentProfiles,
   array: arrayAgentProfiles,
   string: stringAgentProfiles,

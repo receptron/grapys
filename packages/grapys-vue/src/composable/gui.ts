@@ -59,7 +59,7 @@ export const useNewEdge = () => {
   });
 
   const edgeConnectable = computed(() => {
-    return isEdgeConnectale(expectEdge.value, store.edges, store.nodeRecords);
+    return isEdgeConnectale(expectEdge.value, store.edges, store.nodeRecords, store.nestedGraphs);
   });
 
   return {
