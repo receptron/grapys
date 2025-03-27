@@ -1,11 +1,24 @@
 <template>
-  <div class="m-auto w-10/12 text-left">
-    <div v-for="(m, k) in messages" :key="k">
-      <div v-if="m.role === 'user'" class="mr-8">👱{{ m.content }}</div>
-      <div class="ml-20" v-else>🤖({{ m.nodeId }}){{ m.content }}</div>
+  <div>
+    <div v-for="(m, k) in messages" :key="k" :class="`mb-4 ${m.role === 'user' ? 'text-right' : 'text-left'}`">
+      <div
+        :class="`inline-block max-w-[80%] rounded-lg px-4 py-2 ${
+          m.role === 'user'
+            ? 'bg-blue-500 text-white'
+            : 'bg-gray-200 text-gray-800'
+        }`"
+      >
+        <div class="text-sm font-semibold mb-1">
+          {{ m.role === 'user' ? 'You' : `AI (${m.nodeId})` }}
+        </div>
+        <div class="whitespace-pre-wrap break-words">{{ m.content }}</div>
+      </div>
     </div>
-    <div v-for="(nodeId, k) in streamNodeIds" :key="k">
-      <div class="ml-20" v-if="isStreaming[nodeId]">🤖({{ nodeId }}){{ streamData[nodeId] }}</div>
+    <div v-for="(nodeId, k) in streamNodeIds" :key="`stream-${k}`" class="text-left mb-4">
+      <div v-if="isStreaming[nodeId]" class="inline-block max-w-[80%] rounded-lg bg-gray-200 px-4 py-2 text-gray-800">
+        <div class="text-sm font-semibold mb-1">AI ({{ nodeId }})</div>
+        <div class="whitespace-pre-wrap break-words">{{ streamData[nodeId] }}</div>
+      </div>
     </div>
   </div>
 </template>
