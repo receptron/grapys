@@ -12,9 +12,9 @@
   },
   "dependencies": {
     "@receptron/firebase-tools": "^1.0.0",
-    "firebase": "^11.8.0",
-    "pinia": "^3.0.2",
-    "vue": "^3.5.14",
+    "firebase": "^11.9.1",
+    "pinia": "^3.0.3",
+    "vue": "^3.5.17",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
