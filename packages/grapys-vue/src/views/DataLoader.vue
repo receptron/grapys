@@ -57,9 +57,9 @@ export default defineComponent({
         return;
       }
       const reader = new FileReader();
-      reader.onload = (e: ProgressEvent<FileReader>) => {
+      reader.onload = (event: ProgressEvent<FileReader>) => {
         try {
-          const json = JSON.parse(e?.target?.result as string);
+          const json = JSON.parse(event?.target?.result as string);
           store.initFromGraphData(json);
           file = null;
           fileName.value = null;

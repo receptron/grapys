@@ -1,7 +1,7 @@
 import { Ref } from "vue";
 import { NewEdgeData } from "../utils/gui/type";
 
-export function usePanAndScroll(mainContainer: Ref<HTMLElement | undefined>, isNodeDragging: Ref<boolean>, newEdgeData?: Ref<NewEdgeData | null>) {
+export const usePanAndScroll = (mainContainer: Ref<HTMLElement | undefined>, isNodeDragging: Ref<boolean>, newEdgeData?: Ref<NewEdgeData | null>) => {
   const setupPanAndScroll = () => {
     const container = mainContainer.value;
     if (!container) return;
@@ -166,4 +166,4 @@ export function usePanAndScroll(mainContainer: Ref<HTMLElement | undefined>, isN
   return {
     setupPanAndScroll,
   };
-}
+};
