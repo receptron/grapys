@@ -1,15 +1,15 @@
 import { DefaultConfigData } from "graphai";
 import { NestedGraphList } from "../utils/gui/type";
 
-import { graphChat as graphBattleRegister } from "./battle_register";
-import { graphChat as graphBattleSpy } from "./battle_spy";
-import { graphChat as graphBattleSpyTools } from "./battle_spy_tools";
-import { graphChat as graphBattlePlayer } from "./battle_player";
+// import { graphChat as graphBattleRegister } from "./battle_register";
+// import { graphChat as graphBattleSpy } from "./battle_spy";
+// import { graphChat as graphBattleSpyTools } from "./battle_spy_tools";
+// import { graphChat as graphBattlePlayer } from "./battle_player";
 import { graphChat as graphBattleRegisterProd } from "./battle_register_prod";
 import { graphChat as graphBattleSpyToolsProd } from "./battle_spy_tools_prod";
 import { graphChat as graphBattlePlayerProd } from "./battle_player_prod";
 
-import { graphChat as graphChatOpenAI } from "../graph/chat";
+// import { graphChat as graphChatOpenAI } from "../graph/chat";
 import { graphChat as graphChatOpenAI2 } from "../graph/chat2";
 // import { graphChat as graphChatOllama } from "../graph/chat_ollama";
 // import { graphChat as graphChatTinySwallow } from "../graph/chat_tinyswallow";

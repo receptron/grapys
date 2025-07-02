@@ -169,7 +169,7 @@ export default defineComponent({
       const config = getGraphConfigs();
       if (fbStore.firebaseUser) {
         const token = await fbStore.firebaseUser.getIdToken();
-        config["vanillaFetchAgent"] = {
+        config.vanillaFetchAgent = {
           authorization: "BEAR " + token,
         };
       }

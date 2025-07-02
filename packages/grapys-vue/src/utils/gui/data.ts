@@ -518,18 +518,14 @@ export const gameAgentProfiles: Record<string, AgentProfile> = {
     },
     inputs: [
       { name: "game_id", type: "text" },
-      { name: "compare", type: "boolean", mapTo: "unless"},
+      { name: "compare", type: "boolean", mapTo: "unless" },
     ],
     params: [
       { name: "method", defaultValue: "POST" },
       { name: "body", defaultValue: {} },
     ],
-    outputs: [
-      { name: "message" },
-      { name: "state" },
-      { name: "status" },
-    ],
-    if: ":compare"
+    outputs: [{ name: "message" }, { name: "state" }, { name: "status" }],
+    if: ":compare",
   },
   aiHint: {
     agent: "vanillaFetchAgent",
@@ -576,8 +572,8 @@ export const gameAgentProfiles: Record<string, AgentProfile> = {
       { name: "col", type: "int" },
       { name: "compare", type: "boolean", mapTo: "unless" },
     ],
-    outputs: [{ name: "state" }, { name: "status" }, { name: "assignment" }, { name: "word" }, ],
-    unless: ":compare"
+    outputs: [{ name: "state" }, { name: "status" }, { name: "assignment" }, { name: "word" }],
+    unless: ":compare",
   },
 };
 
