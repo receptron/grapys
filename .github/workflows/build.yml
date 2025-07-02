@@ -19,6 +19,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: cp packages/grapys-vue/src/config/game-dev.ts packages/grapys-vue/src/config/project.ts
+    - run: mkdir packages/grapys-react/src/config
+    - run: cp packages/grapys-vue/src/config/game-dev.ts packages/grapys-react/src/config/project.ts
     - run: yarn install
     - run: yarn run build
     - run: yarn run lint
