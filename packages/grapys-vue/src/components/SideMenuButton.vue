@@ -11,8 +11,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
-import type { PropType } from "vue";
+import { defineComponent, computed, type PropType } from "vue";
 import { buttonColorVariants, buttonRoundedClasses } from "../utils/gui/classUtils";
 
 type ColorVariant = keyof typeof buttonColorVariants;

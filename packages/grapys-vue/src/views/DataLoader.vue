@@ -1,19 +1,17 @@
 <template>
-  <div 
-    @dragover.prevent="handleDragOver" 
+  <div
+    @dragover.prevent="handleDragOver"
     @dragleave.prevent="handleDragLeave"
-    @drop.prevent="handleDrop" 
-    class="border-2 border-dashed px-5 py-3 text-center max-w-lg mx-auto my-3 rounded-md transition-colors"
+    @drop.prevent="handleDrop"
+    class="mx-auto my-3 max-w-lg rounded-md border-2 border-dashed px-5 py-3 text-center transition-colors"
     :class="isDragOver ? 'border-blue-400 bg-blue-50' : 'border-gray-400'"
   >
-    <p v-if="!fileName" class="text-sm py-8">Drop JSON file here.</p>
+    <p v-if="!fileName" class="py-8 text-sm">Drop JSON file here.</p>
 
     <div v-if="fileName" class="mt-2">
       <p class="mb-1 text-left text-xs text-gray-600">File:</p>
-      <p class="break-words line-clamp-3 text-left overflow-hidden mb-1 text-sm">{{ fileName }}</p>
-      <SideMenuButton variant="primary" rounded="full" @click="loadFile">
-        Load
-      </SideMenuButton>
+      <p class="mb-1 line-clamp-3 overflow-hidden text-left text-sm break-words">{{ fileName }}</p>
+      <SideMenuButton variant="primary" rounded="full" @click="loadFile"> Load </SideMenuButton>
     </div>
   </div>
 </template>

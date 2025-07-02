@@ -405,9 +405,9 @@ export const agentProfilesCategory: Record<string, Record<string, AgentProfile>>
   string: stringAgentProfiles,
 };
 if (!restrictedFeature) {
-  agentProfilesCategory["service"] = serviceAgentProfiles;
-  agentProfilesCategory["test"] = testAgentProfiles;
-  agentProfilesCategory["graph"] = nestedAgentProfiles;
+  agentProfilesCategory.service = serviceAgentProfiles;
+  agentProfilesCategory.test = testAgentProfiles;
+  agentProfilesCategory.graph = nestedAgentProfiles;
 }
 
 export const agentProfiles: Record<string, AgentProfile> = Object.values(agentProfilesCategory).reduce((tmp, current) => {
