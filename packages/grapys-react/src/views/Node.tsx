@@ -263,7 +263,7 @@ const Node: React.FC<NodeProps> = ({
             }}
           >
             <div
-              className={`absolute left-[-10px] h-4 w-4 min-w-[12px] rounded-full ${nodeInputClass(isExpectNearButton("outbound", index), nodeData)}`}
+          className={`absolute left-[-10px] h-4 w-4 min-w-[12px] rounded-full ${nodeInputClass(isExpectNearButton("outbound", index), nodeData, input as any, false)}`}
               onMouseDown={(e) => onStartEdge(e, "inbound", index)}
             ></div>
             <span className="ml-2 text-xs whitespace-nowrap">{input.name}</span>
