@@ -1,4 +1,4 @@
-import { ref, Ref } from "vue";
+import { Ref } from "vue";
 import { NewEdgeData } from "../utils/gui/type";
 
 export function usePanAndScroll(mainContainer: Ref<HTMLElement | undefined>, isNodeDragging: Ref<boolean>, newEdgeData?: Ref<NewEdgeData | null>) {

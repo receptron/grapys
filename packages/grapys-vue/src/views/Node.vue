@@ -38,7 +38,7 @@
         :key="['in', input.name, index, nestedGraph?.id ?? ''].join('-')"
         class="relative flex items-center"
         ref="inputsRef"
-        >
+      >
         <div
           class="absolute left-[-10px] h-4 w-4 min-w-[12px] rounded-full"
           :class="nodeInputClass(isExpectNearButton('outbound', index), nodeData, input as any, isConnectable)"

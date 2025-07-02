@@ -470,7 +470,8 @@ export const getDefaultParams = (params: ParamData[]) => {
   return params.reduce((tmp: DefaultParamsType, param) => {
     if (param.defaultValue !== undefined) {
       tmp[param.name] = param.defaultValue;
-    } if (param.values) {
+    }
+    if (param.values) {
       tmp[param.name] = param.values[0];
     }
     return tmp;
