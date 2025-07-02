@@ -2,7 +2,7 @@
   <button
     @click="$emit('click')"
     :disabled="disabled"
-    :type="type as 'submit' | 'reset' | 'button'"
+    :type="type"
     class="mb-1 cursor-pointer items-center py-2 text-sm font-medium text-white transition-colors duration-200"
     :class="dynamicClasses"
   >
@@ -38,7 +38,7 @@ export default defineComponent({
       default: true,
     },
     type: {
-      type: String,
+      type: String as PropType<"submit" | "reset" | "button">,
       default: "button",
     },
     customClass: {
