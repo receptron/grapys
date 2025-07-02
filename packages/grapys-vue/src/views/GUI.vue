@@ -150,7 +150,7 @@ export default defineComponent({
                 :source-data="edge.source"
                 :target-data="edge.target"
                 class="pointer-events-auto"
-                @dblclick="(e) => openEdgeMenu(e, index)"
+                @dblclick="(e: MouseEvent) => openEdgeMenu(e, index)"
               />
               <Edge
                 v-if="newEdgeData"
