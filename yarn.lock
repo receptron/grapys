@@ -15,10 +15,10 @@
     "@jridgewell/gen-mapping" "^0.3.5"
     "@jridgewell/trace-mapping" "^0.3.24"
 
-"@anthropic-ai/sdk@^0.52.0":
-  version "0.52.0"
-  resolved "https://registry.yarnpkg.com/@anthropic-ai/sdk/-/sdk-0.52.0.tgz#fa521708f926963da78d7bea50dd29bf786f465b"
-  integrity sha512-d4c+fg+xy9e46c8+YnrrgIQR45CZlAi7PwdzIfDXDM6ACxEZli1/fxhURsq30ZpMZy6LvSkr41jGq5aF5TD7rQ==
+"@anthropic-ai/sdk@^0.56.0":
+  version "0.56.0"
+  resolved "https://registry.yarnpkg.com/@anthropic-ai/sdk/-/sdk-0.56.0.tgz#8b6366d5d22235c3ec978c05b2c9420fdf426ed9"
+  integrity sha512-SLCB8M8+VMg1cpCucnA1XWHGWqVSZtIWzmOdDOEu3eTFZMB+A0sGZ1ESO5MHDnqrNTXz3safMrWx9x4rMZSOqA==
 
 "@babel/code-frame@^7.27.1":
   version "7.27.1"
@@ -441,15 +441,10 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
-"@eslint/js@9.32.0":
+"@eslint/js@9.32.0", "@eslint/js@^9.32.0":
   version "9.32.0"
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-9.32.0.tgz#a02916f58bd587ea276876cb051b579a3d75d091"
   integrity sha512-BBpRFZK3eX6uMLKz8WxFOBIFFcGFJ/g8XuwjTHCqHROSIsopI+ddn/d5Cfh36+7+e5edVS8dbSHnBNhrLEX0zg==
-
-"@eslint/js@^9.30.1":
-  version "9.30.1"
-  resolved "https://registry.yarnpkg.com/@eslint/js/-/js-9.30.1.tgz#ebe9dd52a38345784c486300175a28c6013c088d"
-  integrity sha512-zXhuECFlyep42KZUhWjfvsmXGX39W8K8LFb8AWXM9gSV9dQB+MrJGLKvW6Zw0Ggnbpw0VHTtrhFXYe3Gym18jg==
 
 "@eslint/object-schema@^2.1.6":
   version "2.1.6"
@@ -865,12 +860,12 @@
   resolved "https://registry.yarnpkg.com/@graphai/agent_utils/-/agent_utils-2.0.1.tgz#baa17e99cf304fe69c5f0f9912eb729a1ca841e8"
   integrity sha512-7hIGPFmF3mq9ZBU/X4wLY0W2ctp5+wKaHQnfwNIrWeTQ8ZHvfPggArt/prX0pPXFgsYZFixVuInAW+sW1G6AXA==
 
-"@graphai/anthropic_agent@^2.0.2":
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/@graphai/anthropic_agent/-/anthropic_agent-2.0.2.tgz#a24e5f849a8b7039fbab3d5dc81707f8e0bc6137"
-  integrity sha512-3axa6R1payLfdCaNZwi91TvliVSh6e4e/sLu/b6MvtNgjjFdxSBeA4n/xcwZd3IwIFfYOxjlq1OPdojQ8DzKkg==
+"@graphai/anthropic_agent@^2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@graphai/anthropic_agent/-/anthropic_agent-2.0.5.tgz#50812484642cbbaf6e7debbc06a7aedcd48abe9a"
+  integrity sha512-HrSioxr+MyI/fKW3wPKhCJLvmOYSjeaQM9gMEHrTwa017M/IaADO7BAchUzGuVl2e68fGMsExs/EHuPhMp9bfw==
   dependencies:
-    "@anthropic-ai/sdk" "^0.52.0"
+    "@anthropic-ai/sdk" "^0.56.0"
     "@graphai/llm_utils" "^2.0.0"
 
 "@graphai/browserless_agent@^2.0.1":
@@ -911,10 +906,10 @@
   resolved "https://registry.yarnpkg.com/@graphai/stream_agent_filter/-/stream_agent_filter-2.0.2.tgz#128250d8de876ffcfe8db488170ea43ac8c9d9f0"
   integrity sha512-S45q/cnzc8s2FTOUUcCCvMTOW7M7H1En10lKI5YCgH7UhmIeM3aP4x43fxTazeX9mqAC6od01wYIIDBvK/B2yA==
 
-"@graphai/vanilla@^2.0.4":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@graphai/vanilla/-/vanilla-2.0.4.tgz#bb88f4169d7f1deb6d7f07ba45fea8689e8427c8"
-  integrity sha512-rpfFOj4DV2wlYyYh46yx78mqTxvApI/wa/CSg2ti/in16OZWS/z+sCuZ0q+2lkI5E9WyHIyPq76hNbOT6v3cNg==
+"@graphai/vanilla@^2.0.6":
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/@graphai/vanilla/-/vanilla-2.0.6.tgz#10ea74446279cd66300f5d4f3c7ffc390cc154e6"
+  integrity sha512-2l10062HpfKMlfuN9PBknpS2p1qvWxy7+lMt5fd1tpxGii9/ZLfSIkqVIZErqpHLvMtEg6Mb0k4joJQ2r6wSfQ==
   dependencies:
     "@graphai/agent_utils" "^2.0.1"
 
@@ -2744,10 +2739,10 @@ graceful-fs@^4.2.4:
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.11.tgz#4183e4e8bf08bb6e05bbb2f7d2e0c8f712ca40e3"
   integrity sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==
 
-graphai@^2.0.9:
-  version "2.0.9"
-  resolved "https://registry.yarnpkg.com/graphai/-/graphai-2.0.9.tgz#0636d05814418d344ac15ee39a0fd80c37823a8b"
-  integrity sha512-F2QQAhcpX2F+FoPRzdeueaQxerbVwX2/YAOFzdsbjlQRVJQ0bNbo1d7V908gPGDmEWo+7xWHberIkNEEW7y0vQ==
+graphai@^2.0.13:
+  version "2.0.13"
+  resolved "https://registry.yarnpkg.com/graphai/-/graphai-2.0.13.tgz#f5ede953bf414b0ac5ce80b1c469dc434c60dffa"
+  integrity sha512-jp0aK/smMsXP0COQcGjqobxZqN7xWvmpMG+JQXkhKmpQRX9+Ip3nVBVK32SEms8SChuXDzs9Of3bBKudDIRZTA==
 
 graphemer@^1.4.0:
   version "1.4.0"

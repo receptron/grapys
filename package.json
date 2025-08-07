@@ -10,7 +10,7 @@
   },
   "private": true,
   "devDependencies": {
-    "@eslint/js": "^9.30.1",
+    "@eslint/js": "^9.32.0",
     "@tailwindcss/postcss": "^4.1.11",
     "@tailwindcss/vite": "^4.1.11",
     "@types/react": "^19.1.8",
@@ -42,15 +42,15 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@graphai/anthropic_agent": "^2.0.2",
+    "@graphai/anthropic_agent": "^2.0.5",
     "@graphai/browserless_agent": "^2.0.1",
     "@graphai/data_agents": "^1.0.0",
     "@graphai/gemini_agent": "^2.0.0",
     "@graphai/openai_agent": "^2.0.3",
     "@graphai/stream_agent_filter": "^2.0.2",
-    "@graphai/vanilla": "^2.0.4",
+    "@graphai/vanilla": "^2.0.6",
     "@mlc-ai/web-llm": "^0.2.79",
     "@receptron/event_agent_generator": "^0.0.6",
-    "graphai": "^2.0.9"
+    "graphai": "^2.0.13"
   }
 }
