@@ -1,6 +1,8 @@
 <script lang="ts">
 import { defineComponent, computed, onMounted, ref } from "vue";
 import Node from "./Node.vue";
+import Node2 from "./Node2.vue";
+import NodeEditorPanel from "./NodeEditorPanel.vue";
 import Edge from "./Edge.vue";
 import Loop from "./Loop.vue";
 
@@ -25,10 +27,12 @@ export default defineComponent({
   components: {
     SideMenu,
     Node,
+    Node2,
     Edge,
     Loop,
     ContextEdgeMenu,
     ContextNodeMenu,
+    NodeEditorPanel,
     GraphRunner,
     JsonViewer,
   },
@@ -36,6 +40,9 @@ export default defineComponent({
     const store = useStore();
     const contextEdgeMenu = ref();
     const contextNodeMenu = ref();
+    const showNodeEditor = ref(false);
+    const selectedNodeIndex = ref(0);
+    const panelKey = ref(0);
     const mainContainer = ref();
     store.initFromGraphData(graphChat);
 
@@ -89,6 +96,15 @@ export default defineComponent({
       const rect = svgRef.value.getBoundingClientRect();
       contextNodeMenu.value.openMenu(event, rect, nodeIndex);
     };
+    const openNodeEditor = (_event: MouseEvent, nodeIndex: number) => {
+      // 同じノードを連続クリックした場合は再マウントしない
+      const isSameNode = selectedNodeIndex.value === nodeIndex;
+      selectedNodeIndex.value = nodeIndex;
+      if (!isSameNode || !showNodeEditor.value) {
+        panelKey.value++;
+      }
+      showNodeEditor.value = true;
+    };
 
     const showJsonView = ref(false);
     const showChat = ref(false);
@@ -113,6 +129,7 @@ export default defineComponent({
       contextNodeMenu,
       openEdgeMenu,
       openNodeMenu,
+      openNodeEditor,
       closeMenu,
 
       edgeConnectable,
@@ -120,6 +137,9 @@ export default defineComponent({
       showJsonView,
       showChat,
       mainContainer,
+      showNodeEditor,
+      selectedNodeIndex,
+      panelKey,
 
       handleNodeDragStart,
       handleNodeDragEnd,
@@ -160,7 +180,7 @@ export default defineComponent({
                 :is-connectable="edgeConnectable"
               />
             </svg>
-            <Node
+            <Node2
               v-for="(node, index) in store.nodes"
               :key="[node.nodeId, index].join('-')"
               :node-index="index"
@@ -175,6 +195,7 @@ export default defineComponent({
               @new-edge="onNewEdge"
               @new-edge-end="onNewEdgeEnd"
               @open-node-menu="(event) => openNodeMenu(event, index)"
+              @open-node-edit-menu="(event) => openNodeEditor(event, index)"
               @node-drag-start="handleNodeDragStart"
               @node-drag-end="handleNodeDragEnd"
             />
@@ -212,6 +233,7 @@ export default defineComponent({
           <div class="flex flex-row items-start space-x-4">
             <JsonViewer v-if="showJsonView" :json-data="store.graphData" :is-open="showJsonView" @close="showJsonView = false" />
             <GraphRunner :class="{ hidden: !showChat }" :graph-data="store.graphData" :is-open="showChat" @close="showChat = false" />
+            <NodeEditorPanel :key="panelKey" :is-open="showNodeEditor" :node-index="selectedNodeIndex" @close="showNodeEditor = false" />
           </div>
         </div>
       </main>
