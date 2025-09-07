@@ -1,6 +1,5 @@
 <script lang="ts">
 import { defineComponent, computed, onMounted, ref } from "vue";
-import Node from "./Node.vue";
 import Node2 from "./Node2.vue";
 import NodeEditorPanel from "./NodeEditorPanel.vue";
 import Edge from "./Edge.vue";
@@ -26,7 +25,6 @@ import { useStore } from "../store";
 export default defineComponent({
   components: {
     SideMenu,
-    Node,
     Node2,
     Edge,
     Loop,
@@ -101,7 +99,7 @@ export default defineComponent({
       const isSameNode = selectedNodeIndex.value === nodeIndex;
       selectedNodeIndex.value = nodeIndex;
       if (!isSameNode || !showNodeEditor.value) {
-        panelKey.value++;
+        panelKey.value += 1;
       }
       showNodeEditor.value = true;
     };
@@ -187,15 +185,15 @@ export default defineComponent({
               :node-data="node"
               :nearest-data="nearestData"
               :is-connectable="edgeConnectable"
-              @update-position="(pos) => updateNodePosition(index, pos)"
-              @update-static-node-value="(value) => updateStaticNodeValue(index, value, true)"
-              @update-nested-graph="(value) => updateNestedGraph(index, value)"
+              @update-position="(pos: NodePosition) => updateNodePosition(index, pos)"
+              @update-static-node-value="updateStaticNodeValue(index, $event, true)"
+              @update-nested-graph="updateNestedGraph(index, $event)"
               @save-position="saveNodePosition"
               @new-edge-start="onNewEdgeStart"
               @new-edge="onNewEdge"
               @new-edge-end="onNewEdgeEnd"
-              @open-node-menu="(event) => openNodeMenu(event, index)"
-              @open-node-edit-menu="(event) => openNodeEditor(event, index)"
+              @open-node-menu="(e: MouseEvent) => openNodeMenu(e, index)"
+              @open-node-edit-menu="(e: MouseEvent) => openNodeEditor(e, index)"
               @node-drag-start="handleNodeDragStart"
               @node-drag-end="handleNodeDragEnd"
             />
@@ -233,7 +231,14 @@ export default defineComponent({
           <div class="flex flex-row items-start space-x-4">
             <JsonViewer v-if="showJsonView" :json-data="store.graphData" :is-open="showJsonView" @close="showJsonView = false" />
             <GraphRunner :class="{ hidden: !showChat }" :graph-data="store.graphData" :is-open="showChat" @close="showChat = false" />
-            <NodeEditorPanel :key="panelKey" :is-open="showNodeEditor" :node-index="selectedNodeIndex" @close="showNodeEditor = false" />
+            <NodeEditorPanel
+              :key="panelKey"
+              :is-open="showNodeEditor"
+              :node-index="selectedNodeIndex"
+              @close="showNodeEditor = false"
+              @update-static-node-value="(v: UpdateStaticValue) => updateStaticNodeValue(selectedNodeIndex, v, true)"
+              @update-nested-graph="(v: UpdateStaticValue) => updateNestedGraph(selectedNodeIndex, v)"
+            />
           </div>
         </div>
       </main>

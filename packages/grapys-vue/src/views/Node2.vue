@@ -17,7 +17,7 @@
         {{ nodeData.data.guiAgentId?.replace(/Agent$/, "") }}
       </div>
     </div>
-    
+
     <div class="mt-1 flex flex-col items-end">
       <div v-for="(output, index) in outputs" :key="['out', output.name, index].join('-')" class="relative flex items-center" ref="outputsRef">
         <span class="mr-2 text-xs whitespace-nowrap">{{ output.name }}</span>
@@ -49,7 +49,6 @@
     <div class="flex w-full flex-col gap-1 p-2">
       <NodeResult :node-data="nodeData" />
     </div>
-    
   </div>
 </template>
 
