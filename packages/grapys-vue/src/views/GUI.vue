@@ -1,201 +1,78 @@
 <script lang="ts">
-import { defineComponent, computed, onMounted, ref } from "vue";
-import Node from "./Node.vue";
-import Edge from "./Edge.vue";
-import Loop from "./Loop.vue";
-
-import ContextEdgeMenu from "./ContextEdgeMenu.vue";
-import ContextNodeMenu from "./ContextNodeMenu.vue";
-
+import { defineComponent, computed, ref } from "vue";
 import GraphRunner from "./GraphRunner.vue";
-import JsonViewer from "./JsonViewer.vue";
-
 import SideMenu from "./SideMenu.vue";
-
-import { EdgeData, NodePosition, UpdateStaticValue } from "../utils/gui/type";
+import GraphCanvas from "./GraphCanvas.vue";
 
 import { graphChat } from "../graph/chat_tinyswallow";
-
-import { useNewEdge } from "../composable/gui";
-import { usePanAndScroll } from "../composable/usePanAndScroll";
-import { guiEdgeData2edgeData } from "../utils/gui/utils";
 import { useStore } from "../store";
 
 export default defineComponent({
   components: {
     SideMenu,
-    Node,
-    Edge,
-    Loop,
-    ContextEdgeMenu,
-    ContextNodeMenu,
     GraphRunner,
-    JsonViewer,
+    GraphCanvas,
   },
   setup() {
     const store = useStore();
-    const contextEdgeMenu = ref();
-    const contextNodeMenu = ref();
-    const mainContainer = ref();
     store.initFromGraphData(graphChat);
 
-    // ノードドラッグ状態の管理
-    const isNodeDragging = ref(false);
-
-    const handleNodeDragStart = () => {
-      isNodeDragging.value = true;
-    };
-
-    const handleNodeDragEnd = () => {
-      isNodeDragging.value = false;
-    };
-
-    onMounted(() => {
-      saveNodePosition();
-      setupPanAndScroll();
-    });
-
-    const updateNodePosition = (index: number, pos: NodePosition) => {
-      store.updateNodePosition(index, pos);
-    };
-    const saveNodePosition = () => {
-      store.saveNodePositionData();
-    };
-    const updateStaticNodeValue = (index: number, value: UpdateStaticValue, saveHistory: boolean) => {
-      store.updateStaticNodeValue(index, value, saveHistory);
-    };
-    const updateNestedGraph = (index: number, value: UpdateStaticValue) => {
-      store.updateNestedGraph(index, value);
-    };
-
-    const edgeDataList = computed<EdgeData[]>(() => {
-      return guiEdgeData2edgeData(store.edges, store.nodeRecords);
-    });
-
-    const { svgRef, newEdgeData, onNewEdgeStart, onNewEdge, onNewEdgeEnd, nearestData, edgeConnectable } = useNewEdge();
-
-    // パン（掴んで動かす）とスクロール機能のセットアップ
-    const { setupPanAndScroll } = usePanAndScroll(mainContainer, isNodeDragging, newEdgeData);
-
-    const openEdgeMenu = (event: MouseEvent, edgeIndex: number) => {
-      const rect = svgRef.value.getBoundingClientRect();
-      contextEdgeMenu.value.openMenu(event, rect, edgeIndex);
-    };
-    const closeMenu = () => {
-      contextEdgeMenu.value.closeMenu();
-      contextNodeMenu.value.closeMenu();
-    };
-    const openNodeMenu = (event: MouseEvent, nodeIndex: number) => {
-      const rect = svgRef.value.getBoundingClientRect();
-      contextNodeMenu.value.openMenu(event, rect, nodeIndex);
-    };
-
-    const showJsonView = ref(false);
+    // View mode: graph/split/json
+    const viewMode = ref<"graph" | "split" | "json">("graph");
     const showChat = ref(false);
 
-    return {
-      updateNodePosition,
-      saveNodePosition,
-      updateStaticNodeValue,
-      updateNestedGraph,
+    // NOTE: view visibility is determined directly from viewMode in template
 
+    // Pretty JSON text
+    const prettyJsonText = computed(() => JSON.stringify(store.graphData, null, 2));
+
+    return {
       store,
 
-      edgeDataList,
-      onNewEdgeStart,
-      onNewEdge,
-      onNewEdgeEnd,
-      newEdgeData,
-      svgRef,
-      nearestData,
-
-      contextEdgeMenu,
-      contextNodeMenu,
-      openEdgeMenu,
-      openNodeMenu,
-      closeMenu,
-
-      edgeConnectable,
-
-      showJsonView,
+      viewMode,
       showChat,
-      mainContainer,
 
-      handleNodeDragStart,
-      handleNodeDragEnd,
+      prettyJsonText,
     };
   },
 });
 </script>
 
 <template>
-  <div>
-    <div class="flex h-screen">
+  <div class="overflow-x-hidden">
+    <div class="flex h-screen w-full overflow-x-hidden">
       <aside class="w-48 p-4 text-center">
         <SideMenu />
       </aside>
-      <main class="flex-1">
-        <div
-          ref="mainContainer"
-          class="relative overflow-auto rounded-md border-4 border-gray-200"
-          style="width: calc(100vw - 192px); height: calc(100vh - 40px)"
-          @click="closeMenu"
-        >
-          <div class="relative" style="width: 2000px; height: 1500px">
-            <Loop />
-            <svg x="0" y="0" class="pointer-events-none absolute h-full w-full" ref="svgRef">
-              <Edge
-                v-for="(edge, index) in edgeDataList"
-                :key="['edge', edge.source, edge.target, index].join('-')"
-                :source-data="edge.source"
-                :target-data="edge.target"
-                class="pointer-events-auto"
-                @dblclick="(e: MouseEvent) => openEdgeMenu(e, index)"
-              />
-              <Edge
-                v-if="newEdgeData"
-                :source-data="newEdgeData.source"
-                :target-data="newEdgeData.target"
-                class="pointer-events-auto"
-                :is-connectable="edgeConnectable"
-              />
-            </svg>
-            <Node
-              v-for="(node, index) in store.nodes"
-              :key="[node.nodeId, index].join('-')"
-              :node-index="index"
-              :node-data="node"
-              :nearest-data="nearestData"
-              :is-connectable="edgeConnectable"
-              @update-position="(pos) => updateNodePosition(index, pos)"
-              @update-static-node-value="(value) => updateStaticNodeValue(index, value, true)"
-              @update-nested-graph="(value) => updateNestedGraph(index, value)"
-              @save-position="saveNodePosition"
-              @new-edge-start="onNewEdgeStart"
-              @new-edge="onNewEdge"
-              @new-edge-end="onNewEdgeEnd"
-              @open-node-menu="(event) => openNodeMenu(event, index)"
-              @node-drag-start="handleNodeDragStart"
-              @node-drag-end="handleNodeDragEnd"
-            />
-            <ContextEdgeMenu ref="contextEdgeMenu" />
-            <ContextNodeMenu ref="contextNodeMenu" />
-          </div>
-        </div>
-        <div class="h-100vh pointer-events-none absolute top-0 right-0 z-10 flex max-h-screen flex-col items-end space-y-4 pt-4 pr-4 pb-4">
-          <div class="flex flex-row items-start space-x-4">
-            <button
-              class="pointer-events-auto m-1 cursor-pointer items-center rounded-full border-1 border-gray-300 bg-gray-100 px-4 py-2 text-black"
-              @click="showJsonView = !showJsonView"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M14.25 9.75 16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z"
-                />
-              </svg>
-            </button>
+      <main class="flex-1 relative h-screen overflow-hidden">
+        <!-- Top-right controls -->
+        <div class="pointer-events-none absolute top-0 right-0 z-10 flex max-h-screen flex-col items-end space-y-4 pt-4 pr-4 pb-4">
+          <div class="flex flex-row items-start space-x-2">
+            <!-- View mode switch -->
+            <div class="pointer-events-auto inline-flex overflow-hidden rounded-full border border-gray-300 bg-white text-sm text-gray-700 shadow-sm">
+              <button
+                class="px-4 py-2 hover:bg-gray-100"
+                :class="{ 'bg-gray-200 font-semibold': viewMode === 'graph' }"
+                @click="viewMode = 'graph'"
+              >
+                Graph
+              </button>
+              <button
+                class="border-l border-gray-300 px-4 py-2 hover:bg-gray-100"
+                :class="{ 'bg-gray-200 font-semibold': viewMode === 'split' }"
+                @click="viewMode = 'split'"
+              >
+                Split
+              </button>
+              <button
+                class="border-l border-gray-300 px-4 py-2 hover:bg-gray-100"
+                :class="{ 'bg-gray-200 font-semibold': viewMode === 'json' }"
+                @click="viewMode = 'json'"
+              >
+                JSON
+              </button>
+            </div>
+            <!-- Chat toggle -->
             <button
               class="pointer-events-auto m-1 cursor-pointer items-center rounded-full border-1 border-gray-300 bg-gray-100 px-4 py-2 text-black"
               @click="showChat = !showChat"
@@ -210,8 +87,35 @@ export default defineComponent({
             </button>
           </div>
           <div class="flex flex-row items-start space-x-4">
-            <JsonViewer v-if="showJsonView" :json-data="store.graphData" :is-open="showJsonView" @close="showJsonView = false" />
             <GraphRunner :class="{ hidden: !showChat }" :graph-data="store.graphData" :is-open="showChat" @close="showChat = false" />
+          </div>
+        </div>
+        <!-- Content area: switch by mode -->
+        <div class="h-full pt-16 overflow-hidden min-h-0">
+          <!-- Graph only -->
+          <div v-if="viewMode === 'graph'" class="h-full w-full">
+            <GraphCanvas />
+          </div>
+
+          <!-- Split: left graph / right JSON -->
+          <div v-else-if="viewMode === 'split'" class="grid h-full w-full grid-cols-2 min-h-0">
+            <!-- Left: graph area -->
+            <div class="h-full w-full min-h-0">
+              <GraphCanvas />
+            </div>
+            <!-- Right: JSON text area -->
+            <div class="h-full w-full min-h-0">
+              <div class="h-full w-full overflow-hidden rounded-md border-4 border-gray-200 bg-white box-border min-h-0">
+                <pre class="h-full w-full p-4 font-mono text-xs whitespace-pre break-words overflow-auto">{{ prettyJsonText }}</pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- JSON only -->
+          <div v-else class="h-full w-full">
+            <div class="h-full w-full overflow-hidden rounded-md border-4 border-gray-200 bg-white box-border">
+              <pre class="h-full w-full p-4 font-mono text-xs whitespace-pre break-words overflow-auto">{{ prettyJsonText }}</pre>
+            </div>
           </div>
         </div>
       </main>
