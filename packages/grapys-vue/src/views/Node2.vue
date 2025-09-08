@@ -24,8 +24,9 @@
         <div
           class="absolute right-[-10px] h-4 w-4 min-w-[12px] rounded-full"
           :class="nodeOutputClass(isExpectNearButton('inbound', index), nodeData, isConnectable)"
-          @mousedown="(e) => onStartEdge(e, 'outbound', index)"
-          @touchstart="(e) => onStartEdge(e, 'outbound', index)"
+          @click.stop
+          @mousedown.stop.prevent="(e) => onStartEdge(e, 'outbound', index)"
+          @touchstart.stop.prevent="(e) => onStartEdge(e, 'outbound', index)"
         ></div>
       </div>
     </div>
@@ -40,8 +41,9 @@
         <div
           class="absolute left-[-10px] h-4 w-4 min-w-[12px] rounded-full"
           :class="nodeInputClass(isExpectNearButton('outbound', index), nodeData, input as any, isConnectable)"
-          @mousedown="(e) => onStartEdge(e, 'inbound', index)"
-          @touchstart="(e) => onStartEdge(e, 'inbound', index)"
+          @click.stop
+          @mousedown.stop.prevent="(e) => onStartEdge(e, 'inbound', index)"
+          @touchstart.stop.prevent="(e) => onStartEdge(e, 'inbound', index)"
         ></div>
         <span class="ml-2 text-xs whitespace-nowrap">{{ input.name }}</span>
       </div>
@@ -262,6 +264,7 @@ export default defineComponent({
     };
     const openNodeEditMenu = (event: MouseEvent) => {
       if (isDragging.value || isNewEdge.value) return;
+      if (deltaDistance > deltaDistanceThredhold) return;
       ctx.emit("openNodeEditMenu", event);
     };
     const updateAgentIndex = () => {
