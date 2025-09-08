@@ -1,7 +1,15 @@
 <template>
   <div v-if="isOpen" class="pointer-events-auto w-80 rounded-md border border-gray-300 bg-white p-4 shadow-md">
     <div class="mb-3 flex items-center justify-between">
-      <h3 class="text-lg font-semibold">Node Editor</h3>
+      <div class="flex flex-col">
+        <h3 class="text-lg font-semibold leading-tight">
+          {{ currentNode?.nodeId ?? 'Node Editor' }}
+        </h3>
+        <div v-if="currentNode?.type === 'computed' && headerAgentName" class="mt-0.5 text-xs text-gray-500 leading-none">
+          {{ headerAgentName }}
+        </div>
+      </div>
+
       <button class="cursor-pointer rounded-full p-1 text-gray-600 hover:bg-gray-100" @click="$emit('close')" aria-label="Close" title="Close">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -63,6 +71,12 @@ export default defineComponent({
       return node.type === "computed" ? agentProfiles[node.data.guiAgentId ?? ""] : staticNodeParams;
     });
 
+    const headerAgentName = computed(() => {
+      const node = currentNode.value;
+      if (!node || node.type !== 'computed') return '';
+      return node.data.guiAgentId?.replace(/Agent$/, "") ?? '';
+    });
+
     const agentIndex = ref<number>(0);
     const nestedGraphIndex = ref<number>(0);
 
@@ -99,6 +113,7 @@ export default defineComponent({
       store,
       currentNode,
       agentProfile,
+      headerAgentName,
       agentIndex,
       nestedGraphIndex,
       onChangeAgent,
