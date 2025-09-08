@@ -269,6 +269,7 @@ export default defineComponent({
     };
     const updateAgentIndex = () => {
       const agent = agentProfile?.agents?.[agentIndex.value];
+      // this is not static node value, but it works
       ctx.emit("updateStaticNodeValue", { agentIndex: agentIndex.value, agent });
     };
     watch(
@@ -286,6 +287,7 @@ export default defineComponent({
     const updateNestedGraphIndex = () => {
       ctx.emit("updateNestedGraph", { nestedGraphIndex: nestedGraphIndex.value, nestedGraphId: nestedGraph.value.id });
       ctx.emit("updatePosition", getWH());
+      // TODO remove Edge
     };
     watch(
       () => props.nodeData.data.nestedGraphIndex,
@@ -298,11 +300,13 @@ export default defineComponent({
 
     const inputs = computed(() => {
       if (agentProfile.isNestedGraph) {
+        // not do mapAgent
         return nestedGraphInputs(nestedGraph.value.graph);
       }
       return agentProfile.inputs;
     });
     const outputs = computed(() => {
+      // not do mapAgent
       if (agentProfile.isNestedGraph) {
         return nestedGraph.value.graph?.metadata?.forNested?.outputs ?? agentProfile.outputs;
       }
@@ -331,6 +335,7 @@ export default defineComponent({
 
       openNodeMenu,
       openNodeEditMenu,
+      // helper
       nodeMainClass,
       nodeHeaderClass,
       nodeOutputClass,
