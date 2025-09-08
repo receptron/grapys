@@ -38,8 +38,8 @@ export default defineComponent({
     const store = useStore();
     const contextEdgeMenu = ref();
     const contextNodeMenu = ref();
-    const showNodeEditor = ref(false);
-    const selectedNodeIndex = ref(0);
+    const selectedNodeIndex = ref<number | null>(null);
+    const isNodeEditorOpen = computed(() => selectedNodeIndex.value !== null);
     const panelKey = ref(0);
     const mainContainer = ref();
     store.initFromGraphData(graphChat);
@@ -95,13 +95,10 @@ export default defineComponent({
       contextNodeMenu.value.openMenu(event, rect, nodeIndex);
     };
     const openNodeEditor = (_event: MouseEvent, nodeIndex: number) => {
-      // 同じノードを連続クリックした場合は再マウントしない
-      const isSameNode = selectedNodeIndex.value === nodeIndex;
+      // remount only if different node is clicked
+      if (selectedNodeIndex.value === nodeIndex) return;
       selectedNodeIndex.value = nodeIndex;
-      if (!isSameNode || !showNodeEditor.value) {
-        panelKey.value += 1;
-      }
-      showNodeEditor.value = true;
+      panelKey.value += 1;
     };
 
     const showJsonView = ref(false);
@@ -135,8 +132,8 @@ export default defineComponent({
       showJsonView,
       showChat,
       mainContainer,
-      showNodeEditor,
       selectedNodeIndex,
+      isNodeEditorOpen,
       panelKey,
 
       handleNodeDragStart,
@@ -233,11 +230,12 @@ export default defineComponent({
             <GraphRunner :class="{ hidden: !showChat }" :graph-data="store.graphData" :is-open="showChat" @close="showChat = false" />
             <NodeEditorPanel
               :key="panelKey"
-              :is-open="showNodeEditor"
-              :node-index="selectedNodeIndex"
-              @close="showNodeEditor = false"
-              @update-static-node-value="(v: UpdateStaticValue) => updateStaticNodeValue(selectedNodeIndex, v, true)"
-              @update-nested-graph="(v: UpdateStaticValue) => updateNestedGraph(selectedNodeIndex, v)"
+              :is-open="isNodeEditorOpen"
+              v-if="isNodeEditorOpen"
+              :node-index="selectedNodeIndex as number"
+              @close="selectedNodeIndex = null"
+              @update-static-node-value="(v: UpdateStaticValue) => updateStaticNodeValue(selectedNodeIndex as number, v, true)"
+              @update-nested-graph="(v: UpdateStaticValue) => updateNestedGraph(selectedNodeIndex as number, v)"
             />
           </div>
         </div>
