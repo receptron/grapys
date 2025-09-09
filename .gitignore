@@ -8,3 +8,7 @@ node_modules
 .DS_Store
 *.log
 .idea
+AGENTS.md
+packages/grapys-vue/.firebase/
+packages/grapys-vue/.firebaserc
+packages/grapys-vue/tsconfig.tsbuildinfo
