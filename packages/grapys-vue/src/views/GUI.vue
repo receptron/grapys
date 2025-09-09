@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent, computed, onMounted, ref } from "vue";
-import Node from "./Node.vue";
+import Node2 from "./Node2.vue";
+import NodeEditorPanel from "./NodeEditorPanel.vue";
 import Edge from "./Edge.vue";
 import Loop from "./Loop.vue";
 
@@ -24,11 +25,12 @@ import { useStore } from "../store";
 export default defineComponent({
   components: {
     SideMenu,
-    Node,
+    Node2,
     Edge,
     Loop,
     ContextEdgeMenu,
     ContextNodeMenu,
+    NodeEditorPanel,
     GraphRunner,
     JsonViewer,
   },
@@ -36,6 +38,9 @@ export default defineComponent({
     const store = useStore();
     const contextEdgeMenu = ref();
     const contextNodeMenu = ref();
+    const selectedNodeIndex = ref<number | null>(null);
+    const isNodeEditorOpen = computed(() => selectedNodeIndex.value !== null);
+    const panelKey = ref(0);
     const mainContainer = ref();
     store.initFromGraphData(graphChat);
 
@@ -89,6 +94,12 @@ export default defineComponent({
       const rect = svgRef.value.getBoundingClientRect();
       contextNodeMenu.value.openMenu(event, rect, nodeIndex);
     };
+    const openNodeEditor = (_event: MouseEvent, nodeIndex: number) => {
+      // remount only if different node is clicked
+      if (selectedNodeIndex.value === nodeIndex) return;
+      selectedNodeIndex.value = nodeIndex;
+      panelKey.value += 1;
+    };
 
     const showJsonView = ref(false);
     const showChat = ref(false);
@@ -113,6 +124,7 @@ export default defineComponent({
       contextNodeMenu,
       openEdgeMenu,
       openNodeMenu,
+      openNodeEditor,
       closeMenu,
 
       edgeConnectable,
@@ -120,6 +132,9 @@ export default defineComponent({
       showJsonView,
       showChat,
       mainContainer,
+      selectedNodeIndex,
+      isNodeEditorOpen,
+      panelKey,
 
       handleNodeDragStart,
       handleNodeDragEnd,
@@ -160,21 +175,22 @@ export default defineComponent({
                 :is-connectable="edgeConnectable"
               />
             </svg>
-            <Node
+            <Node2
               v-for="(node, index) in store.nodes"
               :key="[node.nodeId, index].join('-')"
               :node-index="index"
               :node-data="node"
               :nearest-data="nearestData"
               :is-connectable="edgeConnectable"
-              @update-position="(pos) => updateNodePosition(index, pos)"
-              @update-static-node-value="(value) => updateStaticNodeValue(index, value, true)"
-              @update-nested-graph="(value) => updateNestedGraph(index, value)"
+              @update-position="(pos: NodePosition) => updateNodePosition(index, pos)"
+              @update-static-node-value="updateStaticNodeValue(index, $event, true)"
+              @update-nested-graph="updateNestedGraph(index, $event)"
               @save-position="saveNodePosition"
               @new-edge-start="onNewEdgeStart"
               @new-edge="onNewEdge"
               @new-edge-end="onNewEdgeEnd"
-              @open-node-menu="(event) => openNodeMenu(event, index)"
+              @open-node-menu="(e: MouseEvent) => openNodeMenu(e, index)"
+              @open-node-edit-menu="(e: MouseEvent) => openNodeEditor(e, index)"
               @node-drag-start="handleNodeDragStart"
               @node-drag-end="handleNodeDragEnd"
             />
@@ -212,6 +228,15 @@ export default defineComponent({
           <div class="flex flex-row items-start space-x-4">
             <JsonViewer v-if="showJsonView" :json-data="store.graphData" :is-open="showJsonView" @close="showJsonView = false" />
             <GraphRunner :class="{ hidden: !showChat }" :graph-data="store.graphData" :is-open="showChat" @close="showChat = false" />
+            <NodeEditorPanel
+              :key="panelKey"
+              :is-open="isNodeEditorOpen"
+              v-if="isNodeEditorOpen"
+              :node-index="selectedNodeIndex as number"
+              @close="selectedNodeIndex = null"
+              @update-static-node-value="(v: UpdateStaticValue) => updateStaticNodeValue(selectedNodeIndex as number, v, true)"
+              @update-nested-graph="(v: UpdateStaticValue) => updateNestedGraph(selectedNodeIndex as number, v)"
+            />
           </div>
         </div>
       </main>
