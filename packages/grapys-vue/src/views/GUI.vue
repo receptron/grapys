@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, computed, onMounted, ref } from "vue";
+import { defineComponent, computed, onMounted, onBeforeUnmount, ref } from "vue";
 import Node2 from "./Node2.vue";
 import NodeEditorPanel from "./NodeEditorPanel.vue";
 import Edge from "./Edge.vue";
@@ -58,6 +58,49 @@ export default defineComponent({
     onMounted(() => {
       saveNodePosition();
       setupPanAndScroll();
+    });
+
+    // Global keyboard shortcuts: Undo / Redo
+    const isEditableTarget = (target: EventTarget | null): boolean => {
+      const element = target as HTMLElement | null;
+      if (!element) return false;
+      const tag = element.tagName;
+      return tag === "INPUT" || tag === "TEXTAREA" || element.isContentEditable === true;
+    };
+
+    const uaDataPlatform = (navigator as any).userAgentData?.platform as string | undefined;
+    const isMac = uaDataPlatform ? /mac|ios/i.test(uaDataPlatform) : /(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent);
+    const handleKeydown = (event: KeyboardEvent) => {
+      if (isEditableTarget(event.target)) return;
+
+      const mod = isMac ? event.metaKey : event.ctrlKey;
+      if (!mod) return;
+
+      // Undo: Cmd/Ctrl + Z (without Shift)
+      if (event.key.toLowerCase() === "z" && !event.shiftKey) {
+        event.preventDefault();
+        if (store.undoable) {
+          store.undo();
+        }
+        return;
+      }
+
+      // Redo: Cmd/Ctrl + Shift + Z
+      if (event.key.toLowerCase() === "z" && event.shiftKey) {
+        event.preventDefault();
+        if (store.redoable) {
+          store.redo();
+        }
+        return;
+      }
+    };
+
+    onMounted(() => {
+      window.addEventListener("keydown", handleKeydown);
+    });
+
+    onBeforeUnmount(() => {
+      window.removeEventListener("keydown", handleKeydown);
     });
 
     const updateNodePosition = (index: number, pos: NodePosition) => {
