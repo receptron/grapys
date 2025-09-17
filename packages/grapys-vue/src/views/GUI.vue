@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, computed, onMounted, onBeforeUnmount, ref } from "vue";
+import { defineComponent, computed, onMounted, onBeforeUnmount, ref, nextTick } from "vue";
 import Node2 from "./Node2.vue";
 import NodeEditorPanel from "./NodeEditorPanel.vue";
 import Edge from "./Edge.vue";
@@ -68,16 +68,40 @@ export default defineComponent({
       return tag === "INPUT" || tag === "TEXTAREA" || element.isContentEditable === true;
     };
 
-    const uaDataPlatform = (navigator as any).userAgentData?.platform as string | undefined;
-    const isMac = uaDataPlatform ? /mac|ios/i.test(uaDataPlatform) : /(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent);
+    const ua = navigator.userAgent || "";
+    const isMac = /(Mac|iPhone|iPod|iPad|iOS)/i.test(ua);
+    const graphRunnerRef = ref();
+
     const handleKeydown = (event: KeyboardEvent) => {
       if (isEditableTarget(event.target)) return;
 
+      // Run GraphRunner: Ctrl + R
+      if (event.ctrlKey && event.key === "r") {
+        event.preventDefault();
+        // 表示してから run を実行
+        nextTick(() => {
+          try {
+            graphRunnerRef.value?.run?.();
+          } catch (error) {
+            console.error(error);
+          }
+        });
+        return;
+      }
+
+      // 以下は Cmd/Ctrl が必須
       const mod = isMac ? event.metaKey : event.ctrlKey;
       if (!mod) return;
 
-      // Undo: Cmd/Ctrl + Z (without Shift)
-      if (event.key.toLowerCase() === "z" && !event.shiftKey) {
+      // Toggle Chat Viewer: Cmd/Ctrl + L
+      if (event.key === "l" && !event.shiftKey) {
+        event.preventDefault();
+        showChat.value = !showChat.value;
+        return;
+      }
+
+      // Undo: Cmd/Ctrl + Z
+      if (event.key === "z" && !event.shiftKey) {
         event.preventDefault();
         if (store.undoable) {
           store.undo();
@@ -86,12 +110,11 @@ export default defineComponent({
       }
 
       // Redo: Cmd/Ctrl + Shift + Z
-      if (event.key.toLowerCase() === "z" && event.shiftKey) {
+      if (event.key === "z" && event.shiftKey) {
         event.preventDefault();
         if (store.redoable) {
           store.redo();
         }
-        return;
       }
     };
 
@@ -181,6 +204,8 @@ export default defineComponent({
 
       handleNodeDragStart,
       handleNodeDragEnd,
+
+      graphRunnerRef,
     };
   },
 });
@@ -270,7 +295,7 @@ export default defineComponent({
           </div>
           <div class="flex flex-row items-start space-x-4">
             <JsonViewer v-if="showJsonView" :json-data="store.graphData" :is-open="showJsonView" @close="showJsonView = false" />
-            <GraphRunner :class="{ hidden: !showChat }" :graph-data="store.graphData" :is-open="showChat" @close="showChat = false" />
+            <GraphRunner ref="graphRunnerRef" :class="{ hidden: !showChat }" :graph-data="store.graphData" :is-open="showChat" @close="showChat = false" />
             <NodeEditorPanel
               :key="panelKey"
               :is-open="isNodeEditorOpen"
