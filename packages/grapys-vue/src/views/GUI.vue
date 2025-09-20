@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, computed, onMounted, onBeforeUnmount, ref, nextTick } from "vue";
+import { defineComponent, computed, onMounted, ref, nextTick } from "vue";
 import Node2 from "./Node2.vue";
 import NodeEditorPanel from "./NodeEditorPanel.vue";
 import Edge from "./Edge.vue";
@@ -58,11 +58,11 @@ export default defineComponent({
 
     const graphRunnerRef = ref();
     const { addShortcut } = useKeyboardShortcuts();
-    
+
     onMounted(() => {
       saveNodePosition();
       setupPanAndScroll();
-      
+
       // Run GraphRunner: Ctrl + R
       addShortcut({
         combo: "ctrl+r",
@@ -105,7 +105,6 @@ export default defineComponent({
         },
       });
     });
-
 
     const updateNodePosition = (index: number, pos: NodePosition) => {
       store.updateNodePosition(index, pos);
