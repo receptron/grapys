@@ -11,14 +11,14 @@ export type UseShortcutsApi = {
   addShortcut: (shortcut: Shortcut) => void;
 };
 
-function isEditableTarget(target: EventTarget | null): boolean {
+const isEditableTarget = (target: EventTarget | null): boolean => {
   const element = target as HTMLElement | null;
   if (!element) return false;
   const tag = element.tagName;
   return tag === "INPUT" || tag === "TEXTAREA" || element.isContentEditable === true;
 }
 
-function isMacOS(): boolean {
+const isMacOS = (): boolean => {
   const ua = navigator.userAgent || "";
   return /(Mac|iPhone|iPod|iPad|iOS)/i.test(ua);
 }
@@ -32,12 +32,12 @@ type ParsedCombo = {
   mod?: boolean; // virtual modifier
 };
 
-function parseCombo(combo: string): ParsedCombo {
+const parseCombo = (combo: string): ParsedCombo => {
   // Minimal implementation: do not treat '+' specially
   const parts = combo
     .toLowerCase()
     .split("+")
-    .map((s) => s.trim())
+    .map((part) => part.trim())
     .filter(Boolean);
 
   const modifierMap: { [key: string]: keyof Omit<ParsedCombo, "key"> } = {
@@ -64,7 +64,7 @@ function parseCombo(combo: string): ParsedCombo {
   }, initialCombo);
 }
 
-function matchCombo(event: KeyboardEvent, parsedCombo: ParsedCombo, isMac: boolean): boolean {
+const matchCombo = (event: KeyboardEvent, parsedCombo: ParsedCombo, isMac: boolean): boolean => {
   const rawKey = event.key || "";
   const key = rawKey.toLowerCase();
 
@@ -84,12 +84,7 @@ function matchCombo(event: KeyboardEvent, parsedCombo: ParsedCombo, isMac: boole
   const actualAlt = event.altKey;
 
   // Check if the expected state and actual state match perfectly
-  return (
-    expectCtrl === actualCtrl &&
-    expectMeta === actualMeta &&
-    expectShift === actualShift &&
-    expectAlt === actualAlt
-  );
+  return expectCtrl === actualCtrl && expectMeta === actualMeta && expectShift === actualShift && expectAlt === actualAlt;
 }
 
 type InternalShortcut = {
@@ -97,7 +92,7 @@ type InternalShortcut = {
   handler: ShortcutHandler;
 };
 
-export function useKeyboardShortcuts(): UseShortcutsApi {
+export const useKeyboardShortcuts = (): UseShortcutsApi => {
   const shortcuts: InternalShortcut[] = [];
   const isMac = isMacOS();
 
