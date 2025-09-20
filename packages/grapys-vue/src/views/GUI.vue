@@ -56,16 +56,13 @@ export default defineComponent({
       isNodeDragging.value = false;
     };
 
+    const graphRunnerRef = ref();
+    const { addShortcut } = useKeyboardShortcuts();
+    
     onMounted(() => {
       saveNodePosition();
       setupPanAndScroll();
-    });
-
-    const graphRunnerRef = ref();
-
-    const { addShortcut, clearShortcuts } = useKeyboardShortcuts();
-
-    onMounted(() => {
+      
       // Run GraphRunner: Ctrl + R
       addShortcut({
         combo: "ctrl+r",
@@ -109,9 +106,6 @@ export default defineComponent({
       });
     });
 
-    onBeforeUnmount(() => {
-      clearShortcuts();
-    });
 
     const updateNodePosition = (index: number, pos: NodePosition) => {
       store.updateNodePosition(index, pos);
