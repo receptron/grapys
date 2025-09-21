@@ -34,6 +34,8 @@ export default defineComponent({
     const graphRunnerRef = ref();
     const { addShortcut } = useKeyboardShortcuts();
 
+    const viewerMode = ref<string>("graph");
+
     onMounted(() => {
       // Run GraphRunner: Ctrl + R
       addShortcut({
@@ -95,6 +97,10 @@ export default defineComponent({
     const showJsonView = ref(false);
     const showChat = ref(false);
 
+    const switchViewerMode = () => {
+      viewerMode.value = viewerMode.value === "graph" ? "json" : "graph";
+    };
+
     return {
       updateStaticNodeValue,
       updateNestedGraph,
@@ -110,6 +116,8 @@ export default defineComponent({
       panelKey,
 
       graphRunnerRef,
+      viewerMode,
+      switchViewerMode,
     };
   },
 });
@@ -122,12 +130,13 @@ export default defineComponent({
         <SideMenu />
       </aside>
       <main class="flex-1">
-        <GraphCanvas @open-node-editor="openNodeEditor" />
+        <GraphCanvas v-if="viewerMode === 'graph'" @open-node-editor="openNodeEditor" />
+        <JsonViewer v-if="viewerMode === 'json'" :json-data="store.graphData" :is-open="showJsonView" @close="showJsonView = false" />
         <div class="h-100vh pointer-events-none absolute top-0 right-0 z-10 flex max-h-screen flex-col items-end space-y-4 pt-4 pr-4 pb-4">
           <div class="flex flex-row items-start space-x-4">
             <button
               class="pointer-events-auto m-1 cursor-pointer items-center rounded-full border-1 border-gray-300 bg-gray-100 px-4 py-2 text-black"
-              @click="showJsonView = !showJsonView"
+              @click="switchViewerMode"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                 <path
@@ -151,7 +160,6 @@ export default defineComponent({
             </button>
           </div>
           <div class="flex flex-row items-start space-x-4">
-            <JsonViewer v-if="showJsonView" :json-data="store.graphData" :is-open="showJsonView" @close="showJsonView = false" />
             <NodeEditorPanel
               :key="panelKey"
               v-if="isNodeEditorOpen"
