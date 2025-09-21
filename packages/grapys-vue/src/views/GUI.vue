@@ -131,7 +131,7 @@ export default defineComponent({
       </aside>
       <main class="flex-1">
         <GraphCanvas v-if="viewerMode === 'graph'" @open-node-editor="openNodeEditor" />
-        <JsonViewer v-if="viewerMode === 'json'" :json-data="store.graphData" :is-open="showJsonView" @close="showJsonView = false" />
+        <JsonViewer v-if="viewerMode === 'json'" :json-data="store.graphData" />
         <div class="h-100vh pointer-events-none absolute top-0 right-0 z-10 flex max-h-screen flex-col items-end space-y-4 pt-4 pr-4 pb-4">
           <div class="flex flex-row items-start space-x-4">
             <button

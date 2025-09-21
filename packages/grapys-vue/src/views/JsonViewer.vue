@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 
 export default defineComponent({
   name: "JsonViewer",
@@ -9,11 +9,19 @@ export default defineComponent({
       required: true,
     },
   },
+  setup(props) {
+    const code = computed(() => {
+      return JSON.stringify(props.jsonData, null, 2);
+    });
+    return {
+      code,
+    };
+  },
 });
 </script>
 
 <template>
-  <div class="relative box-border h-full overflow-auto rounded-md border-4 border-gray-200">
-    <pre class="p-6 font-mono text-xs break-words whitespace-pre-wrap">{{ JSON.stringify(jsonData, null, 2) }}</pre>
+  <div class="relative box-border h-full overflow-auto rounded-md border-4 border-gray-200 bg-white">
+    <highlightjs language="json" :code="code" class="h-full" />
   </div>
 </template>
