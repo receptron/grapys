@@ -16,12 +16,12 @@ const isEditableTarget = (target: EventTarget | null): boolean => {
   if (!element) return false;
   const tag = element.tagName;
   return tag === "INPUT" || tag === "TEXTAREA" || element.isContentEditable === true;
-}
+};
 
 const isMacOS = (): boolean => {
   const ua = navigator.userAgent || "";
   return /(Mac|iPhone|iPod|iPad|iOS)/i.test(ua);
-}
+};
 
 type ParsedCombo = {
   key: string; // normalized lower-case
@@ -62,7 +62,7 @@ const parseCombo = (combo: string): ParsedCombo => {
     }
     return acc;
   }, initialCombo);
-}
+};
 
 const matchCombo = (event: KeyboardEvent, parsedCombo: ParsedCombo, isMac: boolean): boolean => {
   const rawKey = event.key || "";
@@ -85,7 +85,7 @@ const matchCombo = (event: KeyboardEvent, parsedCombo: ParsedCombo, isMac: boole
 
   // Check if the expected state and actual state match perfectly
   return expectCtrl === actualCtrl && expectMeta === actualMeta && expectShift === actualShift && expectAlt === actualAlt;
-}
+};
 
 type InternalShortcut = {
   parsedCombo: ParsedCombo;
@@ -132,4 +132,4 @@ export const useKeyboardShortcuts = (): UseShortcutsApi => {
   });
 
   return { addShortcut };
-}
+};
