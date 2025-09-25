@@ -87,14 +87,13 @@ export default defineComponent({
       store.updateNestedGraph(index, value);
     };
 
-    const openNodeEditor = (_event: MouseEvent, nodeIndex: number) => {
+    const openNodeEditor = (nodeIndex: number) => {
       // remount only if different node is clicked
       if (selectedNodeIndex.value === nodeIndex) return;
       selectedNodeIndex.value = nodeIndex;
       panelKey.value += 1;
     };
 
-    const showJsonView = ref(false);
     const showChat = ref(false);
 
     const switchViewerMode = () => {
@@ -109,7 +108,6 @@ export default defineComponent({
 
       openNodeEditor,
 
-      showJsonView,
       showChat,
       selectedNodeIndex,
       isNodeEditorOpen,
@@ -168,7 +166,7 @@ export default defineComponent({
               @update-static-node-value="(v: UpdateStaticValue) => updateStaticNodeValue(selectedNodeIndex as number, v, true)"
               @update-nested-graph="(v: UpdateStaticValue) => updateNestedGraph(selectedNodeIndex as number, v)"
             />
-            <GraphRunner ref="graphRunnerRef" :class="{ hidden: !showChat }" :graph-data="store.graphData" :is-open="showChat" @close="showChat = false" />
+            <GraphRunner ref="graphRunnerRef" :class="{ hidden: !showChat }" :graph-data="store.graphData" @close="showChat = false" />
           </div>
         </div>
       </main>

@@ -77,8 +77,8 @@ export default defineComponent({
       const rect = svgRef.value.getBoundingClientRect();
       contextNodeMenu.value.openMenu(event, rect, nodeIndex);
     };
-    const openNodeEditor = (event: MouseEvent, nodeIndex: number) => {
-      emit("open-node-editor", event, nodeIndex);
+    const openNodeEditor = (nodeIndex: number) => {
+      emit("open-node-editor", nodeIndex);
     };
 
     return {
@@ -150,7 +150,7 @@ export default defineComponent({
         @new-edge="onNewEdge"
         @new-edge-end="onNewEdgeEnd"
         @open-node-menu="(e: MouseEvent) => openNodeMenu(e, index)"
-        @open-node-edit-menu="(e: MouseEvent) => openNodeEditor(e, index)"
+        @open-node-edit-menu="openNodeEditor(index)"
         @node-drag-start="handleNodeDragStart"
         @node-drag-end="handleNodeDragEnd"
       />

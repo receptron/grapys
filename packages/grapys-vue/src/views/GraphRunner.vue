@@ -127,10 +127,6 @@ export default defineComponent({
       type: Object as PropType<GraphData>,
       required: true,
     },
-    isOpen: {
-      type: Boolean,
-      default: false,
-    },
   },
   emits: ["close"],
   setup(props, { emit }) {
