@@ -1,11 +1,11 @@
 <template>
-  <div v-if="isOpen" class="pointer-events-auto w-80 rounded-md border border-gray-300 bg-white p-4 shadow-md">
+  <div class="pointer-events-auto w-80 rounded-md border border-gray-300 bg-white p-4 shadow-md">
     <div class="mb-3 flex items-center justify-between">
       <div class="flex flex-col">
-        <h3 class="text-lg font-semibold leading-tight">
-          {{ currentNode?.nodeId ?? 'Node Editor' }}
+        <h3 class="text-lg leading-tight font-semibold">
+          {{ currentNode?.nodeId ?? "Node Editor" }}
         </h3>
-        <div v-if="currentNode?.type === 'computed' && headerAgentName" class="mt-0.5 text-xs text-gray-500 leading-none">
+        <div v-if="currentNode?.type === 'computed' && headerAgentName" class="mt-0.5 text-xs leading-none text-gray-500">
           {{ headerAgentName }}
         </div>
       </div>
@@ -58,7 +58,6 @@ export default defineComponent({
   },
   props: {
     nodeIndex: { type: Number, required: true },
-    isOpen: { type: Boolean, required: true },
   },
   emits: ["close", "updateStaticNodeValue", "updateNestedGraph"],
   setup(props, ctx) {
@@ -73,8 +72,8 @@ export default defineComponent({
 
     const headerAgentName = computed(() => {
       const node = currentNode.value;
-      if (!node || node.type !== 'computed') return '';
-      return node.data.guiAgentId?.replace(/Agent$/, "") ?? '';
+      if (!node || node.type !== "computed") return "";
+      return node.data.guiAgentId?.replace(/Agent$/, "") ?? "";
     });
 
     const agentIndex = ref<number>(0);
