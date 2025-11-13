@@ -6,6 +6,7 @@ import { createPinia, setActivePinia } from "pinia";
 import Node from "./Node";
 import { useStore } from "../store";
 import type { GUINodeData, UpdateNodePositionData, UpdateStaticValue } from "../utils/gui/type";
+import { useStoryApp } from "../storybook/useStoryApp";
 
 const meta: Meta<typeof Node> = {
   title: "Components/Node",
@@ -29,7 +30,7 @@ const cloneNodeData = (node: GUINodeData): GUINodeData =>
   JSON.parse(JSON.stringify(node)) as GUINodeData;
 
 const createRender = (): Story["render"] =>
-  (args, { app }) => {
+  (args) => {
     const storyArgs = args as {
       nodeData: GUINodeData;
       nodeIndex: number;
@@ -38,40 +39,41 @@ const createRender = (): Story["render"] =>
       resultUrl?: string;
     };
 
-    const pinia = createPinia();
-    app.use(pinia);
-    setActivePinia(pinia);
-
-    const store = useStore();
-    const baseNode = cloneNodeData(storyArgs.nodeData);
-    store.initData([baseNode], [], { loopType: "none" });
-
-    const currentNode = computed(() => store.nodes[storyArgs.nodeIndex] ?? baseNode);
-
-    const handleUpdatePosition = (position: UpdateNodePositionData) => {
-      store.updateNodePosition(storyArgs.nodeIndex, position);
-    };
-    const handleSavePosition = () => {
-      store.saveNodePositionData();
-    };
-    const handleStaticNodeValue = (payload: Record<string, unknown>) => {
-      store.updateStaticNodeValue(storyArgs.nodeIndex, payload as UpdateStaticValue, true);
-    };
-    const handleNestedGraph = (payload: Record<string, unknown>) => {
-      store.updateNestedGraph(storyArgs.nodeIndex, payload as UpdateStaticValue);
-    };
-
-    const onNewEdgeStart = action("newEdgeStart");
-    const onNewEdge = action("newEdge");
-    const onNewEdgeEnd = action("newEdgeEnd");
-    const onOpenMenu = action("openNodeMenu");
-    const onOpenEditMenu = action("openNodeEditMenu");
-    const onDragStart = action("nodeDragStart");
-    const onDragEnd = action("nodeDragEnd");
-
     return {
       components: { Node },
       setup() {
+        const app = useStoryApp();
+        const pinia = createPinia();
+        app.use(pinia);
+        setActivePinia(pinia);
+
+        const store = useStore();
+        const baseNode = cloneNodeData(storyArgs.nodeData);
+        store.initData([baseNode], [], { loopType: "none" });
+
+        const currentNode = computed(() => store.nodes[storyArgs.nodeIndex] ?? baseNode);
+
+        const handleUpdatePosition = (position: UpdateNodePositionData) => {
+          store.updateNodePosition(storyArgs.nodeIndex, position);
+        };
+        const handleSavePosition = () => {
+          store.saveNodePositionData();
+        };
+        const handleStaticNodeValue = (payload: Record<string, unknown>) => {
+          store.updateStaticNodeValue(storyArgs.nodeIndex, payload as UpdateStaticValue, true);
+        };
+        const handleNestedGraph = (payload: Record<string, unknown>) => {
+          store.updateNestedGraph(storyArgs.nodeIndex, payload as UpdateStaticValue);
+        };
+
+        const onNewEdgeStart = action("newEdgeStart");
+        const onNewEdge = action("newEdge");
+        const onNewEdgeEnd = action("newEdgeEnd");
+        const onOpenMenu = action("openNodeMenu");
+        const onOpenEditMenu = action("openNodeEditMenu");
+        const onDragStart = action("nodeDragStart");
+        const onDragEnd = action("nodeDragEnd");
+
         if (Object.prototype.hasOwnProperty.call(storyArgs, "resultUrl")) {
           const resultUrl = toRef(storyArgs, "resultUrl");
           watch(
@@ -191,4 +193,3 @@ export const ImageResultNode: Story = {
   } as any,
   render: createRender(),
 };
-

@@ -4,7 +4,6 @@ import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const projectRoot = dirname(fileURLToPath(new URL("./vite.config.ts", import.meta.url)));
-const storybookDir = resolve(projectRoot, ".storybook");
 
 export default defineConfig({
   plugins: [vue()],
@@ -23,11 +22,11 @@ export default defineConfig({
       },
       {
         find: /^.*utils\/firebase\/SocialLogin$/,
-        replacement: resolve(storybookDir, "mocks/SocialLogin.ts"),
+        replacement: resolve(projectRoot, "src/storybook/mocks/SocialLogin.ts"),
       },
       {
         find: /^.*utils\/firebase\/firebase$/,
-        replacement: resolve(storybookDir, "mocks/firebase.ts"),
+        replacement: resolve(projectRoot, "src/storybook/mocks/firebase.ts"),
       },
     ],
   },

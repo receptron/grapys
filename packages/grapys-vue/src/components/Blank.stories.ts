@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/vue3";
 import { createMemoryHistory, createRouter } from "vue-router";
 
 import Blank from "./Blank.vue";
+import { useStoryApp } from "../storybook/useStoryApp";
 
 const meta = {
   title: "Components/Blank",
@@ -17,7 +18,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const RouterView: Story = {
-  render: (_args, { app }) => {
+  render: () => {
     const router = createRouter({
       history: createMemoryHistory(),
       routes: [
@@ -31,13 +32,15 @@ export const RouterView: Story = {
       ],
     });
 
-    app.use(router);
-    router.push("/");
-
     return {
       components: { Blank },
+      setup() {
+        const app = useStoryApp();
+        app.use(router);
+        router.push("/").catch(() => undefined);
+        return {};
+      },
       template: "<Blank />",
     };
   },
 };
-

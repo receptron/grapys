@@ -6,6 +6,7 @@ import type { User } from "firebase/auth";
 
 import Layout from "./Layout.vue";
 import { useFirebaseStore } from "../store/firebase";
+import { useStoryApp } from "../storybook/useStoryApp";
 
 const meta: Meta<typeof Layout> = {
   title: "Components/Layout",
@@ -45,18 +46,20 @@ const makeRouter = () =>
   });
 
 export const FirebaseStates: Story = {
-  render: (args, { app }) => {
-    const pinia = createPinia();
-    app.use(pinia);
-    setActivePinia(pinia);
-
+  render: (args) => {
     const router = makeRouter();
-    app.use(router);
-    router.push("/");
 
     return {
       components: { Layout },
       setup() {
+        const app = useStoryApp();
+        const pinia = createPinia();
+        app.use(pinia);
+        setActivePinia(pinia);
+
+        app.use(router);
+        router.push("/").catch(() => undefined);
+
         const firebaseStore = useFirebaseStore();
         const authState = toRef(args as { authState: string }, "authState");
 
@@ -83,4 +86,3 @@ export const FirebaseStates: Story = {
     };
   },
 };
-

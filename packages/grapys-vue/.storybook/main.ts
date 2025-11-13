@@ -6,8 +6,6 @@ import type { StorybookConfig } from "@storybook/vue3-vite";
 import { mergeConfig } from "vite";
 
 const projectRoot = dirname(fileURLToPath(new URL("../vite.config.ts", import.meta.url)));
-const storybookDir = dirname(fileURLToPath(new URL("./main.ts", import.meta.url)));
-
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
   addons: ["@storybook/addon-essentials", "@storybook/addon-interactions"],
@@ -30,11 +28,11 @@ const config: StorybookConfig = {
           },
           {
             find: /^.*utils\/firebase\/SocialLogin$/,
-            replacement: resolve(storybookDir, "mocks/SocialLogin.ts"),
+            replacement: resolve(projectRoot, "src/storybook/mocks/SocialLogin.ts"),
           },
           {
             find: /^.*utils\/firebase\/firebase$/,
-            replacement: resolve(storybookDir, "mocks/firebase.ts"),
+            replacement: resolve(projectRoot, "src/storybook/mocks/firebase.ts"),
           },
         ],
       },
