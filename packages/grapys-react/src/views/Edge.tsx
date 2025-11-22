@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import type { EdgeData2 } from "../utils/gui/type";
-import { convEdgePath } from "../utils/gui/utils";
-import { edgeColors } from "../utils/gui/classUtils";
+import { convEdgePath } from "../utils/utils/gui";
+import { edgeColors } from "../utils/utils/classUtils";
 
 interface EdgeProps {
   sourceData: EdgeData2;

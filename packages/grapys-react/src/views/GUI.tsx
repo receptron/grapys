@@ -17,7 +17,8 @@ import JsonViewer from "./JsonViewer";
 import { graphChat } from "../graph/chat_tinyswallow";
 
 import { useNewEdge } from "../composable/gui";
-import { graphToGUIData, guiEdgeData2edgeData, handleDownload } from "../utils/gui/utils";
+import { graphToGUIData, handleDownload } from "../utils/gui/utils";
+import { guiEdgeData2edgeData } from "../utils/utils/gui";
 import { GraphData, sleep } from "graphai";
 import { useLocalStore, node2Record, toGraph } from "../store/index";
 

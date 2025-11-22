@@ -1,7 +1,7 @@
 import { useRef, useState, useMemo, useCallback } from "react";
 import { useLocalStore, node2Record } from "../store/index";
 import type { Position, NewEdgeStartEventData, NewEdgeData, ClosestNodeData, GUINearestData, NestedGraphList } from "../utils/gui/type";
-import { edgeStartEventData, edgeUpdateEventData, edgeEndEventData, pickNearestNode, pickNearestConnect, isEdgeConnectale } from "../utils/gui/utils";
+import { edgeStartEventData, edgeUpdateEventData, edgeEndEventData, pickNearestNode, pickNearestConnect, isEdgeConnectale } from "../utils/utils/gui";
 
 export const useNewEdge = () => {
   const nodes = useLocalStore((state) => state.nodes());

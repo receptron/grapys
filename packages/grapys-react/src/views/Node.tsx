@@ -10,8 +10,8 @@ import type {
   UpdateNodePositionData,
   UpdateAgentValue,
 } from "../utils/gui/type";
-import { getClientPos, getNodeSize, getTransformStyle } from "../utils/gui/utils";
-import { nodeMainClass, nodeHeaderClass, nodeOutputClass, nodeInputClass } from "../utils/gui/classUtils";
+import { getClientPos, getNodeSize, getTransformStyle } from "../utils/utils/gui";
+import { nodeMainClass, nodeHeaderClass, nodeOutputClass, nodeInputClass } from "../utils/utils/classUtils";
 
 import { agentProfiles, staticNodeParams } from "../utils/gui/data";
 import { useLocalStore } from "../store/index";
