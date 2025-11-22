@@ -1,9 +1,17 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+import dts from "vite-plugin-dts";
 import { resolve } from "path";
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    dts({
+      insertTypesEntry: true,
+      include: ["src/**/*.ts", "src/**/*.vue"],
+      exclude: ["src/**/*.spec.ts", "node_modules"],
+    }),
+  ],
   build: {
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
@@ -18,7 +26,9 @@ export default defineConfig({
           vue: "Vue",
           pinia: "Pinia",
         },
+        preserveModules: false,
       },
     },
+    emptyOutDir: true,
   },
 });
