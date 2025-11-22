@@ -1,5 +1,5 @@
 <template>
-  <ul v-if="menuVisible" :style="menuStyle" class="absolute w-40 rounded-md border border-gray-300 bg-white py-2 shadow-md">
+  <ul v-if="menuVisible" :style="menuStyle" class="fixed w-40 rounded-md border border-gray-300 bg-white py-2 shadow-md z-50">
     <slot />
   </ul>
 </template>
@@ -14,13 +14,21 @@ export default defineComponent({
     const menuVisible = ref(false);
     const menuStyle = ref({ top: "0px", left: "0px" });
 
-    const openMenu = (event: MouseEvent | TouchEvent, rect: DOMRect) => {
+    const openMenu = (event: MouseEvent | TouchEvent, rect?: DOMRect) => {
       event.preventDefault();
       const { clientX, clientY } = getClientPos(event);
-      menuStyle.value = {
-        top: `${clientY - rect.top}px`,
-        left: `${clientX - rect.left}px`,
-      };
+      if (rect) {
+        menuStyle.value = {
+          top: `${clientY - rect.top}px`,
+          left: `${clientX - rect.left}px`,
+        };
+      } else {
+        // Use page coordinates if no rect provided
+        menuStyle.value = {
+          top: `${clientY}px`,
+          left: `${clientX}px`,
+        };
+      }
       menuVisible.value = true;
     };
 

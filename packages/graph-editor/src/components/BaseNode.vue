@@ -57,7 +57,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watchEffect, computed, PropType, onMounted } from "vue";
+import { defineComponent, ref, watchEffect, computed, PropType, onMounted, nextTick } from "vue";
 import type { GUINodeData, GUINearestData, NewEdgeEventDirection, PortDefinition } from "../types";
 import { getClientPos, getNodeSize, getTransformStyle, nodeMainClass, nodeHeaderClass, nodeOutputClass, nodeInputClass } from "../utils";
 
@@ -139,11 +139,32 @@ export default defineComponent({
     });
 
     const getWH = () => {
+      console.log('getWH called, inputsRef:', inputsRef.value.length, 'outputsRef:', outputsRef.value.length);
+      console.log('inputs prop:', props.inputs?.length, 'outputs prop:', props.outputs?.length);
       return getNodeSize(thisRef.value, sortedInputs.value, sortedOutputs.value);
     };
 
     onMounted(() => {
-      ctx.emit("updatePosition", getWH());
+      nextTick(() => {
+        ctx.emit("updatePosition", getWH());
+      });
+    });
+
+    // Watch for changes in the actual DOM ref arrays (not just props)
+    watchEffect(() => {
+      // Access the ref arrays to track them
+      const inputsLength = inputsRef.value.length;
+      const outputsLength = outputsRef.value.length;
+
+      console.log('watchEffect on refs - inputsRef:', inputsLength, 'outputsRef:', outputsLength);
+
+      // Only update if we have actual DOM elements
+      if (inputsLength > 0 || outputsLength > 0) {
+        nextTick(() => {
+          console.log('watchEffect: updating position due to ref arrays change');
+          ctx.emit("updatePosition", getWH());
+        });
+      }
     });
 
     const onMoveNode = (event: MouseEvent | TouchEvent) => {

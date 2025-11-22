@@ -138,24 +138,24 @@ export const convEdgePath = (
   targetIndex: number | undefined,
   targetPosition: NodePositionData,
 ) => {
-  const { x, y: y1, width, outputCenters } = sourcePosition;
-  const x1 = x + (width ?? 0);
-  const { x: x2, y: y2, inputCenters } = targetPosition;
+  const { x, y: y1, width, outputCenters } = sourcePosition ?? {};
+  const x1 = (x ?? 0) + (width ?? 0);
+  const { x: x2, y: y2, inputCenters } = targetPosition ?? {};
 
-  const y1Offset = sourceIndex !== undefined && outputCenters && outputCenters.length >= sourceIndex ? outputCenters[sourceIndex] : 0;
-  const y2Offset = targetIndex !== undefined && inputCenters && inputCenters.length >= targetIndex ? inputCenters[targetIndex] : 0;
+  const y1Offset = sourceIndex !== undefined && outputCenters && outputCenters.length > sourceIndex ? outputCenters[sourceIndex] : 0;
+  const y2Offset = targetIndex !== undefined && inputCenters && inputCenters.length > targetIndex ? inputCenters[targetIndex] : 0;
 
-  const y1dash = y1 + y1Offset;
-  const y2dash = y2 + y2Offset;
+  const y1dash = (y1 ?? 0) + y1Offset;
+  const y2dash = (y2 ?? 0) + y2Offset;
 
   const ydashDiff = Math.abs(y1dash - y2dash);
   const controlYOffset = (ydashDiff > 40 ? 40 : ydashDiff) * (y1dash > y2dash ? 1 : -1);
 
-  const xDiff = x2 - x1;
+  const xDiff = (x2 ?? 0) - x1;
   const maxOffset = 120;
   const minOffset = 40;
   const offsetThreshold = maxOffset - minOffset;
   const controlXOffset = xDiff > 0 ? minOffset + (xDiff > offsetThreshold ? 0 : offsetThreshold - xDiff) : maxOffset;
 
-  return `M ${x1} ${y1dash} C ${x1 + controlXOffset} ${y1dash - controlYOffset}, ${x2 - controlXOffset} ${y2dash + controlYOffset}, ${x2} ${y2dash}`;
+  return `M ${x1} ${y1dash} C ${x1 + controlXOffset} ${y1dash - controlYOffset}, ${(x2 ?? 0) - controlXOffset} ${y2dash + controlYOffset}, ${x2 ?? 0} ${y2dash}`;
 };

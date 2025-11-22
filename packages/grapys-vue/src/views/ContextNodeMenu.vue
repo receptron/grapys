@@ -20,10 +20,18 @@ export default defineComponent({
     const store = useStore();
     const selectedNodeIndex = ref(0);
 
-    const openMenu = (event: MouseEvent | TouchEvent, rect: DOMRect, nodeIndex: number) => {
+    const openMenu = (event: MouseEvent | TouchEvent, nodeIndexOrRect: number | DOMRect, nodeIndex?: number) => {
       event.preventDefault();
-      contextMenu.value.openMenu(event, rect);
-      selectedNodeIndex.value = nodeIndex;
+      // Support both old (event, rect, index) and new (event, index) signatures
+      if (typeof nodeIndexOrRect === 'number') {
+        // New signature: (event, index)
+        contextMenu.value.openMenu(event);
+        selectedNodeIndex.value = nodeIndexOrRect;
+      } else {
+        // Old signature: (event, rect, index)
+        contextMenu.value.openMenu(event, nodeIndexOrRect);
+        selectedNodeIndex.value = nodeIndex!;
+      }
     };
 
     const closeMenu = () => {

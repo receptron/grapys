@@ -20,10 +20,18 @@ export default defineComponent({
     const store = useStore();
     const selectedEdgeIndex = ref(0);
 
-    const openMenu = (event: MouseEvent | TouchEvent, rect: DOMRect, edgeIndex: number) => {
+    const openMenu = (event: MouseEvent | TouchEvent, edgeIndexOrRect: number | DOMRect, edgeIndex?: number) => {
       event.preventDefault();
-      contextMenu.value.openMenu(event, rect);
-      selectedEdgeIndex.value = edgeIndex;
+      // Support both old (event, rect, index) and new (event, index) signatures
+      if (typeof edgeIndexOrRect === 'number') {
+        // New signature: (event, index)
+        contextMenu.value.openMenu(event);
+        selectedEdgeIndex.value = edgeIndexOrRect;
+      } else {
+        // Old signature: (event, rect, index)
+        contextMenu.value.openMenu(event, edgeIndexOrRect);
+        selectedEdgeIndex.value = edgeIndex!;
+      }
     };
 
     const closeMenu = () => {
