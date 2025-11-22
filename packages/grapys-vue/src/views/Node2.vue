@@ -17,7 +17,11 @@
         {{ nodeData.data.guiAgentId?.replace(/Agent$/, "") }}
       </div>
     </div>
-
+    <div v-if="agentProfile.agents && innerMenu">
+      <select v-model="agentIndex" @change="updateAgentIndex">
+        <option :value="key" v-for="(agent, key) in agentProfile.agents" :key="key">{{ agent }}</option>
+      </select>
+    </div>
     <div class="mt-1 flex flex-col items-end">
       <div v-for="(output, index) in outputs" :key="['out', output.name, index].join('-')" class="relative flex items-center" ref="outputsRef">
         <span class="mr-2 text-xs whitespace-nowrap">{{ output.name }}</span>
@@ -48,8 +52,19 @@
         <span class="ml-2 text-xs whitespace-nowrap">{{ input.name }}</span>
       </div>
     </div>
+    <div class="flex w-full flex-col gap-1 p-2" v-if="nodeData.type === 'static' && innerMenu">
+      <NodeStaticValue :node-data="nodeData" @focus-event="focusEvent" @blur-event="blurEvent" @update-static-value="updateStaticValue" />
+    </div>
+    <div class="flex w-full flex-col gap-1 p-2" v-if="nodeData.type === 'computed' && innerMenu">
+      <NodeComputedParams :node-data="nodeData" @focus-event="focusEvent" @blur-event="blurEvent" :node-index="nodeIndex" />
+    </div>
     <div class="flex w-full flex-col gap-1 p-2">
       <NodeResult :node-data="nodeData" />
+    </div>
+    <div v-if="(agentProfile.isNestedGraph || agentProfile.isMap) && innerMenu">
+      <select v-model="nestedGraphIndex" @change="updateNestedGraphIndex">
+        <option :value="key" v-for="(graph, key) in nestedGraphs" :key="key">{{ graph.name }}</option>
+      </select>
     </div>
   </div>
 </template>
@@ -63,11 +78,15 @@ import { agentProfiles, staticNodeParams } from "../utils/gui/data";
 import { nodeMainClass, nodeHeaderClass, nodeOutputClass, nodeInputClass } from "../utils/gui/classUtils";
 // import { graphs } from "../graph";
 
+import NodeStaticValue from "./NodeStaticValue.vue";
+import NodeComputedParams from "./NodeComputedParams.vue";
 import NodeResult from "./NodeResult.vue";
 
 export default defineComponent({
   name: "Node2",
   components: {
+    NodeStaticValue,
+    NodeComputedParams,
     NodeResult,
   },
   props: {
@@ -110,6 +129,7 @@ export default defineComponent({
     const thisRef = ref<HTMLElement | null>(null);
     const inputsRef = ref<HTMLElement[]>([]);
     const outputsRef = ref<HTMLElement[]>([]);
+    const innerMenu = ref(true);
 
     const isDragging = ref(false);
     const isNewEdge = ref(false);
@@ -259,6 +279,9 @@ export default defineComponent({
       }
       ctx.emit("updatePosition", getWH());
     };
+    const updateStaticValue = (value: UpdateStaticValue) => {
+      ctx.emit("updateStaticNodeValue", value);
+    };
     const openNodeMenu = (event: MouseEvent) => {
       ctx.emit("openNodeMenu", event);
     };
@@ -320,6 +343,7 @@ export default defineComponent({
       transform,
       onStartNode,
       isDragging,
+      innerMenu,
       agentProfile,
       thisRef,
       isNewEdge,
@@ -333,6 +357,7 @@ export default defineComponent({
       expectNearNode,
       isExpectNearButton,
 
+      updateStaticValue,
       openNodeMenu,
       openNodeEditMenu,
       // helper

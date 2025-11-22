@@ -6,7 +6,9 @@
     ref="thisRef"
     @mousedown="onStartNode"
     @touchstart="onStartNode"
-  >
+
+
+    >
     <div @dblclick="(e) => openNodeMenu(e)">
       <div class="w-full rounded-t-md py-1 text-center leading-none" :class="nodeHeaderClass(expectNearNode, nodeData)">
         {{ nodeData.nodeId }}
@@ -26,6 +28,7 @@
         <div
           class="absolute right-[-10px] h-4 w-4 min-w-[12px] rounded-full"
           :class="nodeOutputClass(isExpectNearButton('inbound', index), nodeData, isConnectable)"
+
           @mousedown="(e) => onStartEdge(e, 'outbound', index)"
           @touchstart="(e) => onStartEdge(e, 'outbound', index)"
         ></div>
@@ -42,6 +45,7 @@
         <div
           class="absolute left-[-10px] h-4 w-4 min-w-[12px] rounded-full"
           :class="nodeInputClass(isExpectNearButton('outbound', index), nodeData, input as any, isConnectable)"
+
           @mousedown="(e) => onStartEdge(e, 'inbound', index)"
           @touchstart="(e) => onStartEdge(e, 'inbound', index)"
         ></div>
@@ -79,6 +83,7 @@ import NodeComputedParams from "./NodeComputedParams.vue";
 import NodeResult from "./NodeResult.vue";
 
 export default defineComponent({
+
   components: {
     NodeStaticValue,
     NodeComputedParams,
@@ -112,6 +117,7 @@ export default defineComponent({
     "updateStaticNodeValue",
     "updateNestedGraph",
     "openNodeMenu",
+
     "nodeDragStart",
     "nodeDragEnd",
   ],
@@ -123,7 +129,8 @@ export default defineComponent({
     const thisRef = ref<HTMLElement | null>(null);
     const inputsRef = ref<HTMLElement[]>([]);
     const outputsRef = ref<HTMLElement[]>([]);
-
+    const innerMenu = ref(true);
+    
     const isDragging = ref(false);
     const isNewEdge = ref(false);
     const offset = ref({ x: 0, y: 0 });
@@ -278,6 +285,11 @@ export default defineComponent({
     const openNodeMenu = (event: MouseEvent) => {
       ctx.emit("openNodeMenu", event);
     };
+
+
+
+
+
     const updateAgentIndex = () => {
       const agent = agentProfile?.agents?.[agentIndex.value];
       // this is not static node value, but it works
@@ -331,6 +343,7 @@ export default defineComponent({
       transform,
       onStartNode,
       isDragging,
+      innerMenu,
       agentProfile,
       thisRef,
       isNewEdge,
@@ -346,6 +359,7 @@ export default defineComponent({
 
       updateStaticValue,
       openNodeMenu,
+
       // helper
       nodeMainClass,
       nodeHeaderClass,
