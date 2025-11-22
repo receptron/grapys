@@ -1,16 +1,10 @@
 <template>
   <NodeBase
     :node-data="nodeData"
-    :nearest-data="nearestData"
+    :node-index="nodeIndex"
     :inputs="inputs"
     :outputs="outputs"
     :nested-graph-id="nestedGraph?.id"
-    :is-connectable="isConnectable"
-    @update-position="(data) => $emit('updatePosition', data)"
-    @save-position="$emit('savePosition')"
-    @new-edge-start="(data) => $emit('newEdgeStart', data)"
-    @new-edge="(data) => $emit('newEdge', data)"
-    @new-edge-end="$emit('newEdgeEnd')"
     @open-node-menu="(e) => $emit('openNodeMenu', e)"
     @open-node-edit-menu="
       (e) => {
@@ -19,8 +13,6 @@
         }
       }
     "
-    @node-drag-start="$emit('nodeDragStart')"
-    @node-drag-end="$emit('nodeDragEnd')"
   >
     <template #header="{ nodeData, expectNearNode }">
       <div class="w-full rounded-t-md py-1 text-center leading-none" :class="nodeHeaderClass(expectNearNode, nodeData)">
@@ -61,7 +53,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed, PropType, watch } from "vue";
 import { useStore } from "../store";
-import type { GUINodeData, GUINearestData } from "../utils/gui/type";
+import type { GUINodeData } from "../utils/gui/type";
 import { nestedGraphInputs } from "../utils/gui/utils";
 import { agentProfiles, staticNodeParams } from "../utils/gui/data";
 import { nodeHeaderClass } from "../utils/gui/classUtils";
@@ -84,32 +76,16 @@ export default defineComponent({
       type: Object as PropType<GUINodeData>,
       required: true,
     },
-    nearestData: {
-      type: Object as PropType<GUINearestData>,
-      default: undefined,
-    },
     nodeIndex: {
       type: Number,
       required: true,
     },
-    isConnectable: {
-      type: Boolean,
-      required: false,
-      default: true,
-    },
   },
   emits: [
-    "updatePosition",
-    "savePosition",
-    "newEdgeStart",
-    "newEdge",
-    "newEdgeEnd",
     "updateStaticNodeValue",
     "updateNestedGraph",
     "openNodeMenu",
     "openNodeEditMenu",
-    "nodeDragStart",
-    "nodeDragEnd",
   ],
   setup(props, { emit }) {
     const store = useStore();

@@ -10,6 +10,7 @@ import { useNewEdge } from "../composable/gui";
 import { usePanAndScroll } from "../composable/usePanAndScroll";
 import { guiEdgeData2edgeData } from "../utils/gui/utils";
 import { useStore } from "../store";
+import { provideNodeContext } from "../composable/useNodeContext";
 import type { EdgeData, NodePosition, UpdateStaticValue } from "../utils/gui/type";
 
 export default defineComponent({
@@ -81,6 +82,23 @@ export default defineComponent({
       emit("open-node-editor", nodeIndex);
     };
 
+    // Provide node context for NodeBase components
+    const nodeContext = computed(() => ({
+      nearestData: nearestData.value,
+      isConnectable: edgeConnectable.value,
+      updatePosition: (nodeIndex: number, position: NodePosition) => {
+        updateNodePosition(nodeIndex, position);
+      },
+      savePosition: saveNodePosition,
+      onNewEdgeStart,
+      onNewEdge,
+      onNewEdgeEnd,
+      onNodeDragStart: handleNodeDragStart,
+      onNodeDragEnd: handleNodeDragEnd,
+    }));
+
+    provideNodeContext(nodeContext);
+
     return {
       updateNodePosition,
       saveNodePosition,
@@ -140,19 +158,10 @@ export default defineComponent({
         :key="[node.nodeId, index].join('-')"
         :node-index="index"
         :node-data="node"
-        :nearest-data="nearestData"
-        :is-connectable="edgeConnectable"
-        @update-position="(pos: NodePosition) => updateNodePosition(index, pos)"
         @update-static-node-value="updateStaticNodeValue(index, $event, true)"
         @update-nested-graph="updateNestedGraph(index, $event)"
-        @save-position="saveNodePosition"
-        @new-edge-start="onNewEdgeStart"
-        @new-edge="onNewEdge"
-        @new-edge-end="onNewEdgeEnd"
         @open-node-menu="(e: MouseEvent) => openNodeMenu(e, index)"
         @open-node-edit-menu="openNodeEditor(index)"
-        @node-drag-start="handleNodeDragStart"
-        @node-drag-end="handleNodeDragEnd"
       />
       <ContextEdgeMenu ref="contextEdgeMenu" />
       <ContextNodeMenu ref="contextNodeMenu" />

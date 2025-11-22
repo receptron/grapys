@@ -64,9 +64,10 @@
 
 <script lang="ts">
 import { defineComponent, ref, watchEffect, computed, PropType, onMounted } from "vue";
-import type { GUINodeData, GUINearestData, NewEdgeEventDirection } from "../utils/gui/type";
+import type { GUINodeData, NewEdgeEventDirection } from "../utils/gui/type";
 import { getClientPos, getNodeSize, getTransformStyle } from "../utils/gui/utils";
 import { nodeMainClass, nodeHeaderClass, nodeOutputClass, nodeInputClass } from "../utils/gui/classUtils";
+import { useNodeContext } from "../composable/useNodeContext";
 
 export default defineComponent({
   name: "NodeBase",
@@ -75,9 +76,9 @@ export default defineComponent({
       type: Object as PropType<GUINodeData>,
       required: true,
     },
-    nearestData: {
-      type: Object as PropType<GUINearestData>,
-      default: undefined,
+    nodeIndex: {
+      type: Number,
+      required: true,
     },
     inputs: {
       type: Array as PropType<{ name: string }[]>,
@@ -91,14 +92,10 @@ export default defineComponent({
       type: String,
       default: undefined,
     },
-    isConnectable: {
-      type: Boolean,
-      required: false,
-      default: true,
-    },
   },
-  emits: ["updatePosition", "savePosition", "newEdgeStart", "newEdge", "newEdgeEnd", "openNodeMenu", "openNodeEditMenu", "nodeDragStart", "nodeDragEnd"],
+  emits: ["openNodeMenu", "openNodeEditMenu"],
   setup(props, { emit }) {
+    const nodeContext = useNodeContext();
     const thisRef = ref<HTMLElement | null>(null);
     const inputsRef = ref<HTMLElement[]>([]);
     const outputsRef = ref<HTMLElement[]>([]);
@@ -117,7 +114,7 @@ export default defineComponent({
         return;
       }
       isDragging.value = true;
-      emit("nodeDragStart");
+      nodeContext.value.onNodeDragStart();
       const { clientX, clientY } = getClientPos(event);
       const position = props.nodeData.position;
       offset.value.x = clientX - position.x;
@@ -140,7 +137,7 @@ export default defineComponent({
       return getNodeSize(thisRef.value, sortedInputs.value, sortedOutputs.value);
     };
     onMounted(() => {
-      emit("updatePosition", getWH());
+      nodeContext.value.updatePosition(props.nodeIndex, getWH());
     });
 
     const onMoveNode = (event: MouseEvent | TouchEvent) => {
@@ -149,15 +146,15 @@ export default defineComponent({
       const x = clientX - offset.value.x;
       const y = clientY - offset.value.y;
       const newPosition = { ...getWH(), x, y };
-      emit("updatePosition", newPosition);
+      nodeContext.value.updatePosition(props.nodeIndex, newPosition);
       deltaDistance = (startPosition.x - x) ** 2 + (startPosition.y - y) ** 2;
     };
 
     const onEndNode = () => {
       isDragging.value = false;
-      emit("nodeDragEnd");
+      nodeContext.value.onNodeDragEnd();
       if (deltaDistance > deltaDistanceThredhold) {
-        emit("savePosition");
+        nodeContext.value.savePosition();
       }
     };
 
@@ -165,7 +162,7 @@ export default defineComponent({
     const onStartEdge = (event: MouseEvent | TouchEvent, direction: NewEdgeEventDirection, index: number) => {
       isNewEdge.value = true;
       const { clientX, clientY } = getClientPos(event);
-      emit("newEdgeStart", {
+      nodeContext.value.onNewEdgeStart({
         nodeId: props.nodeData.nodeId,
         x: clientX,
         y: clientY,
@@ -175,12 +172,12 @@ export default defineComponent({
     };
     const onEndEdge = () => {
       isNewEdge.value = false;
-      emit("newEdgeEnd");
+      nodeContext.value.onNewEdgeEnd();
     };
     const onMoveEdge = (event: MouseEvent | TouchEvent) => {
       if (!isNewEdge.value) return;
       const { clientX, clientY } = getClientPos(event);
-      emit("newEdge", { x: clientX, y: clientY });
+      nodeContext.value.onNewEdge({ x: clientX, y: clientY });
     };
     // end of edge event
 
@@ -218,15 +215,17 @@ export default defineComponent({
       return getTransformStyle(props.nodeData, isDragging.value);
     });
     const expectNearNode = computed(() => {
-      return props.nodeData.nodeId === props.nearestData?.nodeId;
+      return props.nodeData.nodeId === nodeContext.value.nearestData?.nodeId;
     });
 
     const isExpectNearButton = (direction: NewEdgeEventDirection, index: number) => {
       if (!expectNearNode.value) {
         return false;
       }
-      return props.nearestData?.direction === direction && props.nearestData?.index === index;
+      return nodeContext.value.nearestData?.direction === direction && nodeContext.value.nearestData?.index === index;
     };
+
+    const isConnectable = computed(() => nodeContext.value.isConnectable);
 
     let currentWidth = 0;
     let currentHeight = 0;
@@ -238,7 +237,7 @@ export default defineComponent({
         thisRef.value.style.height = currentHeight * 3 + "px";
         thisRef.value.style.zIndex = "100";
       }
-      emit("updatePosition", getWH());
+      nodeContext.value.updatePosition(props.nodeIndex, getWH());
     };
     const blurEvent = () => {
       if (thisRef.value) {
@@ -246,7 +245,7 @@ export default defineComponent({
         thisRef.value.style.height = currentHeight + "px";
         thisRef.value.style.zIndex = "auto";
       }
-      emit("updatePosition", getWH());
+      nodeContext.value.updatePosition(props.nodeIndex, getWH());
     };
     const openNodeEditMenu = (event: MouseEvent) => {
       if (isDragging.value || isNewEdge.value) return;
@@ -270,6 +269,7 @@ export default defineComponent({
 
       expectNearNode,
       isExpectNearButton,
+      isConnectable,
 
       openNodeEditMenu,
       // helper
