@@ -1,0 +1,57 @@
+{
+  "name": "@receptron/vue-flow",
+  "version": "0.1.0",
+  "description": "A flexible graph editor component for Vue 3, inspired by React Flow",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "vue-tsc && vite build",
+    "dev": "vite build --watch",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "graph",
+    "graph-editor",
+    "flow",
+    "vue-flow",
+    "node-editor",
+    "visual-programming",
+    "diagram",
+    "workflow"
+  ],
+  "author": "Receptron Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/receptron/grapys.git",
+    "directory": "packages/graph-editor"
+  },
+  "peerDependencies": {
+    "vue": "^3.3.0",
+    "pinia": "^2.0.0 || ^3.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.1",
+    "typescript": "~5.9.3",
+    "vite": "^7.1.12",
+    "vue": "^3.5.22",
+    "pinia": "^3.0.3",
+    "vue-tsc": "^3.1.2"
+  },
+  "dependencies": {}
+}

@@ -7,7 +7,6 @@ import type {
   NewEdgeStartEventData,
   NewEdgeData,
   GUINearestData,
-  ClosestNodeData,
   NodePositionData,
 } from "../types";
 

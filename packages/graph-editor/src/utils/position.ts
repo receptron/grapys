@@ -1,4 +1,4 @@
-import type { GUINodeData, NodePositionData } from "../types";
+import type { GUINodeData } from "../types";
 
 /**
  * Check if event is TouchEvent
