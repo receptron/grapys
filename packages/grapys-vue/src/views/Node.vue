@@ -1,7 +1,5 @@
 <template>
   <NodeBase
-    :node-data="nodeData"
-    :node-index="nodeIndex"
     :inputs="inputs"
     :outputs="outputs"
     :nested-graph-id="nestedGraph?.id"
