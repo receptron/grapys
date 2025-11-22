@@ -3,6 +3,7 @@ import { defineComponent, onMounted, ref, computed } from "vue";
 import Node from "./Node.vue";
 import Edge from "./Edge.vue";
 import Loop from "./Loop.vue";
+import NodeContextProvider from "./NodeContextProvider.vue";
 
 import ContextEdgeMenu from "./ContextEdgeMenu.vue";
 import ContextNodeMenu from "./ContextNodeMenu.vue";
@@ -18,6 +19,7 @@ export default defineComponent({
     Node,
     Edge,
     Loop,
+    NodeContextProvider,
     ContextEdgeMenu,
     ContextNodeMenu,
   },
@@ -135,25 +137,30 @@ export default defineComponent({
           :is-connectable="edgeConnectable"
         />
       </svg>
-      <Node
+      <NodeContextProvider
         v-for="(node, index) in store.nodes"
         :key="[node.nodeId, index].join('-')"
-        :node-index="index"
         :node-data="node"
+        :node-index="index"
         :nearest-data="nearestData"
         :is-connectable="edgeConnectable"
-        @update-position="(pos: NodePosition) => updateNodePosition(index, pos)"
-        @update-static-node-value="updateStaticNodeValue(index, $event, true)"
-        @update-nested-graph="updateNestedGraph(index, $event)"
-        @save-position="saveNodePosition"
-        @new-edge-start="onNewEdgeStart"
-        @new-edge="onNewEdge"
-        @new-edge-end="onNewEdgeEnd"
-        @open-node-menu="(e: MouseEvent) => openNodeMenu(e, index)"
-        @open-node-edit-menu="openNodeEditor(index)"
-        @node-drag-start="handleNodeDragStart"
-        @node-drag-end="handleNodeDragEnd"
-      />
+        :update-position="updateNodePosition"
+        :save-position="saveNodePosition"
+        :on-new-edge-start="onNewEdgeStart"
+        :on-new-edge="onNewEdge"
+        :on-new-edge-end="onNewEdgeEnd"
+        :on-node-drag-start="handleNodeDragStart"
+        :on-node-drag-end="handleNodeDragEnd"
+      >
+        <Node
+          :node-index="index"
+          :node-data="node"
+          @update-static-node-value="updateStaticNodeValue(index, $event, true)"
+          @update-nested-graph="updateNestedGraph(index, $event)"
+          @open-node-menu="(e: MouseEvent) => openNodeMenu(e, index)"
+          @open-node-edit-menu="openNodeEditor(index)"
+        />
+      </NodeContextProvider>
       <ContextEdgeMenu ref="contextEdgeMenu" />
       <ContextNodeMenu ref="contextNodeMenu" />
     </div>
