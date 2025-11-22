@@ -131,7 +131,7 @@ export default defineComponent({
     const outputsRef = ref<HTMLElement[]>([]);
     const innerMenu = ref(false);
     const outerMenu = ref(true);
-    
+
     const isDragging = ref(false);
     const isNewEdge = ref(false);
     const offset = ref({ x: 0, y: 0 });
