@@ -1,12 +1,14 @@
 import { ref, computed } from "vue";
 import { eventAgentGenerator, EventData } from "@receptron/event_agent_generator";
 
+type EventWithReject = EventData & { reject: (reason?: any) => void };
+
 export const textInputEvent = () => {
   const userInput = ref("");
 
-  const eventsObj = ref<Record<string, EventData>>({});
+  const eventsObj = ref<Record<string, EventWithReject>>({});
   const { eventAgent } = eventAgentGenerator((id, data) => {
-    eventsObj.value[id] = data;
+    eventsObj.value[id] = data as EventWithReject;
   });
   const submitText = (event: EventData) => {
     const data = {

@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.json",
+  "include": [
+    "../src/**/*.ts",
+    "../src/**/*.tsx",
+    "../src/**/*.vue",
+    "../src/**/*.mdx",
+    "../src/**/*.stories.ts",
+    "../src/**/*.stories.tsx",
+    "../src/**/*.stories.js",
+    "../src/**/*.stories.jsx",
+    "./**/*.ts"
+  ],
+  "exclude": []
+}
+

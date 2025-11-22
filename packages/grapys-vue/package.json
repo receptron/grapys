@@ -5,21 +5,51 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "build": "vue-tsc -b && vite build && yarn storybook:build",
     "lint": "eslint src --fix",
     "preview": "vite preview",
-    "format": "prettier --write '{src/**/*,*}.{js,ts,vue,json}'"
+    "format": "prettier --write '{src/**/*,*}.{js,ts,vue,json}'",
+    "test:vitest": "vitest run --config vitest.config.ts",
+    "test:storybook": "start-server-and-test \"yarn storybook -- --quiet --no-open\" http://127.0.0.1:6006 \"test-storybook --ci --url http://127.0.0.1:6006\"",
+    "storybook": "storybook dev -p 6006",
+    "storybook:build": "storybook build --output-dir dist/storybook"
   },
   "dependencies": {
+    "@graphai/anthropic_agent": "^2.0.11",
+    "@graphai/browserless_agent": "^2.0.1",
+    "@graphai/data_agents": "^1.0.0",
+    "@graphai/gemini_agent": "^2.0.1",
+    "@graphai/openai_agent": "^2.0.7",
+    "@graphai/stream_agent_filter": "^2.0.2",
+    "@graphai/vanilla": "^2.0.12",
+    "@mlc-ai/web-llm": "^0.2.79",
+    "@receptron/event_agent_generator": "^0.0.6",
     "@receptron/firebase-tools": "^1.0.0",
     "@types/highlight.js": "^10.1.0",
     "firebase": "^12.4.0",
+    "graphai": "^2.0.16",
     "highlight.js": "^11.11.1",
     "pinia": "^3.0.3",
+    "react": "^18.3.1",
     "vue": "^3.5.22",
     "vue-router": "^4.6.3"
   },
   "devDependencies": {
+    "@storybook/addon-essentials": "^8.6.14",
+    "@storybook/addon-interactions": "^8.6.14",
+    "@storybook/test": "^8.6.14",
+    "@storybook/test-runner": "^0.20.0",
+    "@storybook/vue3-vite": "^8",
+    "@testing-library/vue": "^8.1.0",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "autoprefixer": "^10.4.19",
+    "happy-dom": "^20.0.10",
+    "postcss": "^8.4.39",
+    "start-server-and-test": "^2.0.3",
+    "storybook": "^8",
+    "tailwindcss": "^3.4.4",
+    "vite": "^5.4.2",
+    "vitest": "^4.0.8",
     "vue-tsc": "^3.1.2"
   }
 }
