@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref, computed } from "vue";
-import Node2 from "./Node2.vue";
+import Node from "./Node.vue";
 import Edge from "./Edge.vue";
 import Loop from "./Loop.vue";
 
@@ -15,7 +15,7 @@ import type { EdgeData, NodePosition, UpdateStaticValue } from "../utils/gui/typ
 export default defineComponent({
   name: "GraphCanvas",
   components: {
-    Node2,
+    Node,
     Edge,
     Loop,
     ContextEdgeMenu,
@@ -135,7 +135,7 @@ export default defineComponent({
           :is-connectable="edgeConnectable"
         />
       </svg>
-      <Node2
+      <Node
         v-for="(node, index) in store.nodes"
         :key="[node.nodeId, index].join('-')"
         :node-index="index"

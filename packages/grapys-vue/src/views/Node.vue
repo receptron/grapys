@@ -6,10 +6,10 @@
     ref="thisRef"
     @mousedown="onStartNode"
     @touchstart="onStartNode"
-
-
-    >
-    <div @dblclick="(e) => openNodeMenu(e)">
+    @dblclick="(e) => openNodeMenu(e)"
+    @click="(e) => openNodeEditMenu(e)"
+  >
+    <div>
       <div class="w-full rounded-t-md py-1 text-center leading-none" :class="nodeHeaderClass(expectNearNode, nodeData)">
         {{ nodeData.nodeId }}
       </div>
@@ -17,7 +17,7 @@
         {{ nodeData.data.guiAgentId?.replace(/Agent$/, "") }}
       </div>
     </div>
-    <div v-if="agentProfile.agents">
+    <div v-if="agentProfile.agents && innerMenu">
       <select v-model="agentIndex" @change="updateAgentIndex">
         <option :value="key" v-for="(agent, key) in agentProfile.agents" :key="key">{{ agent }}</option>
       </select>
@@ -28,9 +28,9 @@
         <div
           class="absolute right-[-10px] h-4 w-4 min-w-[12px] rounded-full"
           :class="nodeOutputClass(isExpectNearButton('inbound', index), nodeData, isConnectable)"
-
-          @mousedown="(e) => onStartEdge(e, 'outbound', index)"
-          @touchstart="(e) => onStartEdge(e, 'outbound', index)"
+          @click.stop
+          @mousedown.stop.prevent="(e) => onStartEdge(e, 'outbound', index)"
+          @touchstart.stop.prevent="(e) => onStartEdge(e, 'outbound', index)"
         ></div>
       </div>
     </div>
@@ -45,23 +45,23 @@
         <div
           class="absolute left-[-10px] h-4 w-4 min-w-[12px] rounded-full"
           :class="nodeInputClass(isExpectNearButton('outbound', index), nodeData, input as any, isConnectable)"
-
-          @mousedown="(e) => onStartEdge(e, 'inbound', index)"
-          @touchstart="(e) => onStartEdge(e, 'inbound', index)"
+          @click.stop
+          @mousedown.stop.prevent="(e) => onStartEdge(e, 'inbound', index)"
+          @touchstart.stop.prevent="(e) => onStartEdge(e, 'inbound', index)"
         ></div>
         <span class="ml-2 text-xs whitespace-nowrap">{{ input.name }}</span>
       </div>
     </div>
-    <div class="flex w-full flex-col gap-1 p-2" v-if="nodeData.type === 'static'">
+    <div class="flex w-full flex-col gap-1 p-2" v-if="nodeData.type === 'static' && innerMenu">
       <NodeStaticValue :node-data="nodeData" @focus-event="focusEvent" @blur-event="blurEvent" @update-static-value="updateStaticValue" />
     </div>
-    <div class="flex w-full flex-col gap-1 p-2" v-if="nodeData.type === 'computed'">
+    <div class="flex w-full flex-col gap-1 p-2" v-if="nodeData.type === 'computed' && innerMenu">
       <NodeComputedParams :node-data="nodeData" @focus-event="focusEvent" @blur-event="blurEvent" :node-index="nodeIndex" />
     </div>
     <div class="flex w-full flex-col gap-1 p-2">
       <NodeResult :node-data="nodeData" />
     </div>
-    <div v-if="agentProfile.isNestedGraph || agentProfile.isMap">
+    <div v-if="(agentProfile.isNestedGraph || agentProfile.isMap) && innerMenu">
       <select v-model="nestedGraphIndex" @change="updateNestedGraphIndex">
         <option :value="key" v-for="(graph, key) in nestedGraphs" :key="key">{{ graph.name }}</option>
       </select>
@@ -72,7 +72,7 @@
 <script lang="ts">
 import { defineComponent, ref, watchEffect, computed, PropType, onMounted, watch } from "vue";
 import { useStore } from "../store";
-import type { GUINodeData, GUINearestData, NewEdgeEventDirection, UpdateStaticValue } from "../utils/gui/type";
+import type { GUINodeData, GUINearestData, NewEdgeEventDirection } from "../utils/gui/type";
 import { getClientPos, getNodeSize, getTransformStyle, nestedGraphInputs } from "../utils/gui/utils";
 import { agentProfiles, staticNodeParams } from "../utils/gui/data";
 import { nodeMainClass, nodeHeaderClass, nodeOutputClass, nodeInputClass } from "../utils/gui/classUtils";
@@ -83,7 +83,7 @@ import NodeComputedParams from "./NodeComputedParams.vue";
 import NodeResult from "./NodeResult.vue";
 
 export default defineComponent({
-
+  name: "Node",
   components: {
     NodeStaticValue,
     NodeComputedParams,
@@ -117,7 +117,7 @@ export default defineComponent({
     "updateStaticNodeValue",
     "updateNestedGraph",
     "openNodeMenu",
-
+    "openNodeEditMenu",
     "nodeDragStart",
     "nodeDragEnd",
   ],
@@ -129,8 +129,9 @@ export default defineComponent({
     const thisRef = ref<HTMLElement | null>(null);
     const inputsRef = ref<HTMLElement[]>([]);
     const outputsRef = ref<HTMLElement[]>([]);
-    const innerMenu = ref(true);
-    
+    const innerMenu = ref(false);
+    const outerMenu = ref(true);
+
     const isDragging = ref(false);
     const isNewEdge = ref(false);
     const offset = ref({ x: 0, y: 0 });
@@ -285,11 +286,14 @@ export default defineComponent({
     const openNodeMenu = (event: MouseEvent) => {
       ctx.emit("openNodeMenu", event);
     };
-
-
-
-
-
+    const openNodeEditMenu = (event: MouseEvent) => {
+      if (!outerMenu.value) {
+        return;
+      }
+      if (isDragging.value || isNewEdge.value) return;
+      if (deltaDistance > deltaDistanceThredhold) return;
+      ctx.emit("openNodeEditMenu", event);
+    };
     const updateAgentIndex = () => {
       const agent = agentProfile?.agents?.[agentIndex.value];
       // this is not static node value, but it works
@@ -359,7 +363,7 @@ export default defineComponent({
 
       updateStaticValue,
       openNodeMenu,
-
+      openNodeEditMenu,
       // helper
       nodeMainClass,
       nodeHeaderClass,
