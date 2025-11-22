@@ -14,12 +14,12 @@
       }
     "
   >
-    <template #header="{ nodeData, expectNearNode }">
-      <div class="w-full rounded-t-md py-1 text-center leading-none" :class="nodeHeaderClass(expectNearNode, nodeData)">
-        {{ nodeData.nodeId }}
+    <template #header="{ nodeData: slotNodeData, expectNearNode }">
+      <div class="w-full rounded-t-md py-1 text-center leading-none" :class="nodeHeaderClass(expectNearNode, slotNodeData)">
+        {{ slotNodeData.nodeId }}
       </div>
-      <div class="w-full py-1 text-center text-xs leading-none" v-if="nodeData.type === 'computed'" :class="nodeHeaderClass(expectNearNode, nodeData)">
-        {{ nodeData.data.guiAgentId?.replace(/Agent$/, "") }}
+      <div class="w-full py-1 text-center text-xs leading-none" v-if="slotNodeData.type === 'computed'" :class="nodeHeaderClass(expectNearNode, slotNodeData)">
+        {{ slotNodeData.data.guiAgentId?.replace(/Agent$/, "") }}
       </div>
     </template>
 
@@ -53,7 +53,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed, PropType, watch } from "vue";
 import { useStore } from "../store";
-import type { GUINodeData } from "../utils/gui/type";
+import type { GUINodeData, UpdateStaticValue } from "../utils/gui/type";
 import { nestedGraphInputs } from "../utils/gui/utils";
 import { agentProfiles, staticNodeParams } from "../utils/gui/data";
 import { nodeHeaderClass } from "../utils/gui/classUtils";
@@ -128,7 +128,7 @@ export default defineComponent({
     );
 
     // Static value update handler
-    const updateStaticValue = (value: any) => {
+    const updateStaticValue = (value: UpdateStaticValue) => {
       emit("updateStaticNodeValue", value);
     };
 

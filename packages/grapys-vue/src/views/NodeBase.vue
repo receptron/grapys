@@ -11,14 +11,14 @@
   >
     <!-- HEAD -->
     <div>
-      <slot name="header" :nodeData="nodeData" :expectNearNode="expectNearNode"></slot>
+      <slot name="header" :node-data="nodeData" :expect-near-node="expectNearNode"></slot>
     </div>
 
     <!-- Body -->
     <div>
       <!-- body head -->
       <div>
-        <slot name="body-head" :nodeData="nodeData"></slot>
+        <slot name="body-head" :node-data="nodeData"></slot>
       </div>
 
       <!-- right output -->
@@ -56,7 +56,7 @@
 
       <!-- Body -->
       <div>
-        <slot name="body-main" :nodeData="nodeData" :focusEvent="focusEvent" :blurEvent="blurEvent"></slot>
+        <slot name="body-main" :node-data="nodeData" :focus-event="focusEvent" :blur-event="blurEvent"></slot>
       </div>
     </div>
   </div>
