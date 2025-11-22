@@ -12,7 +12,13 @@
     @new-edge="(data) => $emit('newEdge', data)"
     @new-edge-end="$emit('newEdgeEnd')"
     @open-node-menu="(e) => $emit('openNodeMenu', e)"
-    @open-node-edit-menu="(e) => { if (outerMenu) { $emit('openNodeEditMenu', e) }}"
+    @open-node-edit-menu="
+      (e) => {
+        if (outerMenu) {
+          $emit('openNodeEditMenu', e);
+        }
+      }
+    "
     @node-drag-start="$emit('nodeDragStart')"
     @node-drag-end="$emit('nodeDragEnd')"
   >

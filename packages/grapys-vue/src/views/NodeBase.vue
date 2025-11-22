@@ -97,17 +97,7 @@ export default defineComponent({
       default: true,
     },
   },
-  emits: [
-    "updatePosition",
-    "savePosition",
-    "newEdgeStart",
-    "newEdge",
-    "newEdgeEnd",
-    "openNodeMenu",
-    "openNodeEditMenu",
-    "nodeDragStart",
-    "nodeDragEnd",
-  ],
+  emits: ["updatePosition", "savePosition", "newEdgeStart", "newEdge", "newEdgeEnd", "openNodeMenu", "openNodeEditMenu", "nodeDragStart", "nodeDragEnd"],
   setup(props, { emit }) {
     const thisRef = ref<HTMLElement | null>(null);
     const inputsRef = ref<HTMLElement[]>([]);
