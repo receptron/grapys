@@ -1,7 +1,8 @@
-import { Position, NewEdgeStartEventData, NewEdgeData, ClosestNodeData, GUINearestData } from "../../utils/gui/type";
+import { Position, NewEdgeStartEventData, NewEdgeData, ClosestNodeData, GUINearestData, GUIEdgeData } from "../../utils/gui/type";
 import { ref, computed } from "vue";
 import { useStore } from "../../store";
 import { edgeStartEventData, edgeUpdateEventData, edgeEndEventData, pickNearestNode, pickNearestConnect, isEdgeConnectale } from "../utils/gui";
+import { validateEdgeConnection } from "../../utils/gui/utils";
 
 export const useNewEdge = () => {
   const store = useStore();
@@ -61,7 +62,9 @@ export const useNewEdge = () => {
   });
 
   const edgeConnectable = computed(() => {
-    return isEdgeConnectale(expectEdge.value, store.edges, store.nodeRecords, store.nestedGraphs);
+    return isEdgeConnectale(expectEdge.value, store.edges, (edge: GUIEdgeData, existingEdges: GUIEdgeData[]) => {
+      return validateEdgeConnection(edge, existingEdges, store.nodeRecords, store.nestedGraphs);
+    });
   });
 
   return {

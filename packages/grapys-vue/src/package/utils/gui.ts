@@ -9,9 +9,7 @@ import type {
   GUINearestData,
   ClosestNodeData,
   NodePositionData,
-  NestedGraphList,
 } from "../../utils/gui/type";
-import { edgeEnd2agentProfile } from "../../utils/gui/utils";
 
 const isTouch = (event: MouseEvent | TouchEvent): event is TouchEvent => {
   return "touches" in event;
@@ -211,7 +209,11 @@ const sameTargetEdge = (edge1: EdgeData | GUIEdgeData, edge2: EdgeData | GUIEdge
   return edge1.target.nodeId === edge2.target.nodeId && edge1.target.index === edge2.target.index;
 };
 
-export const isEdgeConnectale = (expectEdge: GUIEdgeData | null, edges: GUIEdgeData[], nodeRecords: GUINodeDataRecord, nestedGraphs: NestedGraphList) => {
+export const isEdgeConnectale = (
+  expectEdge: GUIEdgeData | null,
+  edges: GUIEdgeData[],
+  validateConnection?: (expectEdge: GUIEdgeData, existingEdges: GUIEdgeData[]) => boolean,
+) => {
   if (!expectEdge) {
     return false;
   }
@@ -225,14 +227,14 @@ export const isEdgeConnectale = (expectEdge: GUIEdgeData | null, edges: GUIEdgeD
   const existanceEdges = edges.filter((edge) => {
     return sameTargetEdge(edge, expectEdge);
   });
-  const profile = edgeEnd2agentProfile(expectEdge.target, nodeRecords, "target", nestedGraphs);
-  if (!profile) {
-    return true;
+
+  // Additional validation callback (application-specific logic)
+  if (validateConnection) {
+    return validateConnection(expectEdge, existanceEdges);
   }
-  if (profile.IOData.type !== "wait") {
-    return existanceEdges.length === 0;
-  }
-  return true;
+
+  // Default: allow connection if no existing edges to same target
+  return existanceEdges.length === 0;
 };
 
 export const convEdgePath = (
