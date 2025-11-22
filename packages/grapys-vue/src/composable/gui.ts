@@ -6,18 +6,20 @@ import { edgeStartEventData, edgeUpdateEventData, edgeEndEventData, pickNearestN
 export const useNewEdge = () => {
   const store = useStore();
 
-  const svgRef = ref();
+  const svgRef = ref<SVGSVGElement | null>(null);
   const newEdgeData = ref<NewEdgeData | null>(null);
   const mouseCurrentPosition = ref<Position>({ x: 0, y: 0 });
   const targetNode = ref<string>("");
 
   const onNewEdgeStart = (data: NewEdgeStartEventData) => {
+    if (!svgRef?.value) return;
     targetNode.value = data.nodeId;
     const { mousePosition, startEdgeData } = edgeStartEventData(data, svgRef.value, store.nodeRecords[data.nodeId]);
     mouseCurrentPosition.value = mousePosition;
     newEdgeData.value = startEdgeData;
   };
   const onNewEdge = (data: Position) => {
+    if (!svgRef?.value) return;
     if (newEdgeData.value) {
       const { mousePosition, updateEdgeData } = edgeUpdateEventData(data, svgRef.value, newEdgeData.value);
       mouseCurrentPosition.value = mousePosition;
