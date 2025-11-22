@@ -8,8 +8,8 @@
 
 <script lang="ts">
 import { defineComponent, computed, PropType } from "vue";
-import { GUINodeData } from "../utils/gui/type";
-import { useStore } from "../store";
+import { GUINodeData } from "../../../utils/gui/type";
+import { useStore } from "../../../store";
 
 export default defineComponent({
   props: {

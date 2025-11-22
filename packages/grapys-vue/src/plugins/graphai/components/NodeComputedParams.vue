@@ -13,9 +13,9 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import type { GUINodeData } from "../utils/gui/type";
+import type { GUINodeData } from "../../../utils/gui/type";
 
-import { agentProfiles } from "../utils/gui/data";
+import { agentProfiles } from "../utils/agentProfiles";
 import NodeComputedParam from "./NodeComputedParam.vue";
 
 export default defineComponent({

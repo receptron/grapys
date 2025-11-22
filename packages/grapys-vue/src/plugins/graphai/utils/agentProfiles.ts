@@ -1,5 +1,5 @@
-import { AgentProfile } from "./type";
-import { restrictedFeature } from "../../config/project";
+import { AgentProfile } from "../../../utils/gui/type";
+import { restrictedFeature } from "../../../config/project";
 
 // data type
 //  If type is not defined, it will not be displayed in the UI. Its defaultValue will always be set.

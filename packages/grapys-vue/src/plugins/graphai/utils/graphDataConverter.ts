@@ -1,7 +1,7 @@
-import type { GUINodeData, GUIEdgeData, GUILoopData, GUINodeDataRecord, HistoryPayload, NestedGraphList, InputOutputData, GraphDataMetaData } from "./type";
+import type { GUINodeData, GUIEdgeData, GUILoopData, GUINodeDataRecord, HistoryPayload, NestedGraphList, InputOutputData, GraphDataMetaData } from "../../../utils/gui/type";
 import type { GraphData, NodeData, StaticNodeData, LoopData } from "graphai";
-import { edgeEnd2agentProfile } from "./utils";
-import { agentProfiles } from "./data";
+import { edgeEnd2agentProfile } from "../../../utils/gui/utils";
+import { agentProfiles } from "./agentProfiles";
 import { resultsOf } from "./result";
 
 // import { graphs } from "../../graph";

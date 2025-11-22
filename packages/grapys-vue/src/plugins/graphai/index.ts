@@ -18,7 +18,13 @@ export const createGraphAIPlugin = (nestedGraphs: NestedGraphList): GraphEditorP
 
     // Export current graph data to GraphAI format
     exportData(payload: HistoryPayload): GraphData {
-      return store2graphData(payload as any, nestedGraphs);
+      // Convert vue-flow format (metadata.loop) to old format (loop at top level)
+      const convertedPayload = {
+        nodes: payload.nodes,
+        edges: payload.edges,
+        loop: (payload.metadata?.loop || { loopType: "none" }) as any,
+      };
+      return store2graphData(convertedPayload as any, nestedGraphs);
     },
 
     // Import GraphAI GraphData to GUI format
@@ -44,7 +50,7 @@ export const createGraphAIPlugin = (nestedGraphs: NestedGraphList): GraphEditorP
         target,
       };
 
-      return isEdgeConnectale(expectEdge, edges, nodeRecords, nestedGraphs);
+      return isEdgeConnectale(expectEdge, edges, nodeRecords as any, nestedGraphs);
     },
   };
 };

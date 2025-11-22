@@ -71,9 +71,9 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType, ref, onBeforeUnmount, onMounted, watch } from "vue";
-import type { ParamData, ApplicationData } from "../utils/gui/type";
+import type { ParamData, ApplicationData } from "../../../utils/gui/type";
 
-import { useStore } from "../store";
+import { useStore } from "../../../store";
 
 export default defineComponent({
   props: {
