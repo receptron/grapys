@@ -1,0 +1,48 @@
+name: Preview Deploy (Firebase Hosting)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+
+jobs:
+  build_and_preview:
+    if: "!contains(github.event.pull_request.labels.*.name, 'no-preview')"  # ラベルで抑止オプション
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write   # PR へ URL コメントするため
+      checks: write          # デプロイアクションがチェックを作成するため
+      id-token: write        # （将来のWIF用。Service Account JSONでも可）
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: ./packages/grapys-vue
+        run: yarn install
+
+      - name: Create config symlink
+        run: ln -s game-dev.ts project.ts
+        working-directory: ./packages/grapys-vue/src/config
+
+      - name: Build
+        working-directory: ./packages/grapys-vue
+        run: yarn build
+
+      # 公式 Firebase Hosting デプロイ Action
+      - name: Deploy to Firebase Hosting (Preview Channel per PR)
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'                # PRにURLコメント
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+          projectId: '${{ secrets.FIREBASE_PROJECT_ID }}'
+          channelId: pr-${{ github.event.number }}               # PR番号で安定化
+          expires: 7d                                            # 有効期限（上限回避）
+          entryPoint: ./packages/grapys-vue
+        env:
+          FIREBASE_CLI_PREVIEWS: hostingchannels
