@@ -137,7 +137,8 @@ export default defineComponent({
       return getNodeSize(thisRef.value, sortedInputs.value, sortedOutputs.value);
     };
     onMounted(() => {
-      nodeContext.value.updatePosition(props.nodeIndex, getWH());
+      const position = { ...getWH(), x: props.nodeData.position.x, y: props.nodeData.position.y };
+      nodeContext.value.updatePosition(props.nodeIndex, position);
     });
 
     const onMoveNode = (event: MouseEvent | TouchEvent) => {
@@ -237,7 +238,8 @@ export default defineComponent({
         thisRef.value.style.height = currentHeight * 3 + "px";
         thisRef.value.style.zIndex = "100";
       }
-      nodeContext.value.updatePosition(props.nodeIndex, getWH());
+      const position = { ...getWH(), x: props.nodeData.position.x, y: props.nodeData.position.y };
+      nodeContext.value.updatePosition(props.nodeIndex, position);
     };
     const blurEvent = () => {
       if (thisRef.value) {
@@ -245,7 +247,8 @@ export default defineComponent({
         thisRef.value.style.height = currentHeight + "px";
         thisRef.value.style.zIndex = "auto";
       }
-      nodeContext.value.updatePosition(props.nodeIndex, getWH());
+      const position = { ...getWH(), x: props.nodeData.position.x, y: props.nodeData.position.y };
+      nodeContext.value.updatePosition(props.nodeIndex, position);
     };
     const openNodeEditMenu = (event: MouseEvent) => {
       if (isDragging.value || isNewEdge.value) return;

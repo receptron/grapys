@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { toRef, provide, computed } from "vue";
-import type { GUINodeData, GUINearestData, NodePosition, NewEdgeEvent } from "../utils/gui/type";
+import type { GUINodeData, GUINearestData, NodePosition, NewEdgeStartEventData } from "../utils/gui/type";
 import { NodeContextKey } from "../composable/useNodeContext";
 
 const props = defineProps<{
@@ -14,7 +14,7 @@ const props = defineProps<{
   isConnectable: boolean;
   updatePosition: (nodeIndex: number, position: NodePosition) => void;
   savePosition: () => void;
-  onNewEdgeStart: (event: NewEdgeEvent) => void;
+  onNewEdgeStart: (event: NewEdgeStartEventData) => void;
   onNewEdge: (event: { x: number; y: number }) => void;
   onNewEdgeEnd: () => void;
   onNodeDragStart: () => void;

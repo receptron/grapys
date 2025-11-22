@@ -1,5 +1,5 @@
 import { inject, type InjectionKey, type ComputedRef } from "vue";
-import type { GUINodeData, GUINearestData, NodePosition, NewEdgeEvent } from "../utils/gui/type";
+import type { GUINodeData, GUINearestData, NodePosition, NewEdgeStartEventData } from "../utils/gui/type";
 
 export interface NodeContext {
   nodeData: GUINodeData;
@@ -8,7 +8,7 @@ export interface NodeContext {
   isConnectable: boolean;
   updatePosition: (nodeIndex: number, position: NodePosition) => void;
   savePosition: () => void;
-  onNewEdgeStart: (event: NewEdgeEvent) => void;
+  onNewEdgeStart: (event: NewEdgeStartEventData) => void;
   onNewEdge: (event: { x: number; y: number }) => void;
   onNewEdgeEnd: () => void;
   onNodeDragStart: () => void;
