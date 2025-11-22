@@ -9,6 +9,7 @@
     @dblclick="(e) => openNodeMenu(e)"
     @click="(e) => openNodeEditMenu(e)"
   >
+    <!-- HEAD -->
     <div>
       <div class="w-full rounded-t-md py-1 text-center leading-none" :class="nodeHeaderClass(expectNearNode, nodeData)">
         {{ nodeData.nodeId }}
@@ -17,54 +18,61 @@
         {{ nodeData.data.guiAgentId?.replace(/Agent$/, "") }}
       </div>
     </div>
-    <div v-if="agentProfile.agents && innerMenu">
-      <select v-model="agentIndex" @change="updateAgentIndex">
-        <option :value="key" v-for="(agent, key) in agentProfile.agents" :key="key">{{ agent }}</option>
-      </select>
-    </div>
-    <div class="mt-1 flex flex-col items-end">
-      <div v-for="(output, index) in outputs" :key="['out', output.name, index].join('-')" class="relative flex items-center" ref="outputsRef">
-        <span class="mr-2 text-xs whitespace-nowrap">{{ output.name }}</span>
-        <div
-          class="absolute right-[-10px] h-4 w-4 min-w-[12px] rounded-full"
-          :class="nodeOutputClass(isExpectNearButton('inbound', index), nodeData, isConnectable)"
-          @click.stop
-          @mousedown.stop.prevent="(e) => onStartEdge(e, 'outbound', index)"
-          @touchstart.stop.prevent="(e) => onStartEdge(e, 'outbound', index)"
-        ></div>
+    <!-- Body -->
+    <div>
+      <!-- body head -->
+      <div v-if="agentProfile.agents && innerMenu">
+        <select v-model="agentIndex" @change="updateAgentIndex">
+          <option :value="key" v-for="(agent, key) in agentProfile.agents" :key="key">{{ agent }}</option>
+        </select>
       </div>
-    </div>
+      <!-- right output -->
+      <div class="mt-1 flex flex-col items-end">
+        <div v-for="(output, index) in outputs" :key="['out', output.name, index].join('-')" class="relative flex items-center" ref="outputsRef">
+          <span class="mr-2 text-xs whitespace-nowrap">{{ output.name }}</span>
+          <div
+            class="absolute right-[-10px] h-4 w-4 min-w-[12px] rounded-full"
+            :class="nodeOutputClass(isExpectNearButton('inbound', index), nodeData, isConnectable)"
+            @click.stop
+            @mousedown.stop.prevent="(e) => onStartEdge(e, 'outbound', index)"
+            @touchstart.stop.prevent="(e) => onStartEdge(e, 'outbound', index)"
+          ></div>
+        </div>
+      </div>
 
-    <div class="mt-1 mb-1 flex flex-col items-start">
-      <div
-        v-for="(input, index) in inputs"
-        :key="['in', input.name, index, nestedGraph?.id ?? ''].join('-')"
-        class="relative flex items-center"
-        ref="inputsRef"
-      >
+      <!-- left input -->
+      <div class="mt-1 mb-1 flex flex-col items-start">
         <div
-          class="absolute left-[-10px] h-4 w-4 min-w-[12px] rounded-full"
-          :class="nodeInputClass(isExpectNearButton('outbound', index), nodeData, input as any, isConnectable)"
-          @click.stop
-          @mousedown.stop.prevent="(e) => onStartEdge(e, 'inbound', index)"
-          @touchstart.stop.prevent="(e) => onStartEdge(e, 'inbound', index)"
-        ></div>
-        <span class="ml-2 text-xs whitespace-nowrap">{{ input.name }}</span>
+          v-for="(input, index) in inputs"
+          :key="['in', input.name, index, nestedGraph?.id ?? ''].join('-')"
+          class="relative flex items-center"
+          ref="inputsRef"
+        >
+          <div
+            class="absolute left-[-10px] h-4 w-4 min-w-[12px] rounded-full"
+            :class="nodeInputClass(isExpectNearButton('outbound', index), nodeData, input as any, isConnectable)"
+            @click.stop
+            @mousedown.stop.prevent="(e) => onStartEdge(e, 'inbound', index)"
+            @touchstart.stop.prevent="(e) => onStartEdge(e, 'inbound', index)"
+          ></div>
+          <span class="ml-2 text-xs whitespace-nowrap">{{ input.name }}</span>
+        </div>
       </div>
-    </div>
-    <div class="flex w-full flex-col gap-1 p-2" v-if="nodeData.type === 'static' && innerMenu">
-      <NodeStaticValue :node-data="nodeData" @focus-event="focusEvent" @blur-event="blurEvent" @update-static-value="updateStaticValue" />
-    </div>
-    <div class="flex w-full flex-col gap-1 p-2" v-if="nodeData.type === 'computed' && innerMenu">
-      <NodeComputedParams :node-data="nodeData" @focus-event="focusEvent" @blur-event="blurEvent" :node-index="nodeIndex" />
-    </div>
-    <div class="flex w-full flex-col gap-1 p-2">
-      <NodeResult :node-data="nodeData" />
-    </div>
-    <div v-if="(agentProfile.isNestedGraph || agentProfile.isMap) && innerMenu">
-      <select v-model="nestedGraphIndex" @change="updateNestedGraphIndex">
-        <option :value="key" v-for="(graph, key) in nestedGraphs" :key="key">{{ graph.name }}</option>
-      </select>
+      <!-- Body -->
+      <div class="flex w-full flex-col gap-1 p-2" v-if="nodeData.type === 'static' && innerMenu">
+        <NodeStaticValue :node-data="nodeData" @focus-event="focusEvent" @blur-event="blurEvent" @update-static-value="updateStaticValue" />
+      </div>
+      <div class="flex w-full flex-col gap-1 p-2" v-if="nodeData.type === 'computed' && innerMenu">
+        <NodeComputedParams :node-data="nodeData" @focus-event="focusEvent" @blur-event="blurEvent" :node-index="nodeIndex" />
+      </div>
+      <div class="flex w-full flex-col gap-1 p-2">
+        <NodeResult :node-data="nodeData" />
+      </div>
+      <div v-if="(agentProfile.isNestedGraph || agentProfile.isMap) && innerMenu">
+        <select v-model="nestedGraphIndex" @change="updateNestedGraphIndex">
+          <option :value="key" v-for="(graph, key) in nestedGraphs" :key="key">{{ graph.name }}</option>
+        </select>
+      </div>
     </div>
   </div>
 </template>
