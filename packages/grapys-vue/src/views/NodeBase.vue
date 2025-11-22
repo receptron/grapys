@@ -37,12 +37,7 @@
 
       <!-- left input -->
       <div class="mt-1 mb-1 flex flex-col items-start">
-        <div
-          v-for="(input, index) in inputs"
-          :key="['in', input.name, index, nestedGraphId ?? ''].join('-')"
-          class="relative flex items-center"
-          ref="inputsRef"
-        >
+        <div v-for="(input, index) in inputs" :key="['in', input.key ?? input.name, index].join('-')" class="relative flex items-center" ref="inputsRef">
           <div
             class="absolute left-[-10px] h-4 w-4 min-w-[12px] rounded-full"
             :class="nodeInputClass(isExpectNearButton('outbound', index), nodeData, input as any, isConnectable)"
@@ -79,10 +74,6 @@ export default defineComponent({
     outputs: {
       type: Array as PropType<{ name: string }[]>,
       required: true,
-    },
-    nestedGraphId: {
-      type: String,
-      default: undefined,
     },
   },
   emits: ["openNodeMenu", "openNodeEditMenu"],

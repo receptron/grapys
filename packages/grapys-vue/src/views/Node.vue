@@ -2,7 +2,6 @@
   <NodeBase
     :inputs="inputs"
     :outputs="outputs"
-    :nested-graph-id="nestedGraph?.id"
     @open-node-menu="(e) => $emit('openNodeMenu', e)"
     @open-node-edit-menu="
       (e) => {
@@ -133,7 +132,12 @@ export default defineComponent({
     // Inputs/outputs computation
     const inputs = computed(() => {
       if (agentProfile.isNestedGraph) {
-        return nestedGraphInputs(nestedGraph.value.graph);
+        return nestedGraphInputs(nestedGraph.value.graph).map((inp) => {
+          return {
+            ...inp,
+            key: [nestedGraph.value.id, inp.name].join("-"),
+          };
+        });
       }
       return agentProfile.inputs;
     });
