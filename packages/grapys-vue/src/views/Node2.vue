@@ -129,8 +129,9 @@ export default defineComponent({
     const thisRef = ref<HTMLElement | null>(null);
     const inputsRef = ref<HTMLElement[]>([]);
     const outputsRef = ref<HTMLElement[]>([]);
-    const innerMenu = ref(true);
-
+    const innerMenu = ref(false);
+    const outerMenu = ref(true);
+    
     const isDragging = ref(false);
     const isNewEdge = ref(false);
     const offset = ref({ x: 0, y: 0 });
@@ -286,6 +287,9 @@ export default defineComponent({
       ctx.emit("openNodeMenu", event);
     };
     const openNodeEditMenu = (event: MouseEvent) => {
+      if (!outerMenu.value) {
+        return;
+      }
       if (isDragging.value || isNewEdge.value) return;
       if (deltaDistance > deltaDistanceThredhold) return;
       ctx.emit("openNodeEditMenu", event);
