@@ -1,7 +1,9 @@
-import { inject, provide, type InjectionKey, type ComputedRef } from "vue";
-import type { GUINearestData, NodePosition, NewEdgeEvent } from "../utils/gui/type";
+import { inject, type InjectionKey, type ComputedRef } from "vue";
+import type { GUINodeData, GUINearestData, NodePosition, NewEdgeEvent } from "../utils/gui/type";
 
 export interface NodeContext {
+  nodeData: GUINodeData;
+  nodeIndex: number;
   nearestData: GUINearestData | undefined;
   isConnectable: boolean;
   updatePosition: (nodeIndex: number, position: NodePosition) => void;
@@ -15,14 +17,10 @@ export interface NodeContext {
 
 export const NodeContextKey: InjectionKey<ComputedRef<NodeContext>> = Symbol("NodeContext");
 
-export const provideNodeContext = (context: ComputedRef<NodeContext>) => {
-  provide(NodeContextKey, context);
-};
-
 export const useNodeContext = () => {
   const context = inject(NodeContextKey);
   if (!context) {
-    throw new Error("useNodeContext must be used within a NodeContext provider");
+    throw new Error("useNodeContext must be used within NodeContextProvider");
   }
   return context;
 };

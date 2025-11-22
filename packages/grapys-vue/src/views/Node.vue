@@ -81,12 +81,7 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: [
-    "updateStaticNodeValue",
-    "updateNestedGraph",
-    "openNodeMenu",
-    "openNodeEditMenu",
-  ],
+  emits: ["updateStaticNodeValue", "updateNestedGraph", "openNodeMenu", "openNodeEditMenu"],
   setup(props, { emit }) {
     const store = useStore();
 

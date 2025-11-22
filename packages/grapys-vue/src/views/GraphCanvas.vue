@@ -3,6 +3,7 @@ import { defineComponent, onMounted, ref, computed } from "vue";
 import Node from "./Node.vue";
 import Edge from "./Edge.vue";
 import Loop from "./Loop.vue";
+import NodeContextProvider from "./NodeContextProvider.vue";
 
 import ContextEdgeMenu from "./ContextEdgeMenu.vue";
 import ContextNodeMenu from "./ContextNodeMenu.vue";
@@ -10,7 +11,6 @@ import { useNewEdge } from "../composable/gui";
 import { usePanAndScroll } from "../composable/usePanAndScroll";
 import { guiEdgeData2edgeData } from "../utils/gui/utils";
 import { useStore } from "../store";
-import { provideNodeContext } from "../composable/useNodeContext";
 import type { EdgeData, NodePosition, UpdateStaticValue } from "../utils/gui/type";
 
 export default defineComponent({
@@ -19,6 +19,7 @@ export default defineComponent({
     Node,
     Edge,
     Loop,
+    NodeContextProvider,
     ContextEdgeMenu,
     ContextNodeMenu,
   },
@@ -82,23 +83,6 @@ export default defineComponent({
       emit("open-node-editor", nodeIndex);
     };
 
-    // Provide node context for NodeBase components
-    const nodeContext = computed(() => ({
-      nearestData: nearestData.value,
-      isConnectable: edgeConnectable.value,
-      updatePosition: (nodeIndex: number, position: NodePosition) => {
-        updateNodePosition(nodeIndex, position);
-      },
-      savePosition: saveNodePosition,
-      onNewEdgeStart,
-      onNewEdge,
-      onNewEdgeEnd,
-      onNodeDragStart: handleNodeDragStart,
-      onNodeDragEnd: handleNodeDragEnd,
-    }));
-
-    provideNodeContext(nodeContext);
-
     return {
       updateNodePosition,
       saveNodePosition,
@@ -153,16 +137,30 @@ export default defineComponent({
           :is-connectable="edgeConnectable"
         />
       </svg>
-      <Node
+      <NodeContextProvider
         v-for="(node, index) in store.nodes"
         :key="[node.nodeId, index].join('-')"
-        :node-index="index"
         :node-data="node"
-        @update-static-node-value="updateStaticNodeValue(index, $event, true)"
-        @update-nested-graph="updateNestedGraph(index, $event)"
-        @open-node-menu="(e: MouseEvent) => openNodeMenu(e, index)"
-        @open-node-edit-menu="openNodeEditor(index)"
-      />
+        :node-index="index"
+        :nearest-data="nearestData"
+        :is-connectable="edgeConnectable"
+        :update-position="updateNodePosition"
+        :save-position="saveNodePosition"
+        :on-new-edge-start="onNewEdgeStart"
+        :on-new-edge="onNewEdge"
+        :on-new-edge-end="onNewEdgeEnd"
+        :on-node-drag-start="handleNodeDragStart"
+        :on-node-drag-end="handleNodeDragEnd"
+      >
+        <Node
+          :node-index="index"
+          :node-data="node"
+          @update-static-node-value="updateStaticNodeValue(index, $event, true)"
+          @update-nested-graph="updateNestedGraph(index, $event)"
+          @open-node-menu="(e: MouseEvent) => openNodeMenu(e, index)"
+          @open-node-edit-menu="openNodeEditor(index)"
+        />
+      </NodeContextProvider>
       <ContextEdgeMenu ref="contextEdgeMenu" />
       <ContextNodeMenu ref="contextNodeMenu" />
     </div>
