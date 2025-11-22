@@ -38,6 +38,7 @@
         :on-new-edge-end="onNewEdgeEnd"
         :on-node-drag-start="handleNodeDragStart"
         :on-node-drag-end="handleNodeDragEnd"
+        :open-node-menu="openNodeMenu"
       >
         <!-- node slot - user provides their custom node component -->
         <slot name="node" :node-data="nodeData" :node-index="index">
@@ -57,8 +58,8 @@
 import { ref, computed, onMounted, type PropType } from "vue";
 import NodeContextProvider from "./NodeContextProvider.vue";
 import Edge from "./Edge.vue";
-import ContextEdgeMenu from "../../views/ContextEdgeMenu.vue";
-import ContextNodeMenu from "../../views/ContextNodeMenu.vue";
+import ContextEdgeMenu from "./ContextEdgeMenu.vue";
+import ContextNodeMenu from "./ContextNodeMenu.vue";
 import { useNewEdge } from "../composable/gui";
 import { usePanAndScroll } from "../composable/usePanAndScroll";
 import { guiEdgeData2edgeData } from "../utils/gui";

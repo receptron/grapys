@@ -13,6 +13,7 @@ export interface NodeContext {
   onNewEdgeEnd: () => void;
   onNodeDragStart: () => void;
   onNodeDragEnd: () => void;
+  openNodeMenu: (event: MouseEvent, nodeIndex: number) => void;
 }
 
 export const NodeContextKey: InjectionKey<ComputedRef<NodeContext>> = Symbol("NodeContext");

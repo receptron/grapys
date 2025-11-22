@@ -1,6 +1,5 @@
 <template>
   <GraphCanvasBase
-    ref="canvasRef"
     :nodes="store.nodes"
     :edges="store.edges"
     :node-records="store.nodeRecords"
@@ -17,7 +16,6 @@
         :node-data="nodeData"
         @update-static-node-value="updateStaticNodeValue(nodeIndex, $event, true)"
         @update-nested-graph="updateNestedGraph(nodeIndex, $event)"
-        @open-node-menu="canvasRef?.openNodeMenu($event, nodeIndex)"
         @open-node-edit-menu="openNodeEditor(nodeIndex)"
       />
     </template>
@@ -25,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 import GraphCanvasBase from "../package/components/GraphCanvasBase.vue";
 import Node from "./Node.vue";
 import Loop from "./Loop.vue";
@@ -43,7 +41,6 @@ export default defineComponent({
   emits: ["open-node-editor"],
   setup(props, { emit }) {
     const store = useStore();
-    const canvasRef = ref();
 
     const updateNodePosition = (index: number, pos: NodePosition) => {
       store.updateNodePosition(index, pos);
@@ -63,7 +60,6 @@ export default defineComponent({
     };
 
     return {
-      canvasRef,
       updateNodePosition,
       saveNodePosition,
       updateStaticNodeValue,

@@ -19,6 +19,7 @@ const props = defineProps<{
   onNewEdgeEnd: () => void;
   onNodeDragStart: () => void;
   onNodeDragEnd: () => void;
+  openNodeMenu: (event: MouseEvent, nodeIndex: number) => void;
 }>();
 
 const nodeDataRef = toRef(props, "nodeData");
@@ -36,6 +37,7 @@ const context = computed(() => ({
   onNewEdgeEnd: props.onNewEdgeEnd,
   onNodeDragStart: props.onNodeDragStart,
   onNodeDragEnd: props.onNodeDragEnd,
+  openNodeMenu: props.openNodeMenu,
 }));
 
 provide(NodeContextKey, context);

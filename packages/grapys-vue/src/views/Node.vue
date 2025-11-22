@@ -2,7 +2,6 @@
   <NodeBase
     :inputs="inputs"
     :outputs="outputs"
-    @open-node-menu="(e) => $emit('openNodeMenu', e)"
     @open-node-edit-menu="
       (e) => {
         if (outerMenu) {
@@ -78,7 +77,7 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ["updateStaticNodeValue", "updateNestedGraph", "openNodeMenu", "openNodeEditMenu"],
+  emits: ["updateStaticNodeValue", "updateNestedGraph", "openNodeEditMenu"],
   setup(props, { emit }) {
     const store = useStore();
 

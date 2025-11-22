@@ -1,6 +1,6 @@
 <template>
-  <ContextMenu ref="contextMenu">
-    <li class="cursor-pointer px-4 py-2 hover:bg-gray-100" @click="deleteEdge()">Delete</li>
+  <ContextMenu ref="contextMenu" class="z-100">
+    <li class="cursor-pointer px-4 py-2 hover:bg-gray-100" @click="deleteNode()">Delete</li>
   </ContextMenu>
 </template>
 
@@ -8,7 +8,7 @@
 import { ref, defineComponent } from "vue";
 
 import ContextMenu from "./ContextMenu.vue";
-import { useStore } from "../store";
+import { useStore } from "../../store";
 
 export default defineComponent({
   components: {
@@ -18,26 +18,26 @@ export default defineComponent({
     const contextMenu = ref();
 
     const store = useStore();
-    const selectedEdgeIndex = ref(0);
+    const selectedNodeIndex = ref(0);
 
-    const openMenu = (event: MouseEvent | TouchEvent, rect: DOMRect, edgeIndex: number) => {
+    const openMenu = (event: MouseEvent | TouchEvent, rect: DOMRect, nodeIndex: number) => {
       event.preventDefault();
       contextMenu.value.openMenu(event, rect);
-      selectedEdgeIndex.value = edgeIndex;
+      selectedNodeIndex.value = nodeIndex;
     };
 
     const closeMenu = () => {
       contextMenu.value.closeMenu();
     };
 
-    const deleteEdge = () => {
-      store.deleteEdge(selectedEdgeIndex.value);
+    const deleteNode = () => {
+      store.deleteNode(selectedNodeIndex.value);
     };
     return {
       contextMenu,
       openMenu,
       closeMenu,
-      deleteEdge,
+      deleteNode,
     };
   },
 });
