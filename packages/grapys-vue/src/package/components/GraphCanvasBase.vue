@@ -61,7 +61,7 @@ import ContextEdgeMenu from "../../views/ContextEdgeMenu.vue";
 import ContextNodeMenu from "../../views/ContextNodeMenu.vue";
 import { useNewEdge } from "../composable/gui";
 import { usePanAndScroll } from "../composable/usePanAndScroll";
-import { guiEdgeData2edgeData } from "../../utils/gui/utils";
+import { guiEdgeData2edgeData } from "../utils/gui";
 import type { GUINodeData, NodePosition, GUIEdgeData, GUINodeDataRecord } from "../../utils/gui/type";
 
 const props = defineProps({
