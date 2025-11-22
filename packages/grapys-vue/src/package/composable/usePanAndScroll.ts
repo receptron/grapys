@@ -1,5 +1,5 @@
 import { Ref } from "vue";
-import { NewEdgeData } from "../utils/gui/type";
+import { NewEdgeData } from "../../utils/gui/type";
 
 export const usePanAndScroll = (mainContainer: Ref<HTMLElement | undefined>, isNodeDragging: Ref<boolean>, newEdgeData?: Ref<NewEdgeData | null>) => {
   const setupPanAndScroll = () => {

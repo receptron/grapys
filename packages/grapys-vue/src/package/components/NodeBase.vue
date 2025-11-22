@@ -59,16 +59,16 @@
 
 <script lang="ts">
 import { defineComponent, ref, watchEffect, computed, PropType, onMounted } from "vue";
-import type { NewEdgeEventDirection } from "../utils/gui/type";
-import { getClientPos, getNodeSize, getTransformStyle } from "../utils/gui/utils";
-import { nodeMainClass, nodeHeaderClass, nodeOutputClass, nodeInputClass } from "../utils/gui/classUtils";
+import type { NewEdgeEventDirection } from "../../utils/gui/type";
+import { getClientPos, getNodeSize, getTransformStyle } from "../utils/gui";
+import { nodeMainClass, nodeHeaderClass, nodeOutputClass, nodeInputClass } from "../utils/classUtils";
 import { useNodeContext } from "../composable/useNodeContext";
 
 export default defineComponent({
   name: "NodeBase",
   props: {
     inputs: {
-      type: Array as PropType<{ name: string }[]>,
+      type: Array as PropType<{ name: string; key?: string }[]>,
       required: true,
     },
     outputs: {

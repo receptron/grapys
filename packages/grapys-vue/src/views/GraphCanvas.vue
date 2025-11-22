@@ -26,7 +26,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import GraphCanvasBase from "./GraphCanvasBase.vue";
+import GraphCanvasBase from "../package/components/GraphCanvasBase.vue";
 import Node from "./Node.vue";
 import Loop from "./Loop.vue";
 

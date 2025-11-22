@@ -11,10 +11,10 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed, PropType } from "vue";
-import { EdgeData2 } from "../utils/gui/type";
-import { convEdgePath } from "../utils/gui/utils";
+import { EdgeData2 } from "../../utils/gui/type";
+import { convEdgePath } from "../../utils/gui/utils";
 
-import { edgeColors } from "../utils/gui/classUtils";
+import { edgeColors } from "../utils/classUtils";
 
 export default defineComponent({
   components: {},

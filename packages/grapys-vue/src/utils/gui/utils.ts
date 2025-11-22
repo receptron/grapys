@@ -22,14 +22,6 @@ import { inputs2dataSources, GraphData, isComputedNodeData, isStaticNodeData, De
 import { agentProfiles } from "./data";
 import { store2graphData } from "./graph";
 
-const isTouch = (event: MouseEvent | TouchEvent): event is TouchEvent => {
-  return "touches" in event;
-};
-export const getClientPos = (event: MouseEvent | TouchEvent) => {
-  const clientX = isTouch(event) ? event.touches[0].clientX : event.clientX;
-  const clientY = isTouch(event) ? event.touches[0].clientY : event.clientY;
-  return { clientX, clientY };
-};
 
 const loop2loop = (graphLoop: LoopData): GUILoopData => {
   if (graphLoop.while) {
@@ -420,36 +412,6 @@ export const convEdgePath = (
   const controlXOffset = xDiff > 0 ? minOffset + (xDiff > offsetThreshold ? 0 : offsetThreshold - xDiff) : maxOffset;
 
   return `M ${x1} ${y1dash} C ${x1 + controlXOffset} ${y1dash - controlYOffset}, ${x2 - controlXOffset} ${y2dash + controlYOffset}, ${x2} ${y2dash}`;
-};
-
-const round = (data: number) => {
-  return Math.round(data * 100) / 100;
-};
-
-export const getNodeSize = (nodeDom: HTMLElement | null, inputDoms: HTMLElement[], outputDoms: HTMLElement[]) => {
-  if (!nodeDom) {
-    return { width: 0, height: 0, outputCenters: [], inputCenters: [] };
-  }
-  const rect = nodeDom.getBoundingClientRect();
-  const parentTop = rect.top;
-
-  const getCenterHeight = (el: HTMLElement) => {
-    const oRect = el.getBoundingClientRect();
-    return round(oRect.top - parentTop + oRect.height / 2);
-  };
-  return {
-    width: round(rect.width),
-    height: round(rect.height),
-    inputCenters: inputDoms.map(getCenterHeight),
-    outputCenters: outputDoms.map(getCenterHeight),
-  };
-};
-
-export const getTransformStyle = (nodeData: GUINodeData, isDragging: boolean) => {
-  return {
-    transform: `translate(${nodeData?.position?.x ?? 0}px, ${nodeData?.position?.y ?? 0}px)`,
-    cursor: isDragging ? "grabbing" : "grab",
-  };
 };
 
 export const getLoopWhileSources = (nodes: GUINodeData[], nestedGraphs: NestedGraphList) => {
