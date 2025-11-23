@@ -27,14 +27,14 @@ export default defineComponent({
   setup() {
     const store = useFlowStore();
     const graphAIStore = useGraphAIStore();
-    const { updateStaticNodeValue, updateNestedGraph } = useNodeUpdate();
+    const { initFromGraphData, updateStaticNodeValue, updateNestedGraph } = useNodeUpdate();
     const graphData = computed(() => {
       return graphAIStore.createGraphData(store.currentData);
     });
     const selectedNodeIndex = ref<number | null>(null);
     const isNodeEditorOpen = computed(() => selectedNodeIndex.value !== null);
     const panelKey = ref(0);
-    store.initFromGraphData(graphChat);
+    initFromGraphData(graphChat);
 
     const graphRunnerRef = ref();
     const { addShortcut } = useKeyboardShortcuts();

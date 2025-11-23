@@ -1,5 +1,7 @@
 import { useFlowStore } from "../package";
 import type { UpdateStaticValue } from "../utils/gui/type";
+import { graphToGUIData } from "../utils/gui/utils";
+import type { GraphData } from "graphai";
 
 // Re-export types for use in components
 export type { UpdateStaticValue } from "../utils/gui/type";
@@ -10,6 +12,13 @@ export type { UpdateStaticValue } from "../utils/gui/type";
  */
 export const useNodeUpdate = () => {
   const store = useFlowStore();
+
+  const initFromGraphData = (graph: GraphData, extraData: Record<string, unknown> = {}) => {
+    const { rawEdge, rawNode, loop: loopData } = graphToGUIData(graph);
+    // BACKWARD COMPATIBILITY: If graph has loop, put it in extra.loop
+    const initExtra = loopData ? { ...extraData, loop: loopData } : extraData;
+    store.initData(rawNode, rawEdge, initExtra);
+  };
 
   const updateNodeParam = (positionIndex: number, key: string, value: unknown) => {
     store.updateNodeAt(
@@ -74,6 +83,7 @@ export const useNodeUpdate = () => {
   };
 
   return {
+    initFromGraphData,
     updateNodeParam,
     updateStaticNodeValue,
     updateNestedGraph,

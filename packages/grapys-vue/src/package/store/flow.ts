@@ -2,9 +2,6 @@ import { ref, computed } from "vue";
 import { GUINodeData, GUIEdgeData, GUINodeDataRecord, UpdateNodePositionData, HistoryData, HistoryPayload } from "../utils";
 import { defineStore } from "pinia";
 
-import { graphToGUIData } from "../../utils/gui/utils";
-import type { GraphData } from "graphai";
-
 export const useFlowStore = defineStore("store", () => {
   const histories = ref<HistoryData[]>([]);
   const currentData = ref<HistoryPayload>({
@@ -83,13 +80,6 @@ export const useFlowStore = defineStore("store", () => {
     };
     currentData.value = data;
     // this time, node position is not set. save after mounted.
-  };
-
-  const initFromGraphData = (graph: GraphData, extraData: Record<string, unknown> = {}) => {
-    const { rawEdge, rawNode, loop: loopData } = graphToGUIData(graph);
-    // BACKWARD COMPATIBILITY: If graph has loop, put it in extra.loop
-    const initExtra = loopData ? { ...extraData, loop: loopData } : extraData;
-    initData(rawNode, rawEdge, initExtra);
   };
 
   // node
@@ -176,7 +166,6 @@ export const useFlowStore = defineStore("store", () => {
 
     // methods
     initData,
-    initFromGraphData,
     pushNode,
     pushEdge,
     deleteEdge,
