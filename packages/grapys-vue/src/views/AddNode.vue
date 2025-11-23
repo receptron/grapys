@@ -71,7 +71,7 @@ export default defineComponent({
             guiAgentId: agent.value,
             params,
             ...(targetAgent.agents ? { agentIndex: 0 } : {}),
-            ...(targetAgent.isNestedGraph || targetAgent.isMap ? { nestedGraphIndex: 0, nestedGraphId: graphAIStore.nestedGraphs[0].id } : {}),
+            ...(targetAgent.isNestedGraph || targetAgent.isMap ? { nestedGraphIndex: 0, nestedGraphId: graphAIStore.nestedGraphs?.[0]?.id } : {}),
           };
 
       store.pushNode({
