@@ -104,53 +104,22 @@ export const useFlowStore = defineStore("store", () => {
     newNodes[positionIndex] = newNode;
     updateData(newNodes, [...edges.value], { ...extra.value }, "updatePosition", false);
   };
-  const updateNodeParam = (positionIndex: number, key: string, value: unknown) => {
-    const oldNode = nodes.value[positionIndex];
-    const newNode = {
-      ...oldNode,
-      data: {
-        ...oldNode.data,
-        params: oldNode.data.params ? { ...oldNode.data.params } : {},
-      },
-    };
 
-    if (value === "" || value === undefined || (value === null && newNode.data.params && newNode.data.params[key] !== undefined)) {
-      // delete operation
-      const { [key]: __, ...updatedParams } = newNode.data.params || {};
-      newNode.data.params = updatedParams;
-    } else {
-      // upsert
-      newNode.data.params = { ...(newNode.data.params || {}), [key]: value };
-    }
+  // Low-level API: Generic node updater
+  const updateNodeAt = (index: number, updater: (node: GUINodeData) => GUINodeData, name: string, saveHistory: boolean) => {
     const newNodes = [...nodes.value];
-    newNodes[positionIndex] = newNode;
-    updateData(newNodes, [...edges.value], { ...extra.value }, "updateParams", true);
-  };
-  const updateStaticNodeValue = (positionIndex: number, value: Record<string, unknown>, saveHistory: boolean) => {
-    const newNode = { ...nodes.value[positionIndex] };
-    newNode.data = { ...newNode.data, ...value };
-    const newNodes = [...nodes.value];
-    newNodes[positionIndex] = newNode;
-    updateData(newNodes, [...edges.value], { ...extra.value }, "updateStaticValue", saveHistory);
+    newNodes[index] = updater({ ...nodes.value[index] });
+    updateData(newNodes, [...edges.value], { ...extra.value }, name, saveHistory);
   };
 
-  const updateNestedGraph = (positionIndex: number, value: Record<string, unknown>) => {
-    const newNode = { ...nodes.value[positionIndex] };
-    newNode.data = { ...newNode.data, ...value };
-    const newNodes = [...nodes.value];
-    newNodes[positionIndex] = newNode;
-    updateData(
-      newNodes,
-      [
-        ...edges.value.filter((edge) => {
-          const { source, target } = edge;
-          return source.nodeId !== newNode.nodeId && target.nodeId !== newNode.nodeId;
-        }),
-      ],
-      { ...extra.value },
-      "NestedGraph",
-      true,
-    );
+  // Low-level API: Generic nodes and edges updater
+  const updateNodesAndEdges = (
+    nodeUpdater: (nodes: GUINodeData[]) => GUINodeData[],
+    edgeUpdater: (edges: GUIEdgeData[]) => GUIEdgeData[],
+    name: string,
+    saveHistory: boolean,
+  ) => {
+    updateData(nodeUpdater([...nodes.value]), edgeUpdater([...edges.value]), { ...extra.value }, name, saveHistory);
   };
 
   const updateExtra = (extraData: Record<string, unknown>) => {
@@ -214,14 +183,14 @@ export const useFlowStore = defineStore("store", () => {
     deleteNode,
 
     updateNodePosition,
-    updateNodeParam,
-    // pushDataToHistory,
     saveNodePositionData,
 
     loadData,
 
-    updateStaticNodeValue,
-    updateNestedGraph,
+    // Low-level API for extensions
+    updateData,
+    updateNodeAt,
+    updateNodesAndEdges,
     updateExtra,
 
     undo,

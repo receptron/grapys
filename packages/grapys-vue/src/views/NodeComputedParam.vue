@@ -73,7 +73,7 @@
 import { defineComponent, PropType, ref, onBeforeUnmount, onMounted, watch } from "vue";
 import type { ParamData, ApplicationData } from "../utils/gui/type";
 
-import { useFlowStore } from "../package";
+import { useNodeUpdate } from "../composable/useNodeUpdate";
 
 export default defineComponent({
   props: {
@@ -92,7 +92,7 @@ export default defineComponent({
   },
   emits: ["focusEvent", "blurEvent", "updateValue"],
   setup(props, ctx) {
-    const store = useFlowStore();
+    const { updateNodeParam } = useNodeUpdate();
 
     const textareaRef = ref();
     const inputRef = ref();
@@ -154,24 +154,24 @@ export default defineComponent({
       if (event.target instanceof HTMLTextAreaElement) {
         rows.value = 3;
         ctx.emit("blurEvent");
-        store.updateNodeParam(props.nodeIndex, key, textAreaValue.value);
+        updateNodeParam(props.nodeIndex, key, textAreaValue.value);
       }
     };
     const blurUpdateEvent = () => {
-      store.updateNodeParam(props.nodeIndex, key, inputValue.value);
+      updateNodeParam(props.nodeIndex, key, inputValue.value);
     };
     /*
     watch([booleanValue], () => {
       if (props.param.type === "boolean") {
-        store.updateNodeParam(props.nodeIndex, key, booleanValue.value === "true");
+        updateNodeParam(props.nodeIndex, key, booleanValue.value === "true");
       }
     });
     */
     const selectUpdate = () => {
-      store.updateNodeParam(props.nodeIndex, key, booleanValue.value === "true");
+      updateNodeParam(props.nodeIndex, key, booleanValue.value === "true");
     };
     const enumUpdate = () => {
-      store.updateNodeParam(props.nodeIndex, key, enumValue.value);
+      updateNodeParam(props.nodeIndex, key, enumValue.value);
     };
 
     onMounted(() => {

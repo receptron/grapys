@@ -16,6 +16,7 @@ import { graphChat } from "../graph/chat_tinyswallow";
 import { useKeyboardShortcuts } from "../composable/useKeyboardShortcuts";
 import { useFlowStore } from "../package";
 import { useGraphAIStore } from "../store/graphai";
+import { useNodeUpdate } from "../composable/useNodeUpdate";
 
 export default defineComponent({
   components: {
@@ -28,6 +29,7 @@ export default defineComponent({
   setup() {
     const store = useFlowStore();
     const graphAIStore = useGraphAIStore();
+    const { updateStaticNodeValue, updateNestedGraph } = useNodeUpdate();
     const graphData = computed(() => {
       return graphAIStore.createGraphData(store.currentData);
     });
@@ -85,12 +87,6 @@ export default defineComponent({
       });
     });
 
-    const updateStaticNodeValue = (index: number, value: UpdateStaticValue, saveHistory: boolean) => {
-      store.updateStaticNodeValue(index, value, saveHistory);
-    };
-    const updateNestedGraph = (index: number, value: UpdateStaticValue) => {
-      store.updateNestedGraph(index, value);
-    };
 
     const openNodeEditor = (nodeIndex: number) => {
       // remount only if different node is clicked

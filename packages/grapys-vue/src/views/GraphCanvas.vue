@@ -32,6 +32,7 @@ import { useFlowStore, GraphCanvasBase, NodePosition, GUIEdgeData } from "../pac
 import { useGraphAIStore } from "../store/graphai";
 import type { UpdateStaticValue } from "../utils/gui/type";
 import { validateEdgeConnection } from "../utils/gui/utils";
+import { useNodeUpdate } from "../composable/useNodeUpdate";
 
 export default defineComponent({
   name: "GraphCanvas",
@@ -44,18 +45,13 @@ export default defineComponent({
   setup(props, { emit }) {
     const store = useFlowStore();
     const graphAIStore = useGraphAIStore();
+    const { updateStaticNodeValue, updateNestedGraph } = useNodeUpdate();
 
     const updateNodePosition = (index: number, pos: NodePosition) => {
       store.updateNodePosition(index, pos);
     };
     const saveNodePosition = () => {
       store.saveNodePositionData();
-    };
-    const updateStaticNodeValue = (index: number, value: UpdateStaticValue, saveHistory: boolean) => {
-      store.updateStaticNodeValue(index, value, saveHistory);
-    };
-    const updateNestedGraph = (index: number, value: UpdateStaticValue) => {
-      store.updateNestedGraph(index, value);
     };
 
     const openNodeEditor = (nodeIndex: number) => {
