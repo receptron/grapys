@@ -52,7 +52,7 @@ import { GraphCanvasBase, NodeBase, useFlowStore, type GUINodeData } from "vuewe
 const store = useFlowStore();
 
 // Initialize with empty data
-store.initData([], []);
+store.initData([], [], {});
 
 const nodeCounter = ref(1);
 
@@ -76,7 +76,7 @@ function addNode() {
 }
 
 function clearAll() {
-  store.initData([], []);
+  store.initData([], [], {});
   nodeCounter.value = 1;
 }
 
@@ -85,7 +85,7 @@ function updateNodePosition(index: number, position: any) {
 }
 
 function saveNodePosition() {
-  store.savePosition();
+  store.saveNodePositionData();
 }
 
 function validateConnection() {

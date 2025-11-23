@@ -28,6 +28,5 @@ jobs:
     - run: yarn workspace vueweave run lint
     - run: yarn workspace vueweave run build:module
     - run: yarn workspace vueweave run build
-    - run: yarn workspace grapys-vue install
     - run: yarn workspace grapys-vue run build
     - run: yarn workspace grapys-vue run lint

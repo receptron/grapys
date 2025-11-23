@@ -65,7 +65,8 @@ store.initData(
       source: { nodeId: "process1", index: 0 },
       target: { nodeId: "output1", index: 0 },
     },
-  ]
+  ],
+  {}
 );
 
 const nodes = computed(() => store.nodes);
@@ -77,7 +78,7 @@ function updateNodePosition(index: number, position: any) {
 }
 
 function saveNodePosition() {
-  store.savePosition();
+  store.saveNodePositionData();
 }
 
 function validateConnection() {
