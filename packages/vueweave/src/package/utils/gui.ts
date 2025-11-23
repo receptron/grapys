@@ -235,7 +235,7 @@ export const isEdgeConnectable = (expectEdge: GUIEdgeData | null, edges: GUIEdge
 };
 
 export const convEdgePath = (
-  soureIndex: number | undefined,
+  sourceIndex: number | undefined,
   sourcePosition: NodePositionData,
   targetIndex: number | undefined,
   targetPosition: NodePositionData,
@@ -244,7 +244,7 @@ export const convEdgePath = (
   const x1 = x + (width ?? 0);
   const { x: x2, y: y2, inputCenters } = targetPosition;
 
-  const y1Offset = soureIndex !== undefined && outputCenters && outputCenters.length >= soureIndex ? outputCenters[soureIndex] : 0;
+  const y1Offset = sourceIndex !== undefined && outputCenters && outputCenters.length >= sourceIndex ? outputCenters[sourceIndex] : 0;
   const y2Offset = targetIndex !== undefined && inputCenters && inputCenters.length >= targetIndex ? inputCenters[targetIndex] : 0;
 
   const y1dash = y1 + y1Offset;
