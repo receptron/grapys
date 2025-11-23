@@ -15,12 +15,10 @@ export const useNewEdge = () => {
     x: 0,
     y: 0,
   });
-  const [targetNode, setTargetNode] = useState<string>("");
 
   const onNewEdgeStart = useCallback(
     (data: NewEdgeStartEventData) => {
       if (svgRef.current) {
-        setTargetNode(data.nodeId);
         const { mousePosition, startEdgeData } = edgeStartEventData(data, svgRef.current, nodeRecords[data.nodeId]);
         setMouseCurrentPosition(mousePosition);
         setNewEdgeData(startEdgeData);
@@ -42,8 +40,8 @@ export const useNewEdge = () => {
 
   const nearestNode = useMemo<ClosestNodeData | null>(() => {
     if (!nodes.length) return null;
-    return pickNearestNode(nodes, targetNode, mouseCurrentPosition);
-  }, [nodes, targetNode, mouseCurrentPosition]);
+    return pickNearestNode(nodes, mouseCurrentPosition);
+  }, [nodes, mouseCurrentPosition]);
 
   const nearestConnect = useMemo(() => {
     if (!newEdgeData || !nearestNode) return;

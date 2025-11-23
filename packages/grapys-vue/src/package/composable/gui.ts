@@ -9,11 +9,9 @@ export const useNewEdge = (validateConnection?: ValidateConnectionFn) => {
   const svgRef = ref<SVGSVGElement | null>(null);
   const newEdgeData = ref<NewEdgeData | null>(null);
   const mouseCurrentPosition = ref<Position>({ x: 0, y: 0 });
-  const targetNode = ref<string>("");
 
   const onNewEdgeStart = (data: NewEdgeStartEventData) => {
     if (!svgRef?.value) return;
-    targetNode.value = data.nodeId;
     const { mousePosition, startEdgeData } = edgeStartEventData(data, svgRef.value, store.nodeRecords[data.nodeId]);
     mouseCurrentPosition.value = mousePosition;
     newEdgeData.value = startEdgeData;
@@ -42,7 +40,7 @@ export const useNewEdge = (validateConnection?: ValidateConnectionFn) => {
   const nearestNode = computed<ClosestNodeData | null>(() => {
     if (!store.nodes.length) return null;
 
-    return pickNearestNode(store.nodes, targetNode.value, mouseCurrentPosition.value);
+    return pickNearestNode(store.nodes, mouseCurrentPosition.value);
   });
 
   const nearestConnect = computed(() => {

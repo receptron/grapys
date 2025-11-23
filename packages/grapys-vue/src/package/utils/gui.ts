@@ -155,7 +155,7 @@ export const edgeEndEventData = (newEdgeData: NewEdgeData, nearestData: GUINeare
   return null;
 };
 
-export const pickNearestNode = (nodes: GUINodeData[], __targetNode: string, mouseCurrentPosition: Position) => {
+export const pickNearestNode = (nodes: GUINodeData[], mouseCurrentPosition: Position) => {
   return nodes.reduce((closest: null | ClosestNodeData, node) => {
     const mouseX = mouseCurrentPosition.x;
     const mouseY = mouseCurrentPosition.y;
