@@ -79,9 +79,9 @@
 <script lang="ts">
 import { defineComponent, nextTick, computed } from "vue";
 import type { GraphData } from "graphai";
+import { useFlowStore } from "vueweave";
 import { signOut } from "firebase/auth";
 
-import { useFlowStore } from "../package";
 import { useGraphAIStore } from "../store/graphai";
 import { useFirebaseStore } from "../store/firebase";
 import { useNodeUpdate } from "../composable/useNodeUpdate";

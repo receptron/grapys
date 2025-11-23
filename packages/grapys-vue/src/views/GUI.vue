@@ -12,7 +12,7 @@ import SideMenu from "./SideMenu.vue";
 import { graphChat } from "../graph/chat_tinyswallow";
 
 import { useKeyboardShortcuts } from "../composable/useKeyboardShortcuts";
-import { useFlowStore } from "../package";
+import { useFlowStore } from "vueweave";
 import { useGraphAIStore } from "../store/graphai";
 import { useNodeUpdate, type UpdateStaticValue } from "../composable/useNodeUpdate";
 

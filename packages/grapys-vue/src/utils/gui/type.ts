@@ -1,5 +1,5 @@
 import type { GraphData, DefaultParamsType } from "graphai";
-import type { GUINodeData, GUIEdgeData, InputOutputData, HistoryPayload } from "../../package";
+import type { GUINodeData, GUIEdgeData, InputOutputData, HistoryPayload } from "vueweave";
 
 export type StaticNodeType = "text" | "data" | "number" | "boolean";
 

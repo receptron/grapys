@@ -95,7 +95,7 @@
 import { defineComponent, ref, computed, watch, PropType } from "vue";
 import { GraphAI, GraphData, AgentFilterInfo, NodeState } from "graphai";
 
-import { useFlowStore } from "../package";
+import { useFlowStore } from "vueweave";
 import { useGraphAIStore } from "../store/graphai";
 
 import { useStreamData } from "../utils/vue-plugin/stream";

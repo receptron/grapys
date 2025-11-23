@@ -1,8 +1,8 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
+import type { HistoryPayload } from "vueweave";
 import { store2graphData } from "../utils/gui/graph";
 import { graphs } from "../graph/nested";
-import type { HistoryPayload } from "../package";
 import type { GUILoopData } from "../utils/gui/type";
 
 export const useGraphAIStore = defineStore("graphai", () => {

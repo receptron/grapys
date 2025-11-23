@@ -2,12 +2,6 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Blank from "../views/Blank.vue";
 import Home from "../views/Home.vue";
 
-const routeChildren: Array<RouteRecordRaw> = [
-  {
-    path: "",
-  },
-];
-
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",

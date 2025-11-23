@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
-import { useFlowStore } from "../package";
+import { useFlowStore } from "vueweave";
 import { useGraphAIStore } from "../store/graphai";
 import { getLoopWhileSources } from "../utils/gui/utils";
 import { LoopDataType, GUILoopData } from "../utils/gui/type";

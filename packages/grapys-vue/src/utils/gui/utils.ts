@@ -1,4 +1,4 @@
-import { GUINodeData, GUIEdgeData, GUINodeDataRecord, InputOutputData, EdgeEndPointData } from "../../package";
+import { GUINodeData, GUIEdgeData, GUINodeDataRecord, InputOutputData, EdgeEndPointData } from "vueweave";
 import {
   AgentProfile,
   StaticNodeType,

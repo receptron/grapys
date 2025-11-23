@@ -1,4 +1,4 @@
-import { useFlowStore } from "../package";
+import { useFlowStore } from "vueweave";
 import type { UpdateStaticValue } from "../utils/gui/type";
 import { graphToGUIData } from "../utils/gui/utils";
 import type { GraphData } from "graphai";

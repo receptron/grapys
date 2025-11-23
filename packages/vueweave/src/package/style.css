@@ -1,0 +1,4 @@
+@import 'tailwindcss';
+
+/* Ensure all Tailwind classes used in package components are included */
+@source "./**/*.{vue,ts}";

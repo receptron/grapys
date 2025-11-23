@@ -1,4 +1,4 @@
-import type { GUINodeData, GUIEdgeData, GUINodeDataRecord, HistoryPayload, InputOutputData } from "../../package";
+import type { GUINodeData, GUIEdgeData, GUINodeDataRecord, HistoryPayload, InputOutputData } from "vueweave";
 import type { GUILoopData, NestedGraphList, GraphDataMetaData } from "./type";
 import type { GraphData, NodeData, StaticNodeData, LoopData } from "graphai";
 import { edgeEnd2agentProfile } from "./utils";
