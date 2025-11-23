@@ -1,0 +1,21 @@
+{
+  "name": "vueweave",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "lint": "eslint src --fix",
+    "preview": "vite preview",
+    "format": "prettier --write '{src/**/*,*}.{js,ts,vue,json}'"
+  },
+  "dependencies": {
+    "pinia": "^3.0.3"
+  },
+  "devDependencies": {
+    "vue": "^3.5.22",
+    "vue-router": "^4.6.3",
+    "vue-tsc": "^3.1.2"
+  }
+}
