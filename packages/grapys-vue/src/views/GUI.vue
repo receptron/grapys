@@ -14,7 +14,7 @@ import { UpdateStaticValue } from "../utils/gui/type";
 import { graphChat } from "../graph/chat_tinyswallow";
 
 import { useKeyboardShortcuts } from "../composable/useKeyboardShortcuts";
-import { useFlowStore } from "../store";
+import { useFlowStore } from "../package";
 import { useGraphAIStore } from "../store/graphai";
 
 export default defineComponent({

@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useFlowStore } from "../store";
+import { useFlowStore } from "../package";
 import { useGraphAIStore } from "../store/graphai";
 
 export default defineComponent({

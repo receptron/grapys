@@ -8,7 +8,7 @@
 import { ref, defineComponent } from "vue";
 
 import ContextMenu from "./ContextMenu.vue";
-import { useFlowStore } from "../../store";
+import { useFlowStore } from "../store";
 
 export default defineComponent({
   components: {

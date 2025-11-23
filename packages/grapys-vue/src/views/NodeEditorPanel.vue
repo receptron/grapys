@@ -44,7 +44,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from "vue";
-import { useFlowStore } from "../store";
+import { useFlowStore } from "../package";
 import { useGraphAIStore } from "../store/graphai";
 import { agentProfiles, staticNodeParams } from "../utils/gui/data";
 import type { GUINodeData, AgentProfile, UpdateStaticValue } from "../utils/gui/type";

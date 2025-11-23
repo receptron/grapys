@@ -22,21 +22,21 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
-import { useFlowStore } from "../store";
+import { useFlowStore } from "../package";
 import { useGraphAIStore } from "../store/graphai";
 import { getLoopWhileSources } from "../utils/gui/utils";
 import { LoopDataType, GUILoopData } from "../utils/gui/type";
 
 export default defineComponent({
   setup() {
-    const store = useFlowStore();
+    const flowStore = useFlowStore();
     const graphAIStore = useGraphAIStore();
     const whileSources = computed(() => {
-      return getLoopWhileSources(store.nodes, graphAIStore.nestedGraphs);
+      return getLoopWhileSources(flowStore.nodes, graphAIStore.nestedGraphs);
     });
 
     const loop = computed(() => {
-      return (store.extra.loop ?? { loopType: "none" }) as GUILoopData;
+      return (flowStore.extra.loop ?? { loopType: "none" }) as GUILoopData;
     });
 
     const loopType = ref<LoopDataType>(loop.value.loopType);
@@ -75,7 +75,7 @@ export default defineComponent({
     );
 
     const updateLoop = () => {
-      store.updateExtra({ ...store.extra, loop: storeLoopData.value });
+      flowStore.updateExtra({ ...flowStore.extra, loop: storeLoopData.value });
     };
 
     const updateType = (event: Event) => {
@@ -115,7 +115,6 @@ export default defineComponent({
       updateWhile,
 
       countRef,
-      store,
     };
   },
 });

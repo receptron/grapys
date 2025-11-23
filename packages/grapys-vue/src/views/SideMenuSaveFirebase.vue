@@ -45,7 +45,7 @@
 
 <script lang="ts">
 import { defineComponent, onUnmounted, ref } from "vue";
-import { useFlowStore } from "../store";
+import { useFlowStore } from "../package";
 import { useGraphAIStore } from "../store/graphai";
 import { useFirebaseStore } from "../store/firebase";
 import { serverTimestamp, doc, collection, setDoc, updateDoc, deleteDoc, onSnapshot } from "firebase/firestore";

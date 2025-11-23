@@ -73,7 +73,7 @@
 import { defineComponent, PropType, ref, onBeforeUnmount, onMounted, watch } from "vue";
 import type { ParamData, ApplicationData } from "../utils/gui/type";
 
-import { useFlowStore } from "../store";
+import { useFlowStore } from "../package";
 
 export default defineComponent({
   props: {

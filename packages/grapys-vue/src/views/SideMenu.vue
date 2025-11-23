@@ -81,7 +81,7 @@ import { defineComponent, nextTick, computed } from "vue";
 import type { GraphData } from "graphai";
 import { signOut } from "firebase/auth";
 
-import { useFlowStore } from "../store";
+import { useFlowStore } from "../package";
 import { useGraphAIStore } from "../store/graphai";
 import { useFirebaseStore } from "../store/firebase";
 

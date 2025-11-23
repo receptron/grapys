@@ -1,6 +1,6 @@
 import { Position, NewEdgeStartEventData, NewEdgeData, ClosestNodeData, GUINearestData, ValidateConnectionFn } from "../utils/type";
 import { ref, computed } from "vue";
-import { useFlowStore } from "../../store";
+import { useFlowStore } from "../store";
 import { edgeStartEventData, edgeUpdateEventData, edgeEndEventData, pickNearestNode, pickNearestConnect, isEdgeConnectable } from "../utils/gui";
 
 export const useNewEdge = (validateConnection?: ValidateConnectionFn) => {

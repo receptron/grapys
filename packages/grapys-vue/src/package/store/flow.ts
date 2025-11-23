@@ -7,10 +7,10 @@ import {
   UpdateNodePositionData,
   HistoryData,
   HistoryPayload,
-} from "../utils/gui/type";
+} from "../../utils/gui/type";
 import { defineStore } from "pinia";
 
-import { graphToGUIData } from "../utils/gui/utils";
+import { graphToGUIData } from "../../utils/gui/utils";
 import type { GraphData } from "graphai";
 
 export const useFlowStore = defineStore("store", () => {

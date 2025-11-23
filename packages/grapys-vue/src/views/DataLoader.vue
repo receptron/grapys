@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { useFlowStore } from "../store";
+import { useFlowStore } from "../package";
 import SideMenuButton from "../components/SideMenuButton.vue";
 
 export default defineComponent({

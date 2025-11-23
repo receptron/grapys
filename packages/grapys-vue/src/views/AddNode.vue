@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
-import { useFlowStore } from "../store";
+import { useFlowStore } from "../package";
 import { useGraphAIStore } from "../store/graphai";
 import { agentProfilesCategory, agentProfiles } from "../utils/gui/data";
 import { getDefaultParams } from "../utils/gui/utils";
