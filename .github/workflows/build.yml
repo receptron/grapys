@@ -26,5 +26,6 @@ jobs:
     - run: cp packages/grapys-vue/src/config/game-dev.ts packages/grapys-react/src/config/project.ts
     - run: yarn install
     - run: yarn workspace vueweave run build
+    - run: yarn workspace grapys-vue install
     - run: yarn workspace grapys-vue run build
     - run: yarn workspace grapys-vue run lint
