@@ -207,7 +207,7 @@ vueweave/
 
 ## License
 
-[Your License Here]
+MIT
 
 ## Contributing
 
