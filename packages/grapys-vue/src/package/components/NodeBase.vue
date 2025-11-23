@@ -59,7 +59,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, watchEffect, computed, PropType, onMounted } from "vue";
-import type { NewEdgeEventDirection } from "../../utils/gui/type";
+import type { NewEdgeEventDirection } from "../utils/type";
 import { getClientPos, getNodeSize, getTransformStyle } from "../utils/gui";
 import { nodeMainClass, nodeHeaderClass, nodeOutputClass, nodeInputClass } from "../utils/classUtils";
 import { useNodeContext } from "../composable/useNodeContext";

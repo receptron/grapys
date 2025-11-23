@@ -9,7 +9,7 @@ import type {
   GUINearestData,
   ClosestNodeData,
   NodePositionData,
-} from "../../utils/gui/type";
+} from "./type";
 
 const isTouch = (event: MouseEvent | TouchEvent): event is TouchEvent => {
   return "touches" in event;

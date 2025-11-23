@@ -63,7 +63,7 @@ import ContextNodeMenu from "./ContextNodeMenu.vue";
 import { useNewEdge } from "../composable/gui";
 import { usePanAndScroll } from "../composable/usePanAndScroll";
 import { guiEdgeData2edgeData } from "../utils/gui";
-import type { GUINodeData, NodePosition, GUIEdgeData, GUINodeDataRecord } from "../../utils/gui/type";
+import type { GUINodeData, NodePosition, GUIEdgeData, GUINodeDataRecord } from "../utils/type";
 
 const props = defineProps({
   nodes: {

@@ -1,5 +1,5 @@
 import { inject, type InjectionKey, type ComputedRef } from "vue";
-import type { GUINodeData, GUINearestData, NodePosition, NewEdgeStartEventData } from "../../utils/gui/type";
+import type { GUINodeData, GUINearestData, NodePosition, NewEdgeStartEventData } from "../utils/type";
 
 export interface NodeContext {
   nodeData: GUINodeData;

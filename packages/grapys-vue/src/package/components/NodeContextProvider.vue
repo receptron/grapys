@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { toRef, provide, computed } from "vue";
-import type { GUINodeData, GUINearestData, NodePosition, NewEdgeStartEventData } from "../../utils/gui/type";
+import type { GUINodeData, GUINearestData, NodePosition, NewEdgeStartEventData } from "../utils/type";
 import { NodeContextKey } from "../composable/useNodeContext";
 
 const props = defineProps<{
