@@ -84,6 +84,7 @@ import { signOut } from "firebase/auth";
 import { useFlowStore } from "../package";
 import { useGraphAIStore } from "../store/graphai";
 import { useFirebaseStore } from "../store/firebase";
+import { useNodeUpdate } from "../composable/useNodeUpdate";
 
 import AddNode from "./AddNode.vue";
 import SideMenuSaveBrowser from "./SideMenuSaveBrowser.vue";
@@ -112,6 +113,7 @@ export default defineComponent({
     const store = useFlowStore();
     const graphAIStore = useGraphAIStore();
     const firebaseStore = useFirebaseStore();
+    const { initFromGraphData } = useNodeUpdate();
 
     const graphData = computed(() => {
       return graphAIStore.createGraphData(store.currentData);
@@ -120,7 +122,7 @@ export default defineComponent({
     const setGraph = async (graph: GraphData) => {
       store.reset({ loop: { loopType: "none" } });
       await nextTick(); // to reset edge position. Due to duplicate edge keys, the position will be incorrect.
-      store.initFromGraphData(graph);
+      initFromGraphData(graph);
     };
 
     const logout = () => {
