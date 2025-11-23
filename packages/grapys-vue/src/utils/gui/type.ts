@@ -89,11 +89,25 @@ export type GUILoopData = {
   while?: string | true;
   count?: number;
 };
+
+// BACKWARD COMPATIBILITY: Old format included 'loop' at root level.
+// New format uses 'extra.loop' for application-specific data.
 export type HistoryPayload = {
-  loop: GUILoopData;
   nodes: GUINodeData[];
   edges: GUIEdgeData[];
+  extra?: Record<string, unknown>;
+  // Deprecated: kept for backward compatibility, will be migrated to extra.loop
+  loop?: GUILoopData;
 };
+
+export type AppHistoryPayload = {
+  nodes: GUINodeData[];
+  edges: GUIEdgeData[];
+  extra: {
+    loop: GUILoopData;
+  };
+};
+
 export type HistoryData = { name: string; data: HistoryPayload };
 
 export type GUIMessage = {

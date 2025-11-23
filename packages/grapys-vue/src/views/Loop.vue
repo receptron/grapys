@@ -35,9 +35,13 @@ export default defineComponent({
       return getLoopWhileSources(store.nodes, graphAIStore.nestedGraphs);
     });
 
-    const loopType = ref<LoopDataType>(store.loop.loopType);
-    const countValue = ref(store.loop && store.loop.loopType === "count" ? store.loop.count : "1");
-    const whileValue = ref(store.loop && store.loop.loopType === "while" ? (store.loop.while === true ? "true" : store.loop.while) : whileSources.value[0]);
+    const loop = computed(() => {
+      return (store.extra.loop ?? { loopType: "none" }) as GUILoopData;
+    });
+
+    const loopType = ref<LoopDataType>(loop.value.loopType);
+    const countValue = ref(loop.value && loop.value.loopType === "count" ? loop.value.count : "1");
+    const whileValue = ref(loop.value && loop.value.loopType === "while" ? (loop.value.while === true ? "true" : loop.value.while) : whileSources.value[0]);
     const countRef = ref();
 
     const storeLoopData = computed<GUILoopData>(() => {
@@ -58,7 +62,7 @@ export default defineComponent({
       };
     });
     watch(
-      () => store.loop,
+      () => loop.value,
       (value) => {
         loopType.value = value.loopType;
         if (value.loopType === "while") {
@@ -71,7 +75,7 @@ export default defineComponent({
     );
 
     const updateLoop = () => {
-      store.updateLoop(storeLoopData.value);
+      store.updateExtra({ ...store.extra, loop: storeLoopData.value });
     };
 
     const updateType = (event: Event) => {

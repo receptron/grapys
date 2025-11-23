@@ -96,7 +96,7 @@ const loop2LoopObj = (loop: GUILoopData): LoopData | undefined => {
   return undefined;
 };
 
-export const store2graphData = (currentData: HistoryPayload, nestedGraphs: NestedGraphList) => {
+export const store2graphData = (currentData: HistoryPayload & { loop: GUILoopData }, nestedGraphs: NestedGraphList) => {
   const { nodes, edges, loop } = currentData;
   const edgeObject = edges2inputs(edges, nodes, nestedGraphs);
 
@@ -170,10 +170,19 @@ export const store2graphData = (currentData: HistoryPayload, nestedGraphs: Neste
 
 // convert template graph (graph or metadata) to graph
 export const convertGraph2Graph = (graphData: GraphData & GraphDataMetaData, nestedGraphs: NestedGraphList) => {
-  const graph =
-    graphData?.metadata?.data?.nodes && graphData?.metadata?.data?.edges
-      ? store2graphData(graphData?.metadata.data as HistoryPayload, nestedGraphs)
-      : graphData;
-  const { version, nodes, loop } = graph;
+  if (graphData?.metadata?.data?.nodes && graphData?.metadata?.data?.edges) {
+    // BACKWARD COMPATIBILITY: Support both old (root.loop) and new (extra.loop) format
+    const metaData = graphData.metadata.data;
+    const extra = metaData.extra as { loop?: GUILoopData } | undefined;
+    const loop = extra?.loop ?? metaData.loop ?? { loopType: "none" as const };
+
+    const dataWithLoop = {
+      nodes: metaData.nodes,
+      edges: metaData.edges,
+      loop: loop,
+    };
+    return store2graphData(dataWithLoop, nestedGraphs);
+  }
+  const { version, nodes, loop } = graphData;
   return { version, nodes, loop };
 };

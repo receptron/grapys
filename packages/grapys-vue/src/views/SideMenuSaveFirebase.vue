@@ -110,7 +110,9 @@ export default defineComponent({
       try {
         if (data) {
           const graphData = JSON.parse(data.jsonString);
-          store.loadData(graphData.metadata.data);
+          // BACKWARD COMPATIBILITY: Support old format where loop was at root level
+          const loadedData = graphData.metadata.data;
+          store.loadData(loadedData);
         }
       } catch (error) {
         console.log(error);
