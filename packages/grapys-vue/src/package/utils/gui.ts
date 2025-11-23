@@ -210,7 +210,7 @@ const sameTargetEdge = (edge1: EdgeData | GUIEdgeData, edge2: EdgeData | GUIEdge
   return edge1.target.nodeId === edge2.target.nodeId && edge1.target.index === edge2.target.index;
 };
 
-export const isEdgeConnectale = (expectEdge: GUIEdgeData | null, edges: GUIEdgeData[], validateConnection?: ValidateConnectionFn) => {
+export const isEdgeConnectable = (expectEdge: GUIEdgeData | null, edges: GUIEdgeData[], validateConnection?: ValidateConnectionFn) => {
   if (!expectEdge) {
     return false;
   }
@@ -221,17 +221,17 @@ export const isEdgeConnectale = (expectEdge: GUIEdgeData | null, edges: GUIEdgeD
   if (edges.find((edge) => sameEdge(edge, expectEdge))) {
     return false;
   }
-  const existanceEdges = edges.filter((edge) => {
+  const existingEdges = edges.filter((edge) => {
     return sameTargetEdge(edge, expectEdge);
   });
 
   // Additional validation callback (application-specific logic)
   if (validateConnection) {
-    return validateConnection(expectEdge, existanceEdges);
+    return validateConnection(expectEdge, existingEdges);
   }
 
   // Default: allow connection if no existing edges to same target
-  return existanceEdges.length === 0;
+  return existingEdges.length === 0;
 };
 
 export const convEdgePath = (
