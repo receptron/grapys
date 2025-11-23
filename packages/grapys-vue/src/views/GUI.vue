@@ -9,14 +9,12 @@ import JsonViewer from "./JsonViewer.vue";
 
 import SideMenu from "./SideMenu.vue";
 
-// import type { UpdateStaticValue } from "../utils/gui/type";
-
 import { graphChat } from "../graph/chat_tinyswallow";
 
 import { useKeyboardShortcuts } from "../composable/useKeyboardShortcuts";
 import { useFlowStore } from "../package";
 import { useGraphAIStore } from "../store/graphai";
-import { useNodeUpdate } from "../composable/useNodeUpdate";
+import { useNodeUpdate, type UpdateStaticValue } from "../composable/useNodeUpdate";
 
 export default defineComponent({
   components: {
@@ -95,6 +93,19 @@ export default defineComponent({
       panelKey.value += 1;
     };
 
+    // Handlers for node editor panel events
+    const handleUpdateStaticValue = (value: UpdateStaticValue) => {
+      if (selectedNodeIndex.value !== null) {
+        updateStaticNodeValue(selectedNodeIndex.value, value, true);
+      }
+    };
+
+    const handleUpdateNestedGraph = (value: UpdateStaticValue) => {
+      if (selectedNodeIndex.value !== null) {
+        updateNestedGraph(selectedNodeIndex.value, value);
+      }
+    };
+
     const showChat = ref(false);
 
     const switchViewerMode = () => {
@@ -102,8 +113,8 @@ export default defineComponent({
     };
 
     return {
-      updateStaticNodeValue,
-      updateNestedGraph,
+      handleUpdateStaticValue,
+      handleUpdateNestedGraph,
 
       store,
       graphData,
@@ -165,8 +176,8 @@ export default defineComponent({
               v-if="isNodeEditorOpen"
               :node-index="selectedNodeIndex as number"
               @close="selectedNodeIndex = null"
-              @update-static-node-value="(v: UpdateStaticValue) => updateStaticNodeValue(selectedNodeIndex as number, v, true)"
-              @update-nested-graph="(v: UpdateStaticValue) => updateNestedGraph(selectedNodeIndex as number, v)"
+              @update-static-node-value="handleUpdateStaticValue"
+              @update-nested-graph="handleUpdateNestedGraph"
             />
             <GraphRunner ref="graphRunnerRef" :class="{ hidden: !showChat }" :graph-data="graphData" @close="showChat = false" />
           </div>

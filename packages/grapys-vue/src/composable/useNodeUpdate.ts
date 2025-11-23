@@ -1,6 +1,9 @@
 import { useFlowStore } from "../package";
 import type { UpdateStaticValue } from "../utils/gui/type";
 
+// Re-export types for use in components
+export type { UpdateStaticValue } from "../utils/gui/type";
+
 /**
  * Application-specific node update operations
  * Built on top of the generic store API
