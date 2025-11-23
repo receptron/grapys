@@ -8,8 +8,6 @@ import {
   HistoryPayload,
 } from "../package/utils";
 import {
-  UpdateStaticValue,
-  UpdateAgentValue,
   NestedGraphList,
 } from "../utils/gui/type";
 import { store2graphData } from "../utils/gui/graph";
@@ -30,13 +28,19 @@ export interface LocalState {
   deleteNode: (nodeIndex: number) => void;
 
   updateNodePosition: (positionIndex: number, pos: UpdateNodePositionData) => void;
-  updateNodeParam: (positionIndex: number, key: string, value: unknown) => void;
   pushDataToHistory: (name: string, data: HistoryPayload) => void;
   saveNodePositionData: () => void;
 
   loadData: (data: HistoryPayload) => void;
 
-  updateStaticNodeValue: (nodeIndex: number, value: UpdateStaticValue | UpdateAgentValue, saveHistory: boolean) => void;
+  // Low-level API for extensions
+  updateNodeAt: (index: number, updater: (node: GUINodeData) => GUINodeData, name: string, saveHistory: boolean) => void;
+  updateNodesAndEdges: (
+    nodeUpdater: (nodes: GUINodeData[]) => GUINodeData[],
+    edgeUpdater: (edges: GUIEdgeData[]) => GUIEdgeData[],
+    name: string,
+    saveHistory: boolean,
+  ) => void;
   updateExtra: (extraData: Record<string, unknown>) => void;
 
   undo: () => void;
@@ -141,37 +145,23 @@ export const useLocalStore = create<LocalState>((set, get) => ({
     });
   },
 
-  updateNodeParam: (positionIndex: number, key: string, value: unknown) => {
+  // Low-level API: Generic node updater
+  updateNodeAt: (index: number, updater: (node: GUINodeData) => GUINodeData, name: string, saveHistory: boolean) => {
     const { updateData, currentData } = get();
-    const oldNode = currentData.nodes[positionIndex];
-    const newNode = {
-      ...oldNode,
-      data: {
-        ...oldNode.data,
-        params: oldNode.data.params ? { ...oldNode.data.params } : {},
-      },
-    };
-
-    if (value === "" || value === undefined || (value === null && newNode.data.params && newNode.data.params[key] !== undefined)) {
-      // delete operation
-      const { [key]: __, ...updatedParams } = newNode.data.params || {};
-      newNode.data.params = updatedParams;
-    } else {
-      // upsert
-      newNode.data.params = { ...(newNode.data.params || {}), [key]: value };
-    }
     const newNodes = [...currentData.nodes];
-    newNodes[positionIndex] = newNode;
-    updateData(newNodes, [...currentData.edges], { ...currentData.extra }, "updateParams", true);
+    newNodes[index] = updater({ ...currentData.nodes[index] });
+    updateData(newNodes, [...currentData.edges], { ...currentData.extra }, name, saveHistory);
   },
 
-  updateStaticNodeValue: (nodeIndex: number, value: UpdateStaticValue | UpdateAgentValue, saveHistory: boolean) => {
+  // Low-level API: Generic nodes and edges updater
+  updateNodesAndEdges: (
+    nodeUpdater: (nodes: GUINodeData[]) => GUINodeData[],
+    edgeUpdater: (edges: GUIEdgeData[]) => GUIEdgeData[],
+    name: string,
+    saveHistory: boolean,
+  ) => {
     const { updateData, currentData } = get();
-    const newNode = { ...currentData.nodes[nodeIndex] };
-    newNode.data = { ...newNode.data, ...value };
-    const newNodes = [...currentData.nodes];
-    newNodes[nodeIndex] = newNode;
-    updateData(newNodes, [...currentData.edges], { ...currentData.extra }, "updateStaticValue", saveHistory);
+    updateData(nodeUpdater([...currentData.nodes]), edgeUpdater([...currentData.edges]), { ...currentData.extra }, name, saveHistory);
   },
 
   updateData: (nodeData: GUINodeData[], edgeData: GUIEdgeData[], extraData: Record<string, unknown>, name: string, saveHistory: boolean) =>

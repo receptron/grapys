@@ -16,7 +16,7 @@ import { getClientPos, getNodeSize, getTransformStyle } from "../utils/utils/gui
 import { nodeMainClass, nodeHeaderClass, nodeOutputClass, nodeInputClass } from "../utils/utils/classUtils";
 
 import { agentProfiles, staticNodeParams } from "../utils/gui/data";
-import { useLocalStore } from "../store/index";
+import { useNodeUpdate } from "../hooks/useNodeUpdate";
 
 import NodeStaticValue from "./NodeStaticValue";
 import NodeComputedParams from "./NodeComputedParams";
@@ -59,7 +59,7 @@ const Node: React.FC<NodeProps> = ({
   const deltaDistance = useRef(0);
   const deltaDistanceThredhold = 4; // square deltaDistance
 
-  const updateStaticNodeValue = useLocalStore((state) => state.updateStaticNodeValue);
+  const { updateStaticNodeValue } = useNodeUpdate();
 
   const transformStyle = getTransformStyle(nodeData, isDragging);
 
