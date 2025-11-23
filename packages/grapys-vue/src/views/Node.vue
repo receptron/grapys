@@ -52,9 +52,8 @@ import { useGraphAIStore } from "../store/graphai";
 import type { GUINodeData, UpdateStaticValue } from "../utils/gui/type";
 import { nestedGraphInputs } from "../utils/gui/utils";
 import { agentProfiles, staticNodeParams } from "../utils/gui/data";
-import { nodeHeaderClass } from "../package/utils/classUtils";
+import { nodeHeaderClass, NodeBase } from "../package";
 
-import NodeBase from "../package/components/NodeBase.vue";
 import NodeStaticValue from "./NodeStaticValue.vue";
 import NodeComputedParams from "./NodeComputedParams.vue";
 import NodeResult from "./NodeResult.vue";

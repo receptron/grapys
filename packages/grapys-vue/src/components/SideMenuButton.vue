@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, type PropType } from "vue";
-import { buttonColorVariants, buttonRoundedClasses } from "../package/utils/classUtils";
+import { buttonColorVariants, buttonRoundedClasses } from "../package";
 
 type ColorVariant = keyof typeof buttonColorVariants;
 type RoundedVariant = keyof typeof buttonRoundedClasses;

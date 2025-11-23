@@ -37,9 +37,9 @@ export type {
   ClosestNodeData,
   InputOutputType,
   InputOutputData,
-} from "../../package/utils/type";
+} from "../../package";
 
-import type { NodePosition, GUINodeData, GUIEdgeData, InputOutputData } from "../../package/utils/type";
+import type { NodePosition, GUINodeData, GUIEdgeData, InputOutputData } from "../../package";
 
 export type UpdateNodePositionData = NodePosition | { width: number; height: number; outputCenters: number[]; inputCenters: number[] };
 

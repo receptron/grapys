@@ -16,7 +16,12 @@ import { agentProfiles } from "./data";
 import { store2graphData } from "./graph";
 
 // Validate edge connection based on agent profile
-export const validateEdgeConnection = (expectEdge: GUIEdgeData, existingEdges: GUIEdgeData[], nodeRecords: GUINodeDataRecord, nestedGraphs: NestedGraphList) => {
+export const validateEdgeConnection = (
+  expectEdge: GUIEdgeData,
+  existingEdges: GUIEdgeData[],
+  nodeRecords: GUINodeDataRecord,
+  nestedGraphs: NestedGraphList,
+) => {
   const profile = edgeEnd2agentProfile(expectEdge.target, nodeRecords, "target", nestedGraphs);
   if (!profile) {
     return true;

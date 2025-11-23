@@ -41,7 +41,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed, PropType, onMounted, onBeforeUnmount, watch } from "vue";
 import type { GUINodeData } from "../utils/gui/type";
-import { staticNodeOptions } from "../package/utils/classUtils";
+import { staticNodeOptions } from "../package";
 
 export default defineComponent({
   props: {

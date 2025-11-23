@@ -1,20 +1,11 @@
 import { ref, computed } from "vue";
-import {
-  GUINodeData,
-  GUIEdgeData,
-  GUINodeDataRecord,
-  UpdateStaticValue,
-  UpdateNodePositionData,
-  HistoryData,
-  HistoryPayload,
-} from "../../utils/gui/type";
+import { GUINodeData, GUIEdgeData, GUINodeDataRecord, UpdateStaticValue, UpdateNodePositionData, HistoryData, HistoryPayload } from "../../utils/gui/type";
 import { defineStore } from "pinia";
 
 import { graphToGUIData } from "../../utils/gui/utils";
 import type { GraphData } from "graphai";
 
 export const useFlowStore = defineStore("store", () => {
-
   const histories = ref<HistoryData[]>([]);
   const currentData = ref<HistoryPayload>({
     nodes: [],
