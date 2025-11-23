@@ -15,6 +15,7 @@ import { graphChat } from "../graph/chat_tinyswallow";
 
 import { useKeyboardShortcuts } from "../composable/useKeyboardShortcuts";
 import { useStore } from "../store";
+import { useGraphAIStore } from "../store/graphai";
 
 export default defineComponent({
   components: {
@@ -26,6 +27,10 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
+    const graphAIStore = useGraphAIStore();
+    const graphData = computed(() => {
+      return graphAIStore.createGraphData(store.currentData);
+    });
     const selectedNodeIndex = ref<number | null>(null);
     const isNodeEditorOpen = computed(() => selectedNodeIndex.value !== null);
     const panelKey = ref(0);
@@ -105,6 +110,7 @@ export default defineComponent({
       updateNestedGraph,
 
       store,
+      graphData,
 
       openNodeEditor,
 
@@ -129,7 +135,7 @@ export default defineComponent({
       </aside>
       <main class="flex-1">
         <GraphCanvas v-if="viewerMode === 'graph'" @open-node-editor="openNodeEditor" />
-        <JsonViewer v-if="viewerMode === 'json'" :json-data="store.graphData" />
+        <JsonViewer v-if="viewerMode === 'json'" :json-data="graphData" />
         <div class="h-100vh pointer-events-none absolute top-0 right-0 z-10 flex max-h-screen flex-col items-end space-y-4 pt-4 pr-4 pb-4">
           <div class="flex flex-row items-start space-x-4">
             <button
@@ -166,7 +172,7 @@ export default defineComponent({
               @update-static-node-value="(v: UpdateStaticValue) => updateStaticNodeValue(selectedNodeIndex as number, v, true)"
               @update-nested-graph="(v: UpdateStaticValue) => updateNestedGraph(selectedNodeIndex as number, v)"
             />
-            <GraphRunner ref="graphRunnerRef" :class="{ hidden: !showChat }" :graph-data="store.graphData" @close="showChat = false" />
+            <GraphRunner ref="graphRunnerRef" :class="{ hidden: !showChat }" :graph-data="graphData" @close="showChat = false" />
           </div>
         </div>
       </main>

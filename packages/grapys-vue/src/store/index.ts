@@ -9,14 +9,13 @@ import {
   HistoryPayload,
   GUILoopData,
 } from "../utils/gui/type";
-import { store2graphData } from "../utils/gui/graph";
 import { defineStore } from "pinia";
-import { graphs } from "../graph/nested";
 
 import { graphToGUIData } from "../utils/gui/utils";
 import type { GraphData } from "graphai";
 
 export const useStore = defineStore("store", () => {
+
   const histories = ref<HistoryData[]>([]);
   const currentData = ref<HistoryPayload>({
     nodes: [],
@@ -24,8 +23,6 @@ export const useStore = defineStore("store", () => {
     loop: { loopType: "none" },
   });
   const index = ref(0);
-
-  const graphAIResults = ref<Record<string, unknown>>({});
 
   const reset = () => {
     updateData([], [], { loopType: "none" }, "reset", true);
@@ -48,23 +45,6 @@ export const useStore = defineStore("store", () => {
       tmp[current.nodeId] = current;
       return tmp;
     }, {});
-  });
-  const graphData = computed(() => {
-    return store2graphData(currentData.value, graphs);
-  });
-  const streamNodes = computed(() => {
-    return nodes.value
-      .filter((node) => {
-        return node.data?.params?.stream ?? false;
-      })
-      .map((node) => node.nodeId);
-  });
-  const resultNodes = computed(() => {
-    return nodes.value
-      .filter((node) => {
-        return node.data?.params?.isResult ?? false;
-      })
-      .map((node) => node.nodeId);
   });
   // end of computed
 
@@ -209,13 +189,6 @@ export const useStore = defineStore("store", () => {
     }
   };
 
-  // graphAIResult
-  const setResult = (nodeId: string, result: unknown) => {
-    const ret = graphAIResults.value;
-    ret[nodeId] = result;
-    graphAIResults.value = ret;
-  };
-
   return {
     // variables
     histories,
@@ -249,19 +222,9 @@ export const useStore = defineStore("store", () => {
     nodes,
     edges,
     loop,
-    graphData,
     nodeRecords,
-    streamNodes,
-    resultNodes,
 
     undoable,
     redoable,
-
-    // graphAIResult
-    setResult,
-    graphAIResults,
-
-    // for nested agent
-    nestedGraphs: graphs,
   };
 });

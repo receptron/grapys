@@ -34,7 +34,7 @@
   <h2 class="text-left font-bold">Download</h2>
   <div>
     <button
-      @click="() => handleDownload(store.graphData)"
+      @click="() => handleDownload(graphData)"
       class="mb-1 w-full cursor-pointer items-center rounded-full bg-sky-500 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700"
     >
       GraphData
@@ -77,11 +77,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, nextTick } from "vue";
+import { defineComponent, nextTick, computed } from "vue";
 import type { GraphData } from "graphai";
 import { signOut } from "firebase/auth";
 
 import { useStore } from "../store";
+import { useGraphAIStore } from "../store/graphai";
 import { useFirebaseStore } from "../store/firebase";
 
 import AddNode from "./AddNode.vue";
@@ -109,7 +110,12 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
+    const graphAIStore = useGraphAIStore();
     const firebaseStore = useFirebaseStore();
+
+    const graphData = computed(() => {
+      return graphAIStore.createGraphData(store.currentData);
+    });
 
     const setGraph = async (graph: GraphData) => {
       store.reset();
@@ -130,6 +136,7 @@ export default defineComponent({
       setGraph,
       enableFirebase,
       logout,
+      graphData,
     };
   },
 });

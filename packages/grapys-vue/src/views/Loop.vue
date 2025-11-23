@@ -23,14 +23,16 @@
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useStore } from "../store";
+import { useGraphAIStore } from "../store/graphai";
 import { getLoopWhileSources } from "../utils/gui/utils";
 import { LoopDataType, GUILoopData } from "../utils/gui/type";
 
 export default defineComponent({
   setup() {
     const store = useStore();
+    const graphAIStore = useGraphAIStore();
     const whileSources = computed(() => {
-      return getLoopWhileSources(store.nodes, store.nestedGraphs);
+      return getLoopWhileSources(store.nodes, graphAIStore.nestedGraphs);
     });
 
     const loopType = ref<LoopDataType>(store.loop.loopType);

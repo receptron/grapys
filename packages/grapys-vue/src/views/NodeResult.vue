@@ -9,7 +9,7 @@
 <script lang="ts">
 import { defineComponent, computed, PropType } from "vue";
 import { GUINodeData } from "../utils/gui/type";
-import { useStore } from "../store";
+import { useGraphAIStore } from "../store/graphai";
 
 export default defineComponent({
   props: {
@@ -19,9 +19,9 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const store = useStore();
+    const graphAIStore = useGraphAIStore();
     const result = computed(() => {
-      return store.graphAIResults[props.nodeData.nodeId] as { url?: string };
+      return graphAIStore.graphAIResults[props.nodeData.nodeId] as { url?: string };
     });
     return {
       result,

@@ -46,6 +46,7 @@
 <script lang="ts">
 import { defineComponent, onUnmounted, ref } from "vue";
 import { useStore } from "../store";
+import { useGraphAIStore } from "../store/graphai";
 import { useFirebaseStore } from "../store/firebase";
 import { serverTimestamp, doc, collection, setDoc, updateDoc, deleteDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../utils/firebase/firebase";
@@ -61,6 +62,7 @@ export default defineComponent({
   components: {},
   setup() {
     const store = useStore();
+    const graphAIStore = useGraphAIStore();
     const firebaseStore = useFirebaseStore();
 
     const uid = firebaseStore?.firebaseUser?.uid;
@@ -69,7 +71,8 @@ export default defineComponent({
     const save = async () => {
       const name = window.prompt("Input data name");
       if (name) {
-        const dataStr = JSON.stringify(store.graphData);
+        const graphData = graphAIStore.createGraphData(store.currentData);
+        const dataStr = JSON.stringify(graphData);
         const graphDoc = doc(collection(db, path));
         // console.log(graphId);
         const saveData = {
@@ -117,7 +120,8 @@ export default defineComponent({
       const data = graphDataSet.value[selectedGraph.value];
       if (window.confirm(`Really update data to ${data.name} ??`)) {
         const dataPath = `${path}/${data?.graphId}`;
-        const dataStr = JSON.stringify(store.graphData);
+        const graphData = graphAIStore.createGraphData(store.currentData);
+        const dataStr = JSON.stringify(graphData);
 
         await updateDoc(doc(db, dataPath), {
           jsonString: dataStr,

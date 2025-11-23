@@ -13,14 +13,17 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useStore } from "../store";
+import { useGraphAIStore } from "../store/graphai";
 
 export default defineComponent({
   components: {},
   setup() {
     const store = useStore();
+    const graphAIStore = useGraphAIStore();
 
     const save = () => {
-      const dataStr = JSON.stringify(store.graphData);
+      const graphData = graphAIStore.createGraphData(store.currentData);
+      const dataStr = JSON.stringify(graphData);
       window.localStorage.setItem("GRAPHAIGUI", dataStr);
     };
 

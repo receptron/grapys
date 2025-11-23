@@ -27,7 +27,7 @@
     <div v-if="agentProfile?.isNestedGraph || agentProfile?.isMap" class="space-y-1">
       <label class="block text-xs text-gray-600">Nested Graph</label>
       <select class="w-full rounded border px-2 py-1" v-model.number="nestedGraphIndex" @change="onChangeNestedGraph">
-        <option :value="key" v-for="(graph, key) in store.nestedGraphs" :key="key">{{ graph.name }}</option>
+        <option :value="key" v-for="(graph, key) in graphAIStore.nestedGraphs" :key="key">{{ graph.name }}</option>
       </select>
     </div>
 
@@ -45,6 +45,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from "vue";
 import { useStore } from "../store";
+import { useGraphAIStore } from "../store/graphai";
 import { agentProfiles, staticNodeParams } from "../utils/gui/data";
 import type { GUINodeData, AgentProfile, UpdateStaticValue } from "../utils/gui/type";
 import NodeStaticValue from "./NodeStaticValue.vue";
@@ -62,6 +63,7 @@ export default defineComponent({
   emits: ["close", "updateStaticNodeValue", "updateNestedGraph"],
   setup(props, ctx) {
     const store = useStore();
+    const graphAIStore = useGraphAIStore();
 
     const currentNode = computed<GUINodeData | undefined>(() => store.nodes[props.nodeIndex]);
     const agentProfile = computed<AgentProfile | typeof staticNodeParams | undefined>(() => {
@@ -96,7 +98,7 @@ export default defineComponent({
     };
 
     const onChangeNestedGraph = () => {
-      const graph = store.nestedGraphs[nestedGraphIndex.value];
+      const graph = graphAIStore.nestedGraphs[nestedGraphIndex.value];
       if (!graph) return;
       ctx.emit("updateNestedGraph", { nestedGraphIndex: nestedGraphIndex.value, nestedGraphId: graph.id });
     };
@@ -110,6 +112,7 @@ export default defineComponent({
 
     return {
       store,
+      graphAIStore,
       currentNode,
       agentProfile,
       headerAgentName,

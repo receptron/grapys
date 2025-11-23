@@ -29,6 +29,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
 import { useStore } from "../store";
+import { useGraphAIStore } from "../store/graphai";
 import { agentProfilesCategory, agentProfiles } from "../utils/gui/data";
 import { getDefaultParams } from "../utils/gui/utils";
 import SideMenuButton from "../components/SideMenuButton.vue";
@@ -43,6 +44,7 @@ export default defineComponent({
     const isError = ref(false);
 
     const store = useStore();
+    const graphAIStore = useGraphAIStore();
 
     watch(nodeId, () => {
       isError.value = false;
@@ -69,7 +71,7 @@ export default defineComponent({
             guiAgentId: agent.value,
             params,
             ...(targetAgent.agents ? { agentIndex: 0 } : {}),
-            ...(targetAgent.isNestedGraph || targetAgent.isMap ? { nestedGraphIndex: 0, nestedGraphId: store.nestedGraphs[0].id } : {}),
+            ...(targetAgent.isNestedGraph || targetAgent.isMap ? { nestedGraphIndex: 0, nestedGraphId: graphAIStore.nestedGraphs[0].id } : {}),
           };
 
       store.pushNode({
