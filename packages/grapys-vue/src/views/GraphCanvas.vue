@@ -28,9 +28,9 @@ import { defineComponent } from "vue";
 import Node from "./Node.vue";
 import Loop from "./Loop.vue";
 
-import { useFlowStore, GraphCanvasBase } from "../package";
+import { useFlowStore, GraphCanvasBase, NodePosition, GUIEdgeData } from "../package";
 import { useGraphAIStore } from "../store/graphai";
-import type { NodePosition, UpdateStaticValue, GUIEdgeData } from "../utils/gui/type";
+import type { UpdateStaticValue } from "../utils/gui/type";
 import { validateEdgeConnection } from "../utils/gui/utils";
 
 export default defineComponent({

@@ -1,7 +1,7 @@
 import React from "react";
 import NodeComputedParam from "./NodeComputedParam";
 import { agentProfiles } from "../utils/gui/data";
-import type { GUINodeData } from "../utils/gui/type";
+import type { GUINodeData } from "../package/utils";
 
 interface NodeComputedParamsProps {
   nodeData: GUINodeData;

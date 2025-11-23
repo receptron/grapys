@@ -8,7 +8,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, PropType } from "vue";
-import { GUINodeData } from "../utils/gui/type";
+import { GUINodeData } from "../package";
 import { useGraphAIStore } from "../store/graphai";
 
 export default defineComponent({

@@ -2,7 +2,8 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import { store2graphData } from "../utils/gui/graph";
 import { graphs } from "../graph/nested";
-import type { HistoryPayload, GUILoopData } from "../utils/gui/type";
+import type { HistoryPayload } from "../package";
+import type { GUILoopData } from "../utils/gui/type";
 
 export const useGraphAIStore = defineStore("graphai", () => {
   const graphAIResults = ref<Record<string, unknown>>({});
@@ -21,7 +22,7 @@ export const useGraphAIStore = defineStore("graphai", () => {
   const createGraphData = (currentData: HistoryPayload) => {
     // BACKWARD COMPATIBILITY: Support both old (root.loop) and new (extra.loop) format
     const extra = currentData.extra as { loop?: GUILoopData } | undefined;
-    const loop = extra?.loop ?? currentData.loop ?? { loopType: "none" };
+    const loop: GUILoopData = extra?.loop ?? (currentData.loop as GUILoopData | undefined) ?? { loopType: "none" };
 
     const dataWithLoop = {
       nodes: currentData.nodes,

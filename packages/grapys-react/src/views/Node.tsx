@@ -3,11 +3,13 @@ import type {
   GUINodeData,
   GUINearestData,
   NewEdgeEventDirection,
-  UpdateStaticValue,
   NewEdgeStartEventData,
   Position,
   InputOutputData,
   UpdateNodePositionData,
+} from "../package/utils";
+import type {
+  UpdateStaticValue,
   UpdateAgentValue,
 } from "../utils/gui/type";
 import { getClientPos, getNodeSize, getTransformStyle } from "../utils/utils/gui";

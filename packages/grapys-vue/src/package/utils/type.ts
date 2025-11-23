@@ -92,3 +92,18 @@ export type InputOutputType = "text" | "array" | "message" | "data" | "wait" | "
 export type InputOutputData = { name: string; type?: InputOutputType; mapTo?: string };
 
 export type ValidateConnectionFn = (expectEdge: GUIEdgeData, existingEdges: GUIEdgeData[]) => boolean;
+
+// History and store-related types
+export type UpdateNodePositionData = NodePosition | { width: number; height: number; outputCenters: number[]; inputCenters: number[] };
+
+// BACKWARD COMPATIBILITY: Old format included 'loop' at root level.
+// New format uses 'extra' for application-specific data.
+export type HistoryPayload = {
+  nodes: GUINodeData[];
+  edges: GUIEdgeData[];
+  extra?: Record<string, unknown>;
+  // Deprecated: kept for backward compatibility
+  loop?: unknown;
+};
+
+export type HistoryData = { name: string; data: HistoryPayload };

@@ -1,5 +1,5 @@
 import { ref, computed } from "vue";
-import { GUINodeData, GUIEdgeData, GUINodeDataRecord, UpdateStaticValue, UpdateNodePositionData, HistoryData, HistoryPayload } from "../../utils/gui/type";
+import { GUINodeData, GUIEdgeData, GUINodeDataRecord, UpdateNodePositionData, HistoryData, HistoryPayload } from "../utils";
 import { defineStore } from "pinia";
 
 import { graphToGUIData } from "../../utils/gui/utils";
@@ -126,7 +126,7 @@ export const useFlowStore = defineStore("store", () => {
     newNodes[positionIndex] = newNode;
     updateData(newNodes, [...edges.value], { ...extra.value }, "updateParams", true);
   };
-  const updateStaticNodeValue = (positionIndex: number, value: UpdateStaticValue, saveHistory: boolean) => {
+  const updateStaticNodeValue = (positionIndex: number, value: Record<string, unknown>, saveHistory: boolean) => {
     const newNode = { ...nodes.value[positionIndex] };
     newNode.data = { ...newNode.data, ...value };
     const newNodes = [...nodes.value];
@@ -134,7 +134,7 @@ export const useFlowStore = defineStore("store", () => {
     updateData(newNodes, [...edges.value], { ...extra.value }, "updateStaticValue", saveHistory);
   };
 
-  const updateNestedGraph = (positionIndex: number, value: UpdateStaticValue) => {
+  const updateNestedGraph = (positionIndex: number, value: Record<string, unknown>) => {
     const newNode = { ...nodes.value[positionIndex] };
     newNode.data = { ...newNode.data, ...value };
     const newNodes = [...nodes.value];

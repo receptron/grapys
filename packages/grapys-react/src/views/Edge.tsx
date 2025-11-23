@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import type { EdgeData2 } from "../utils/gui/type";
+import type { EdgeData2 } from "../package/utils";
 import { convEdgePath } from "../utils/utils/gui";
 import { edgeColors } from "../utils/utils/classUtils";
 

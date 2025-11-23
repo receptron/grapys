@@ -3,11 +3,13 @@ import {
   GUINodeData,
   GUIEdgeData,
   GUINodeDataRecord,
-  UpdateStaticValue,
-  UpdateAgentValue,
   UpdateNodePositionData,
   HistoryData,
   HistoryPayload,
+} from "../package/utils";
+import {
+  UpdateStaticValue,
+  UpdateAgentValue,
   NestedGraphList,
 } from "../utils/gui/type";
 import { store2graphData } from "../utils/gui/graph";

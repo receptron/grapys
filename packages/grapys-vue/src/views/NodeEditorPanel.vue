@@ -44,10 +44,10 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from "vue";
-import { useFlowStore } from "../package";
+import { useFlowStore, GUINodeData } from "../package";
 import { useGraphAIStore } from "../store/graphai";
 import { agentProfiles, staticNodeParams } from "../utils/gui/data";
-import type { GUINodeData, AgentProfile, UpdateStaticValue } from "../utils/gui/type";
+import type { AgentProfile, UpdateStaticValue } from "../utils/gui/type";
 import NodeStaticValue from "./NodeStaticValue.vue";
 import NodeComputedParams from "./NodeComputedParams.vue";
 

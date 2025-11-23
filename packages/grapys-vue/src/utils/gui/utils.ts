@@ -1,10 +1,6 @@
+import { GUINodeData, GUIEdgeData, GUINodeDataRecord, InputOutputData, EdgeEndPointData } from "../../package";
 import {
-  GUINodeData,
-  GUIEdgeData,
-  GUINodeDataRecord,
   AgentProfile,
-  InputOutputData,
-  EdgeEndPointData,
   StaticNodeType,
   GUILoopData,
   ParamData,

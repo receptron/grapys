@@ -1,4 +1,5 @@
 import type { GraphData, DefaultParamsType } from "graphai";
+import type { GUINodeData, GUIEdgeData, InputOutputData, HistoryPayload } from "../../package";
 
 export type StaticNodeType = "text" | "data" | "number" | "boolean";
 
@@ -14,39 +15,11 @@ export type ApplicationData = {
   nestedGraphIndex?: number;
 };
 
-// Re-export types from package for backward compatibility
-export type {
-  Position,
-  NodePosition,
-  NodePositionData,
-  GUINodeDataType,
-  GUINodeData,
-  GUINodeDataRecord,
-  EdgeEndPointData,
-  GUIEdgeDataType,
-  GUIEdgeData,
-  EdgeFormToData,
-  EdgeData,
-  NewEdgeEventDirection,
-  NewEdgeStartEventData,
-  GUINearestData,
-  EdgeData2,
-  NewEdgeData1,
-  NewEdgeData2,
-  NewEdgeData,
-  ClosestNodeData,
-  InputOutputType,
-  InputOutputData,
-} from "../../package";
-
-import type { NodePosition, GUINodeData, GUIEdgeData, InputOutputData } from "../../package";
-
-export type UpdateNodePositionData = NodePosition | { width: number; height: number; outputCenters: number[]; inputCenters: number[] };
-
 export type UpdateStaticValue = {
   staticNodeType: StaticNodeType;
   value: string | number | boolean;
 };
+
 export type UpdateAgentValue = {
   agentIndex: number;
   agent?: string;
@@ -69,6 +42,7 @@ export type ParamData = {
   step?: number;
   values?: string[];
 };
+
 export type AgentProfile = {
   inputs: InputOutputData[];
   outputs: InputOutputData[];
@@ -90,16 +64,6 @@ export type GUILoopData = {
   count?: number;
 };
 
-// BACKWARD COMPATIBILITY: Old format included 'loop' at root level.
-// New format uses 'extra.loop' for application-specific data.
-export type HistoryPayload = {
-  nodes: GUINodeData[];
-  edges: GUIEdgeData[];
-  extra?: Record<string, unknown>;
-  // Deprecated: kept for backward compatibility, will be migrated to extra.loop
-  loop?: GUILoopData;
-};
-
 export type AppHistoryPayload = {
   nodes: GUINodeData[];
   edges: GUIEdgeData[];
@@ -107,8 +71,6 @@ export type AppHistoryPayload = {
     loop: GUILoopData;
   };
 };
-
-export type HistoryData = { name: string; data: HistoryPayload };
 
 export type GUIMessage = {
   role: string;
