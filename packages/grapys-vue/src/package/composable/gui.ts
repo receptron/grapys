@@ -1,10 +1,10 @@
 import { Position, NewEdgeStartEventData, NewEdgeData, ClosestNodeData, GUINearestData, ValidateConnectionFn } from "../utils/type";
 import { ref, computed } from "vue";
-import { useStore } from "../../store";
+import { useFlowStore } from "../../store";
 import { edgeStartEventData, edgeUpdateEventData, edgeEndEventData, pickNearestNode, pickNearestConnect, isEdgeConnectable } from "../utils/gui";
 
 export const useNewEdge = (validateConnection?: ValidateConnectionFn) => {
-  const store = useStore();
+  const store = useFlowStore();
 
   const svgRef = ref<SVGSVGElement | null>(null);
   const newEdgeData = ref<NewEdgeData | null>(null);

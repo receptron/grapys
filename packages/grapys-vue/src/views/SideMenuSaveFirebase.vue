@@ -45,7 +45,7 @@
 
 <script lang="ts">
 import { defineComponent, onUnmounted, ref } from "vue";
-import { useStore } from "../store";
+import { useFlowStore } from "../store";
 import { useGraphAIStore } from "../store/graphai";
 import { useFirebaseStore } from "../store/firebase";
 import { serverTimestamp, doc, collection, setDoc, updateDoc, deleteDoc, onSnapshot } from "firebase/firestore";
@@ -61,7 +61,7 @@ type FirebaseGraphData = {
 export default defineComponent({
   components: {},
   setup() {
-    const store = useStore();
+    const store = useFlowStore();
     const graphAIStore = useGraphAIStore();
     const firebaseStore = useFirebaseStore();
 

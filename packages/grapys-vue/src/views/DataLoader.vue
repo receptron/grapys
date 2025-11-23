@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { useStore } from "../store";
+import { useFlowStore } from "../store";
 import SideMenuButton from "../components/SideMenuButton.vue";
 
 export default defineComponent({
@@ -27,7 +27,7 @@ export default defineComponent({
     SideMenuButton,
   },
   setup() {
-    const store = useStore();
+    const store = useFlowStore();
 
     let file: null | File = null;
     const fileName = ref<string | null>("");

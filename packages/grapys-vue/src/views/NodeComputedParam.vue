@@ -73,7 +73,7 @@
 import { defineComponent, PropType, ref, onBeforeUnmount, onMounted, watch } from "vue";
 import type { ParamData, ApplicationData } from "../utils/gui/type";
 
-import { useStore } from "../store";
+import { useFlowStore } from "../store";
 
 export default defineComponent({
   props: {
@@ -92,7 +92,7 @@ export default defineComponent({
   },
   emits: ["focusEvent", "blurEvent", "updateValue"],
   setup(props, ctx) {
-    const store = useStore();
+    const store = useFlowStore();
 
     const textareaRef = ref();
     const inputRef = ref();

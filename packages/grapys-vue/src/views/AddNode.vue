@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
-import { useStore } from "../store";
+import { useFlowStore } from "../store";
 import { useGraphAIStore } from "../store/graphai";
 import { agentProfilesCategory, agentProfiles } from "../utils/gui/data";
 import { getDefaultParams } from "../utils/gui/utils";
@@ -43,7 +43,7 @@ export default defineComponent({
     const agent = ref(nodesKey[0]);
     const isError = ref(false);
 
-    const store = useStore();
+    const store = useFlowStore();
     const graphAIStore = useGraphAIStore();
 
     watch(nodeId, () => {

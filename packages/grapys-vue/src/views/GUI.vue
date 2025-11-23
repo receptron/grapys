@@ -14,7 +14,7 @@ import { UpdateStaticValue } from "../utils/gui/type";
 import { graphChat } from "../graph/chat_tinyswallow";
 
 import { useKeyboardShortcuts } from "../composable/useKeyboardShortcuts";
-import { useStore } from "../store";
+import { useFlowStore } from "../store";
 import { useGraphAIStore } from "../store/graphai";
 
 export default defineComponent({
@@ -26,7 +26,7 @@ export default defineComponent({
     GraphCanvas,
   },
   setup() {
-    const store = useStore();
+    const store = useFlowStore();
     const graphAIStore = useGraphAIStore();
     const graphData = computed(() => {
       return graphAIStore.createGraphData(store.currentData);

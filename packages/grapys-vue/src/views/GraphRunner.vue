@@ -95,7 +95,7 @@
 import { defineComponent, ref, computed, watch, PropType } from "vue";
 import { GraphAI, GraphData, AgentFilterInfo, NodeState } from "graphai";
 
-import { useStore } from "../store";
+import { useFlowStore } from "../store";
 import { useGraphAIStore } from "../store/graphai";
 
 import { useStreamData } from "../utils/vue-plugin/stream";
@@ -133,7 +133,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const isRunning = ref(false);
     const chatContainerRef = ref<HTMLElement | null>(null);
-    const store = useStore();
+    const store = useFlowStore();
     const graphAIStore = useGraphAIStore();
 
     const { eventAgent, userInput, events, submitText, clearEvents } = textInputEvent();

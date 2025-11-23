@@ -29,7 +29,7 @@ import GraphCanvasBase from "../package/components/GraphCanvasBase.vue";
 import Node from "./Node.vue";
 import Loop from "./Loop.vue";
 
-import { useStore } from "../store";
+import { useFlowStore } from "../store";
 import { useGraphAIStore } from "../store/graphai";
 import type { NodePosition, UpdateStaticValue, GUIEdgeData } from "../utils/gui/type";
 import { validateEdgeConnection } from "../utils/gui/utils";
@@ -43,7 +43,7 @@ export default defineComponent({
   },
   emits: ["open-node-editor"],
   setup(props, { emit }) {
-    const store = useStore();
+    const store = useFlowStore();
     const graphAIStore = useGraphAIStore();
 
     const updateNodePosition = (index: number, pos: NodePosition) => {

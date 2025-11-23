@@ -44,7 +44,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from "vue";
-import { useStore } from "../store";
+import { useFlowStore } from "../store";
 import { useGraphAIStore } from "../store/graphai";
 import { agentProfiles, staticNodeParams } from "../utils/gui/data";
 import type { GUINodeData, AgentProfile, UpdateStaticValue } from "../utils/gui/type";
@@ -62,7 +62,7 @@ export default defineComponent({
   },
   emits: ["close", "updateStaticNodeValue", "updateNestedGraph"],
   setup(props, ctx) {
-    const store = useStore();
+    const store = useFlowStore();
     const graphAIStore = useGraphAIStore();
 
     const currentNode = computed<GUINodeData | undefined>(() => store.nodes[props.nodeIndex]);

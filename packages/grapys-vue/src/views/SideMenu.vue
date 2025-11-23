@@ -81,7 +81,7 @@ import { defineComponent, nextTick, computed } from "vue";
 import type { GraphData } from "graphai";
 import { signOut } from "firebase/auth";
 
-import { useStore } from "../store";
+import { useFlowStore } from "../store";
 import { useGraphAIStore } from "../store/graphai";
 import { useFirebaseStore } from "../store/firebase";
 
@@ -109,7 +109,7 @@ export default defineComponent({
     DataLoader,
   },
   setup() {
-    const store = useStore();
+    const store = useFlowStore();
     const graphAIStore = useGraphAIStore();
     const firebaseStore = useFirebaseStore();
 
