@@ -11,6 +11,7 @@ export type NodePositionData = Position & {
 };
 
 export type GUINodeDataType = "computed" | "static";
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type GUINodeData<T = any> = {
   type: GUINodeDataType;

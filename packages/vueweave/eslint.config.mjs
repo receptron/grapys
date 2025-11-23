@@ -11,7 +11,7 @@ export default [
     files: ["src/**/*.{vue,ts}"],
   },
   {
-    ignores: ["**/*js", "functions"]
+    ignores: ["**/*.js", "src/shims-vue.d.ts"]
   },
   eslint.configs.all,
   ...tseslint.configs.strict,
