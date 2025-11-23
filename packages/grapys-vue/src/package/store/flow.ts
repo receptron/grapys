@@ -106,9 +106,9 @@ export const useFlowStore = defineStore("store", () => {
   };
 
   // Low-level API: Generic node updater
-  const updateNodeAt = (index: number, updater: (node: GUINodeData) => GUINodeData, name: string, saveHistory: boolean) => {
+  const updateNodeAt = (nodeIndex: number, updater: (node: GUINodeData) => GUINodeData, name: string, saveHistory: boolean) => {
     const newNodes = [...nodes.value];
-    newNodes[index] = updater({ ...nodes.value[index] });
+    newNodes[nodeIndex] = updater({ ...nodes.value[nodeIndex] });
     updateData(newNodes, [...edges.value], { ...extra.value }, name, saveHistory);
   };
 

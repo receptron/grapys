@@ -30,7 +30,6 @@ import Loop from "./Loop.vue";
 
 import { useFlowStore, GraphCanvasBase, NodePosition, GUIEdgeData } from "../package";
 import { useGraphAIStore } from "../store/graphai";
-import type { UpdateStaticValue } from "../utils/gui/type";
 import { validateEdgeConnection } from "../utils/gui/utils";
 import { useNodeUpdate } from "../composable/useNodeUpdate";
 

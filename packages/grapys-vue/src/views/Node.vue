@@ -49,11 +49,10 @@
 <script lang="ts">
 import { defineComponent, ref, computed, PropType, watch } from "vue";
 import { useGraphAIStore } from "../store/graphai";
-import type { GUINodeData } from "../package";
+import { nodeHeaderClass, NodeBase, type GUINodeData } from "../package";
 import type { UpdateStaticValue } from "../utils/gui/type";
 import { nestedGraphInputs } from "../utils/gui/utils";
 import { agentProfiles, staticNodeParams } from "../utils/gui/data";
-import { nodeHeaderClass, NodeBase } from "../package";
 
 import NodeStaticValue from "./NodeStaticValue.vue";
 import NodeComputedParams from "./NodeComputedParams.vue";
