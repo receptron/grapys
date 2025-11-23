@@ -34,7 +34,7 @@ export interface LocalState {
   loadData: (data: HistoryPayload) => void;
 
   // Low-level API for extensions
-  updateNodeAt: (index: number, updater: (node: GUINodeData) => GUINodeData, name: string, saveHistory: boolean) => void;
+  updateNodeAt: (nodeIndex: number, updater: (node: GUINodeData) => GUINodeData, name: string, saveHistory: boolean) => void;
   updateNodesAndEdges: (
     nodeUpdater: (nodes: GUINodeData[]) => GUINodeData[],
     edgeUpdater: (edges: GUIEdgeData[]) => GUIEdgeData[],
@@ -146,10 +146,10 @@ export const useLocalStore = create<LocalState>((set, get) => ({
   },
 
   // Low-level API: Generic node updater
-  updateNodeAt: (index: number, updater: (node: GUINodeData) => GUINodeData, name: string, saveHistory: boolean) => {
+  updateNodeAt: (nodeIndex: number, updater: (node: GUINodeData) => GUINodeData, name: string, saveHistory: boolean) => {
     const { updateData, currentData } = get();
     const newNodes = [...currentData.nodes];
-    newNodes[index] = updater({ ...currentData.nodes[index] });
+    newNodes[nodeIndex] = updater({ ...currentData.nodes[nodeIndex] });
     updateData(newNodes, [...currentData.edges], { ...currentData.extra }, name, saveHistory);
   },
 
