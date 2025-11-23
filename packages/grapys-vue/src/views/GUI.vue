@@ -9,7 +9,7 @@ import JsonViewer from "./JsonViewer.vue";
 
 import SideMenu from "./SideMenu.vue";
 
-import type { UpdateStaticValue } from "../utils/gui/type";
+// import type { UpdateStaticValue } from "../utils/gui/type";
 
 import { graphChat } from "../graph/chat_tinyswallow";
 
