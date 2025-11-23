@@ -244,8 +244,8 @@ export const convEdgePath = (
   const x1 = x + (width ?? 0);
   const { x: x2, y: y2, inputCenters } = targetPosition;
 
-  const y1Offset = sourceIndex !== undefined && outputCenters && outputCenters.length >= sourceIndex ? outputCenters[sourceIndex] : 0;
-  const y2Offset = targetIndex !== undefined && inputCenters && inputCenters.length >= targetIndex ? inputCenters[targetIndex] : 0;
+  const y1Offset = sourceIndex !== undefined && outputCenters && outputCenters.length > sourceIndex ? outputCenters[sourceIndex] : 0;
+  const y2Offset = targetIndex !== undefined && inputCenters && inputCenters.length > targetIndex ? inputCenters[targetIndex] : 0;
 
   const y1dash = y1 + y1Offset;
   const y2dash = y2 + y2Offset;
