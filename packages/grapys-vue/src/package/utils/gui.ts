@@ -9,6 +9,7 @@ import type {
   GUINearestData,
   ClosestNodeData,
   NodePositionData,
+  ValidateConnectionFn,
 } from "./type";
 
 const isTouch = (event: MouseEvent | TouchEvent): event is TouchEvent => {
@@ -209,11 +210,7 @@ const sameTargetEdge = (edge1: EdgeData | GUIEdgeData, edge2: EdgeData | GUIEdge
   return edge1.target.nodeId === edge2.target.nodeId && edge1.target.index === edge2.target.index;
 };
 
-export const isEdgeConnectale = (
-  expectEdge: GUIEdgeData | null,
-  edges: GUIEdgeData[],
-  validateConnection?: (expectEdge: GUIEdgeData, existingEdges: GUIEdgeData[]) => boolean,
-) => {
+export const isEdgeConnectale = (expectEdge: GUIEdgeData | null, edges: GUIEdgeData[], validateConnection?: ValidateConnectionFn) => {
   if (!expectEdge) {
     return false;
   }

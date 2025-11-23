@@ -63,7 +63,7 @@ import ContextNodeMenu from "./ContextNodeMenu.vue";
 import { useNewEdge } from "../composable/gui";
 import { usePanAndScroll } from "../composable/usePanAndScroll";
 import { guiEdgeData2edgeData } from "../utils/gui";
-import type { GUINodeData, NodePosition, GUIEdgeData, GUINodeDataRecord } from "../utils/type";
+import type { GUINodeData, NodePosition, GUIEdgeData, GUINodeDataRecord, ValidateConnectionFn } from "../utils/type";
 
 const props = defineProps({
   nodes: {
@@ -86,6 +86,11 @@ const props = defineProps({
     type: Function as PropType<() => void>,
     required: true,
   },
+  validateConnection: {
+    type: Function as PropType<ValidateConnectionFn>,
+    required: false,
+    default: undefined,
+  },
   getNodeKey: {
     type: Function as PropType<(nodeData: GUINodeData, index: number) => string>,
     default: (nodeData: GUINodeData, index: number) => `${nodeData.nodeId}-${index}`,
@@ -103,7 +108,7 @@ const edgeDataList = computed(() => {
 });
 
 // eslint-disable-next-line no-useless-assignment
-const { svgRef, newEdgeData, onNewEdgeStart, onNewEdge, onNewEdgeEnd, nearestData, edgeConnectable } = useNewEdge();
+const { svgRef, newEdgeData, onNewEdgeStart, onNewEdge, onNewEdgeEnd, nearestData, edgeConnectable } = useNewEdge(props.validateConnection);
 
 // Node drag state management
 const isNodeDragging = ref(false);

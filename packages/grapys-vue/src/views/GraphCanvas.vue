@@ -5,6 +5,7 @@
     :node-records="store.nodeRecords"
     :update-position="updateNodePosition"
     :save-position="saveNodePosition"
+    :validate-connection="handleValidateConnection"
   >
     <template #head>
       <Loop />
@@ -29,7 +30,8 @@ import Node from "./Node.vue";
 import Loop from "./Loop.vue";
 
 import { useStore } from "../store";
-import type { NodePosition, UpdateStaticValue } from "../utils/gui/type";
+import type { NodePosition, UpdateStaticValue, GUIEdgeData } from "../utils/gui/type";
+import { validateEdgeConnection } from "../utils/gui/utils";
 
 export default defineComponent({
   name: "GraphCanvas",
@@ -59,12 +61,17 @@ export default defineComponent({
       emit("open-node-editor", nodeIndex);
     };
 
+    const handleValidateConnection = (edge: GUIEdgeData, existingEdges: GUIEdgeData[]) => {
+      return validateEdgeConnection(edge, existingEdges, store.nodeRecords, store.nestedGraphs);
+    };
+
     return {
       updateNodePosition,
       saveNodePosition,
       updateStaticNodeValue,
       updateNestedGraph,
       openNodeEditor,
+      handleValidateConnection,
       store,
     };
   },

@@ -1,10 +1,9 @@
-import { Position, NewEdgeStartEventData, NewEdgeData, ClosestNodeData, GUINearestData, GUIEdgeData } from "../utils/type";
+import { Position, NewEdgeStartEventData, NewEdgeData, ClosestNodeData, GUINearestData, ValidateConnectionFn } from "../utils/type";
 import { ref, computed } from "vue";
 import { useStore } from "../../store";
 import { edgeStartEventData, edgeUpdateEventData, edgeEndEventData, pickNearestNode, pickNearestConnect, isEdgeConnectale } from "../utils/gui";
-import { validateEdgeConnection } from "../../utils/gui/utils";
 
-export const useNewEdge = () => {
+export const useNewEdge = (validateConnection?: ValidateConnectionFn) => {
   const store = useStore();
 
   const svgRef = ref<SVGSVGElement | null>(null);
@@ -62,9 +61,7 @@ export const useNewEdge = () => {
   });
 
   const edgeConnectable = computed(() => {
-    return isEdgeConnectale(expectEdge.value, store.edges, (edge: GUIEdgeData, existingEdges: GUIEdgeData[]) => {
-      return validateEdgeConnection(edge, existingEdges, store.nodeRecords, store.nestedGraphs);
-    });
+    return isEdgeConnectale(expectEdge.value, store.edges, validateConnection);
   });
 
   return {
