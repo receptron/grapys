@@ -102,23 +102,23 @@ const contextEdgeMenu = ref();
 const contextNodeMenu = ref();
 
 // Edge management
-// eslint-disable-next-line no-useless-assignment
+ 
 const edgeDataList = computed(() => {
   return guiEdgeData2edgeData(props.edges, props.nodeRecords);
 });
 
-// eslint-disable-next-line no-useless-assignment
+ 
 const { svgRef, newEdgeData, onNewEdgeStart, onNewEdge, onNewEdgeEnd, nearestData, edgeConnectable } = useNewEdge(props.validateConnection);
 
 // Node drag state management
 const isNodeDragging = ref(false);
 
-// eslint-disable-next-line no-useless-assignment
+ 
 const handleNodeDragStart = () => {
   isNodeDragging.value = true;
 };
 
-// eslint-disable-next-line no-useless-assignment
+ 
 const handleNodeDragEnd = () => {
   isNodeDragging.value = false;
 };
@@ -131,7 +131,7 @@ onMounted(() => {
 });
 
 // Context menu handlers
-// eslint-disable-next-line no-useless-assignment
+ 
 const openEdgeMenu = (event: MouseEvent, edgeIndex: number) => {
   if (!svgRef.value) return;
   const rect = svgRef.value.getBoundingClientRect();
@@ -144,7 +144,7 @@ const openNodeMenu = (event: MouseEvent, nodeIndex: number) => {
   contextNodeMenu.value.openMenu(event, rect, nodeIndex);
 };
 
-// eslint-disable-next-line no-useless-assignment
+ 
 const closeMenu = () => {
   contextEdgeMenu.value?.closeMenu();
   contextNodeMenu.value?.closeMenu();

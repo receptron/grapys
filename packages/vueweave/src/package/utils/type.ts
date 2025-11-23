@@ -94,9 +94,6 @@ export type InputOutputData = { name: string; type?: InputOutputType; mapTo?: st
 
 export type ValidateConnectionFn = (expectEdge: GUIEdgeData, existingEdges: GUIEdgeData[]) => boolean;
 
-// History and store-related types
-export type UpdateNodePositionData = NodePosition | { width: number; height: number; outputCenters: number[]; inputCenters: number[] };
-
 // BACKWARD COMPATIBILITY: Old format included 'loop' at root level.
 // New format uses 'extra' for application-specific data.
 export type HistoryPayload = {

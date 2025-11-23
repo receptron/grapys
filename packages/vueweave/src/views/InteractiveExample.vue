@@ -18,7 +18,7 @@
         :save-position="saveNodePosition"
         :validate-connection="validateConnection"
       >
-        <template #node="{ nodeData, nodeIndex }">
+        <template #node="{ nodeData }">
           <NodeBase :inputs="getInputs(nodeData)" :outputs="getOutputs(nodeData)" @open-node-edit-menu="handleNodeClick(nodeData)">
             <template #header>
               <div class="w-full rounded-t-md py-2 text-center text-white" :class="nodeData.type === 'computed' ? 'bg-green-500' : 'bg-purple-500'">
@@ -29,7 +29,7 @@
               <div class="p-2 text-center text-xs">
                 <div v-if="nodeData.type === 'static'">
                   <input
-                    v-model="(nodeData.data as any).value"
+                    v-model="(nodeData.data as { value?: string }).value"
                     @mousedown.stop
                     class="w-full rounded border px-2 py-1"
                     placeholder="Enter value"
@@ -47,7 +47,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { GraphCanvasBase, NodeBase, useFlowStore, type GUINodeData } from "vueweave";
+import { GraphCanvasBase, NodeBase, useFlowStore, type GUINodeData, type NodePositionData } from "vueweave";
 
 const store = useFlowStore();
 
@@ -60,50 +60,52 @@ const nodes = computed(() => store.nodes);
 const edges = computed(() => store.edges);
 const nodeRecords = computed(() => store.nodeRecords);
 
-function addNode() {
-  const nodeId = `node${nodeCounter.value++}`;
-  const nodeType = nodeCounter.value % 2 === 0 ? "computed" : "static";
+const addNode = () => {
+  const currentCount = nodeCounter.value;
+  nodeCounter.value = currentCount + 1;
+  const nodeId = `node${currentCount}`;
+  const nodeType = currentCount % 2 === 0 ? "computed" : "static";
 
   store.pushNode({
     type: nodeType,
     nodeId,
     position: {
-      x: 100 + (nodeCounter.value % 5) * 150,
-      y: 100 + Math.floor(nodeCounter.value / 5) * 150,
+      x: 100 + (currentCount % 5) * 150,
+      y: 100 + Math.floor(currentCount / 5) * 150,
     },
-    data: nodeType === "static" ? { value: `Value ${nodeCounter.value}` } : { name: `Node ${nodeCounter.value}` },
+    data: nodeType === "static" ? { value: `Value ${currentCount}` } : { name: `Node ${currentCount}` },
   });
-}
+};
 
-function clearAll() {
+const clearAll = () => {
   store.initData([], [], {});
   nodeCounter.value = 1;
-}
+};
 
-function updateNodePosition(index: number, position: any) {
+const updateNodePosition = (index: number, position: NodePositionData) => {
   store.updateNodePosition(index, position);
-}
+};
 
-function saveNodePosition() {
+const saveNodePosition = () => {
   store.saveNodePositionData();
-}
+};
 
-function validateConnection() {
+const validateConnection = () => {
   return true;
-}
+};
 
-function handleNodeClick(nodeData: GUINodeData) {
+const handleNodeClick = (nodeData: GUINodeData) => {
   console.log("Node clicked:", nodeData.nodeId);
-}
+};
 
-function getInputs(nodeData: GUINodeData) {
+const getInputs = (nodeData: GUINodeData) => {
   if (nodeData.type === "computed") {
     return [{ name: "input" }];
   }
   return [];
-}
+};
 
-function getOutputs(nodeData: GUINodeData) {
+const getOutputs = (__nodeData: GUINodeData) => {
   return [{ name: "output" }];
-}
+};
 </script>

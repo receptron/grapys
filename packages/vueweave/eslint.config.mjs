@@ -129,6 +129,7 @@ export default [
 
       "class-methods-use-this": "off",
       "no-await-in-loop": "off",
+      "no-useless-assignment": "off",
     },
   },
   eslintConfigPrettier,

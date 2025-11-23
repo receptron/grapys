@@ -8,7 +8,7 @@
       :save-position="saveNodePosition"
       :validate-connection="validateConnection"
     >
-      <template #node="{ nodeData, nodeIndex }">
+      <template #node="{ nodeData }">
         <NodeBase :inputs="getInputs(nodeData)" :outputs="getOutputs(nodeData)">
           <template #header>
             <div class="w-full rounded-t-md bg-blue-500 py-2 text-center text-white">
@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { GraphCanvasBase, NodeBase, useFlowStore, type GUINodeData } from "vueweave";
+import { GraphCanvasBase, NodeBase, useFlowStore, type GUINodeData, type NodePositionData } from "vueweave";
 
 const store = useFlowStore();
 
@@ -73,26 +73,26 @@ const nodes = computed(() => store.nodes);
 const edges = computed(() => store.edges);
 const nodeRecords = computed(() => store.nodeRecords);
 
-function updateNodePosition(index: number, position: any) {
+const updateNodePosition = (index: number, position: NodePositionData) => {
   store.updateNodePosition(index, position);
-}
+};
 
-function saveNodePosition() {
+const saveNodePosition = () => {
   store.saveNodePositionData();
-}
+};
 
-function validateConnection() {
+const validateConnection = () => {
   return true;
-}
+};
 
-function getInputs(nodeData: GUINodeData) {
+const getInputs = (nodeData: GUINodeData) => {
   if (nodeData.type === "computed") {
     return [{ name: "input" }];
   }
   return [];
-}
+};
 
-function getOutputs(nodeData: GUINodeData) {
+const getOutputs = (__nodeData: GUINodeData) => {
   return [{ name: "output" }];
-}
+};
 </script>

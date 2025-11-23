@@ -1,5 +1,5 @@
 import { ref, computed } from "vue";
-import { GUINodeData, GUIEdgeData, GUINodeDataRecord, UpdateNodePositionData, HistoryData, HistoryPayload } from "../utils";
+import { GUINodeData, GUIEdgeData, GUINodeDataRecord, NodePositionData, HistoryData, HistoryPayload } from "../utils";
 import { defineStore } from "pinia";
 
 export const useFlowStore = defineStore("store", () => {
@@ -87,7 +87,7 @@ export const useFlowStore = defineStore("store", () => {
     updateData([...nodes.value, nodeData], [...edges.value], { ...extra.value }, "addNode", true);
   };
 
-  const updateNodePosition = (positionIndex: number, pos: UpdateNodePositionData) => {
+  const updateNodePosition = (positionIndex: number, pos: NodePositionData) => {
     const newNode = { ...nodes.value[positionIndex] };
     newNode.position = { ...newNode.position, ...pos };
     const newNodes = [...nodes.value];
