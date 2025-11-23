@@ -2,29 +2,29 @@ import { useEffect, useRef } from "react";
 import { useLocalStore } from "../store";
 
 import { getLoopWhileSources } from "../utils/gui/utils";
-import { LoopDataType, NestedGraphList } from "../utils/gui/type";
+import { LoopDataType, NestedGraphList, GUILoopData } from "../utils/gui/type";
 
 const LoopComponent = () => {
   const nodes = useLocalStore((state) => state.nodes());
-  const loop = useLocalStore((state) => state.loop());
-  const storeUpdateLoop = useLocalStore((state) => state.updateLoop);
+  const extra = useLocalStore((state) => state.extra());
+  const updateExtra = useLocalStore((state) => state.updateExtra);
   const countRef = useRef<HTMLInputElement | null>(null);
+
+  const loop = (extra.loop ?? { loopType: "none" }) as GUILoopData;
 
   const nestedGraphs: NestedGraphList = []; // TODO: for nested graph
   const whileSources = getLoopWhileSources(nodes, nestedGraphs);
 
-  const updateLoop = () => {
-    if (loop.loopType === "while") {
-      storeUpdateLoop({ loopType: "while", while: loop.while });
-    } else if (loop.loopType === "count") {
-      storeUpdateLoop({ loopType: "count", count: Number(loop.count) });
-    } else {
-      storeUpdateLoop({ loopType: "none" });
-    }
+  const updateLoop = (newLoop: GUILoopData) => {
+    updateExtra({ ...extra, loop: newLoop });
   };
 
   useEffect(() => {
-    const handleBlur = () => updateLoop();
+    const handleBlur = () => {
+      if (loop.loopType === "count") {
+        updateLoop({ loopType: "count", count: Number(loop.count) });
+      }
+    };
     if (countRef.current) {
       countRef.current.addEventListener("blur", handleBlur);
     }
@@ -33,7 +33,7 @@ const LoopComponent = () => {
         countRef.current.removeEventListener("blur", handleBlur);
       }
     };
-  }, [countRef]);
+  }, [countRef, loop]);
 
   return (
     <div className="absolute flex w-36 cursor-grab flex-col rounded-md bg-green-400 text-center text-white select-none">
@@ -41,7 +41,7 @@ const LoopComponent = () => {
       <div className="my-4 p-2">
         <select
           className="w-full resize-none rounded-md border border-gray-300 p-1 text-black"
-          onChange={(e) => storeUpdateLoop({ ...loop, loopType: e.target.value as LoopDataType })}
+          onChange={(e) => updateLoop({ ...loop, loopType: e.target.value as LoopDataType })}
           value={loop.loopType}
         >
           <option value="none">None</option>
@@ -53,7 +53,7 @@ const LoopComponent = () => {
           <div className="mt-2">
             <select
               className="w-full resize-none rounded-md border border-gray-300 p-1 text-black"
-              onChange={(e) => storeUpdateLoop({ ...loop, while: e.target.value === "true" ? true : e.target.value })}
+              onChange={(e) => updateLoop({ ...loop, while: e.target.value === "true" ? true : e.target.value })}
               value={(loop.while === true ? "true" : loop.while) || whileSources[0]}
             >
               {whileSources.map((item) => (
@@ -72,7 +72,7 @@ const LoopComponent = () => {
               className="w-full rounded-md border border-gray-300 p-1 text-black"
               ref={countRef}
               value={loop.count || "1"}
-              onChange={(e) => storeUpdateLoop({ ...loop, count: Number(e.target.value) })}
+              onChange={(e) => updateLoop({ ...loop, count: Number(e.target.value) })}
             />
           </div>
         )}

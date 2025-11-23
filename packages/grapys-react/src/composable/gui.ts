@@ -1,6 +1,6 @@
 import { useRef, useState, useMemo, useCallback } from "react";
 import { useLocalStore, node2Record } from "../store/index";
-import type { Position, NewEdgeStartEventData, NewEdgeData, ClosestNodeData, GUINearestData, NestedGraphList } from "../utils/gui/type";
+import type { Position, NewEdgeStartEventData, NewEdgeData, ClosestNodeData, GUINearestData } from "../utils/gui/type";
 import { edgeStartEventData, edgeUpdateEventData, edgeEndEventData, pickNearestNode, pickNearestConnect, isEdgeConnectale } from "../utils/utils/gui";
 
 export const useNewEdge = () => {
@@ -65,9 +65,8 @@ export const useNewEdge = () => {
   }, [nearestData, newEdgeData]);
 
   const edgeConnectable = useMemo(() => {
-    const nestedGraphs: NestedGraphList = []; // TODO: for nested graph
-    return isEdgeConnectale(expectEdge, edges, nodeRecords, nestedGraphs);
-  }, [expectEdge, edges, nodeRecords]);
+    return isEdgeConnectale(expectEdge, edges);
+  }, [expectEdge, edges]);
 
   const onNewEdgeEnd = useCallback(() => {
     if (expectEdge && edgeConnectable) {
