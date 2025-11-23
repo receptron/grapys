@@ -26,7 +26,7 @@ export const useGraphAIStore = defineStore("graphai", () => {
     const dataWithLoop = {
       nodes: currentData.nodes,
       edges: currentData.edges,
-      loop: loop,
+      loop,
     };
 
     return store2graphData(dataWithLoop, graphs);

@@ -97,8 +97,8 @@ export const useStore = defineStore("store", () => {
   const initFromGraphData = (graph: GraphData, extraData: Record<string, unknown> = {}) => {
     const { rawEdge, rawNode, loop: loopData } = graphToGUIData(graph);
     // BACKWARD COMPATIBILITY: If graph has loop, put it in extra.loop
-    const extra = loopData ? { ...extraData, loop: loopData } : extraData;
-    initData(rawNode, rawEdge, extra);
+    const initExtra = loopData ? { ...extraData, loop: loopData } : extraData;
+    initData(rawNode, rawEdge, initExtra);
   };
 
   // node

@@ -179,7 +179,7 @@ export const convertGraph2Graph = (graphData: GraphData & GraphDataMetaData, nes
     const dataWithLoop = {
       nodes: metaData.nodes,
       edges: metaData.edges,
-      loop: loop,
+      loop,
     };
     return store2graphData(dataWithLoop, nestedGraphs);
   }

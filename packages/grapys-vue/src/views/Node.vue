@@ -48,7 +48,6 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed, PropType, watch } from "vue";
-import { useStore } from "../store";
 import { useGraphAIStore } from "../store/graphai";
 import type { GUINodeData, UpdateStaticValue } from "../utils/gui/type";
 import { nestedGraphInputs } from "../utils/gui/utils";
@@ -80,7 +79,6 @@ export default defineComponent({
   },
   emits: ["updateStaticNodeValue", "updateNestedGraph", "openNodeEditMenu"],
   setup(props, { emit }) {
-    const store = useStore();
     const graphAIStore = useGraphAIStore();
 
     // Agent profile
