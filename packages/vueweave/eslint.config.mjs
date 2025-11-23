@@ -22,6 +22,7 @@ export default [
       'typescript-eslint': tseslint.plugin,
     },
     languageOptions: {
+      parser: vueParser,
       globals: {
         ...globals.browser,
         google: "readonly"
