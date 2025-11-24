@@ -59,10 +59,12 @@ export const guiEdgeData2edgeData = (guiEdges: GUIEdgeData[], nodeRecords: GUINo
     return {
       type,
       source: {
+        kind: "node" as const,
         ...source,
         data: nodeRecords[edge.source.nodeId],
       },
       target: {
+        kind: "node" as const,
         ...target,
         data: nodeRecords[edge.target.nodeId],
       },
@@ -75,12 +77,14 @@ export const edgeStartEventData = (data: NewEdgeStartEventData, parentElement: H
   const mousePosition = { x: data.x - rect.left, y: data.y - rect.top };
 
   const edgeNodeData = {
+    kind: "node" as const,
     nodeId: data.nodeId,
     data: nodeData,
     index: data.index,
   };
 
   const positionData = {
+    kind: "mouse" as const,
     data: { position: mousePosition },
   };
   const startEdgeData: NewEdgeData = (() => {
@@ -107,7 +111,7 @@ export const edgeUpdateEventData = (data: Position, parentElement: HTMLElement |
   const rect = parentElement.getBoundingClientRect();
   const mousePosition = { x: data.x - rect.left, y: data.y - rect.top };
 
-  const newData = { data: { position: mousePosition } };
+  const newData = { kind: "mouse" as const, data: { position: mousePosition } };
 
   const updateEdgeData =
     prevEdgeData.direction === "outbound"

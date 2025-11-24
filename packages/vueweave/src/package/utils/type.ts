@@ -35,6 +35,7 @@ export type GUIEdgeData = {
 };
 
 export type EdgeFormToData = {
+  kind: "node";
   data: GUINodeData;
 } & EdgeEndPointData;
 
@@ -59,13 +60,15 @@ export type GUINearestData = {
   direction: NewEdgeEventDirection;
 };
 
-type NewEdgeMouseData = {
+export type NewEdgeMouseData = {
+  kind: "mouse";
   data: {
     position: NodePositionData;
   };
-  index?: number; // index and width, outputCenters, inputCenters never exists. for data type compatibility.
 };
-type NewEdgeNodeData = {
+
+export type NewEdgeNodeData = {
+  kind: "node";
   nodeId: string;
   index: number;
   data: GUINodeData;
