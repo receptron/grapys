@@ -143,12 +143,12 @@ export const createStyleFunctionsFromColors = (colors: NodeColorConfig, globalPo
     nodeOutputClass: (expectNearNode, nodeData, isConnectable = true) => {
       const portColors = getPortColors(nodeData.type);
       const { outputHighlight, notConnectable, output } = defaultPortColors;
-      return expectNearNode ? (isConnectable ? portColors.outputHighlight ?? outputHighlight : portColors.notConnectable ?? notConnectable) : portColors.output ?? output;
+      return (expectNearNode ? (isConnectable ? portColors.outputHighlight ?? outputHighlight : portColors.notConnectable ?? notConnectable) : portColors.output ?? output) ?? "";
     },
     nodeInputClass: (expectNearNode, nodeData, isConnectable = true) => {
       const portColors = getPortColors(nodeData.type);
       const { inputHighlight, notConnectable, input } = defaultPortColors;
-      return expectNearNode ? (isConnectable ? portColors.inputHighlight ?? inputHighlight : portColors.notConnectable ?? notConnectable) : portColors.input ?? input;
+      return (expectNearNode ? (isConnectable ? portColors.inputHighlight ?? inputHighlight : portColors.notConnectable ?? notConnectable) : portColors.input ?? input) ?? "";
     },
   };
 };

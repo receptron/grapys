@@ -15,14 +15,14 @@ import { GUINodeData, InputOutputData } from "./type";
 
 export type NodeStyleFn = (expectNearNode: boolean, nodeData: GUINodeData) => string;
 export type NodeOutputStyleFn = (expectNearNode: boolean, nodeData: GUINodeData, isConnectable?: boolean) => string;
-export type NodeInputStyleFn = (expectNearNode: boolean, nodeData: GUINodeData, input: InputOutputData, isConnectable?: boolean) => string;
+export type NodeInputStyleFn = (expectNearNode: boolean, nodeData: GUINodeData, isConnectable?: boolean) => string;
 
 /**
  * Default node body/main background color
  * Override this for custom node type colors
  */
 export const nodeMainClass: NodeStyleFn = (expectNearNode, __nodeData) => {
-  return expectNearNode ? defaultNodeColors.default.mainHighlight : defaultNodeColors.default.main;
+  return (expectNearNode ? defaultNodeColors.default.mainHighlight : defaultNodeColors.default.main) ?? "";
 };
 
 /**
@@ -30,7 +30,7 @@ export const nodeMainClass: NodeStyleFn = (expectNearNode, __nodeData) => {
  * Override this for custom node type colors
  */
 export const nodeHeaderClass: NodeStyleFn = (expectNearNode, __nodeData) => {
-  return expectNearNode ? defaultNodeColors.default.headerHighlight : defaultNodeColors.default.header;
+  return (expectNearNode ? defaultNodeColors.default.headerHighlight : defaultNodeColors.default.header) ?? "";
 };
 
 /**
@@ -39,7 +39,7 @@ export const nodeHeaderClass: NodeStyleFn = (expectNearNode, __nodeData) => {
  */
 export const nodeOutputClass: NodeOutputStyleFn = (expectNearNode, nodeData, isConnectable = true) => {
   const { outputHighlight, notConnectable, output } = defaultPortColors;
-  return expectNearNode ? (isConnectable ? outputHighlight : notConnectable) : output;
+  return (expectNearNode ? (isConnectable ? outputHighlight : notConnectable) : output) ?? "";
 };
 
 /**
@@ -48,7 +48,7 @@ export const nodeOutputClass: NodeOutputStyleFn = (expectNearNode, nodeData, isC
  */
 export const nodeInputClass: NodeInputStyleFn = (expectNearNode, nodeData, isConnectable = true) => {
   const { inputHighlight, notConnectable, input } = defaultPortColors;
-  return expectNearNode ? (isConnectable ? inputHighlight : notConnectable) : input;
+  return (expectNearNode ? (isConnectable ? inputHighlight : notConnectable) : input) ?? "";
 };
 
 export const buttonColorVariants = {
