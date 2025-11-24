@@ -55,60 +55,51 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, type PropType } from "vue";
+import { ref, computed, onMounted } from "vue";
 import NodeContextProvider from "./NodeContextProvider.vue";
 import Edge from "./Edge.vue";
 import ContextEdgeMenu from "./ContextEdgeMenu.vue";
 import ContextNodeMenu from "./ContextNodeMenu.vue";
 import { useNewEdge } from "../composable/gui";
 import { usePanAndScroll } from "../composable/usePanAndScroll";
+import { useGraphCanvas } from "../composable/useGraphCanvas";
 import { guiEdgeData2edgeData } from "../utils/gui";
 import type { GUINodeData, NodePosition, GUIEdgeData, GUINodeDataRecord, ValidateConnectionFn } from "../utils/type";
 
-const props = defineProps({
-  nodes: {
-    type: Array as PropType<GUINodeData[]>,
-    required: true,
-  },
-  edges: {
-    type: Array as PropType<GUIEdgeData[]>,
-    required: true,
-  },
-  nodeRecords: {
-    type: Object as PropType<GUINodeDataRecord>,
-    required: true,
-  },
-  updatePosition: {
-    type: Function as PropType<(nodeIndex: number, position: NodePosition) => void>,
-    required: true,
-  },
-  savePosition: {
-    type: Function as PropType<() => void>,
-    required: true,
-  },
-  validateConnection: {
-    type: Function as PropType<ValidateConnectionFn>,
-    required: false,
-    default: undefined,
-  },
-  getNodeKey: {
-    type: Function as PropType<(nodeData: GUINodeData, index: number) => string>,
-    default: (nodeData: GUINodeData, index: number) => `${nodeData.nodeId}-${index}`,
-  },
-});
+const props = defineProps<{
+  nodes?: GUINodeData[];
+  edges?: GUIEdgeData[];
+  nodeRecords?: GUINodeDataRecord;
+  updatePosition?: (nodeIndex: number, position: NodePosition) => void;
+  savePosition?: () => void;
+  validateConnection?: ValidateConnectionFn;
+  getNodeKey?: (nodeData: GUINodeData, index: number) => string;
+}>();
+
+const getNodeKey = props.getNodeKey ?? ((nodeData: GUINodeData, index: number) => `${nodeData.nodeId}-${index}`);
+
+// Use default implementation from useGraphCanvas if props not provided
+const defaultGraph = useGraphCanvas({ validateConnection: props.validateConnection });
+
+const nodes = computed(() => props.nodes ?? defaultGraph.nodes.value);
+const edges = computed(() => props.edges ?? defaultGraph.edges.value);
+const nodeRecords = computed(() => props.nodeRecords ?? defaultGraph.nodeRecords.value);
+const updatePosition = props.updatePosition ?? defaultGraph.updateNodePosition;
+const savePosition = props.savePosition ?? defaultGraph.saveNodePosition;
+const validateConnection = props.validateConnection ?? defaultGraph.validateConnection;
 
 const mainContainer = ref<HTMLElement | undefined>(undefined);
 const contextEdgeMenu = ref();
 const contextNodeMenu = ref();
 
 // Edge management
- 
+
 const edgeDataList = computed(() => {
-  return guiEdgeData2edgeData(props.edges, props.nodeRecords);
+  return guiEdgeData2edgeData(edges.value, nodeRecords.value);
 });
 
- 
-const { svgRef, newEdgeData, onNewEdgeStart, onNewEdge, onNewEdgeEnd, nearestData, edgeConnectable } = useNewEdge(props.validateConnection);
+
+const { svgRef, newEdgeData, onNewEdgeStart, onNewEdge, onNewEdgeEnd, nearestData, edgeConnectable } = useNewEdge(validateConnection);
 
 // Node drag state management
 const isNodeDragging = ref(false);
@@ -154,5 +145,9 @@ defineExpose({
   mainContainer,
   svgRef,
   openNodeMenu,
+  // Expose store operations when using default graph
+  initData: defaultGraph.initData,
+  pushNode: defaultGraph.pushNode,
+  store: defaultGraph.store,
 });
 </script>

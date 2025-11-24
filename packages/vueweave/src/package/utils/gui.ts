@@ -52,24 +52,59 @@ export const getTransformStyle = (nodeData: GUINodeData, isDragging: boolean) =>
   };
 };
 
+// Edge validation helper
+const isValidEdge = (edge: GUIEdgeData, nodeRecords: GUINodeDataRecord): boolean => {
+  const sourceNode = nodeRecords[edge.source.nodeId];
+  const targetNode = nodeRecords[edge.target.nodeId];
+
+  if (!sourceNode || !targetNode) {
+    console.error(`[VueWeave] Invalid edge: missing node. Source: ${edge.source.nodeId}, Target: ${edge.target.nodeId}`);
+    return false;
+  }
+
+  // Check if source has outputs
+  const sourceOutputs = sourceNode.position.outputCenters || [];
+  if (edge.source.index >= sourceOutputs.length) {
+    console.error(
+      `[VueWeave] Invalid edge: source node "${edge.source.nodeId}" does not have output at index ${edge.source.index}. ` +
+      `Available outputs: ${sourceOutputs.length}`
+    );
+    return false;
+  }
+
+  // Check if target has inputs
+  const targetInputs = targetNode.position.inputCenters || [];
+  if (edge.target.index >= targetInputs.length) {
+    console.error(
+      `[VueWeave] Invalid edge: target node "${edge.target.nodeId}" does not have input at index ${edge.target.index}. ` +
+      `Available inputs: ${targetInputs.length}`
+    );
+    return false;
+  }
+
+  return true;
+};
+
 // Edge related functions
 export const guiEdgeData2edgeData = (guiEdges: GUIEdgeData[], nodeRecords: GUINodeDataRecord): EdgeData[] => {
-  return guiEdges.map((edge) => {
-    const { type, source, target } = edge;
-    return {
-      type,
-      source: {
-        kind: "node" as const,
-        ...source,
-        data: nodeRecords[edge.source.nodeId],
-      },
-      target: {
-        kind: "node" as const,
-        ...target,
-        data: nodeRecords[edge.target.nodeId],
-      },
-    };
-  });
+  return guiEdges
+    .filter((edge) => isValidEdge(edge, nodeRecords))
+    .map((edge) => {
+      const { type, source, target } = edge;
+      return {
+        type,
+        source: {
+          kind: "node" as const,
+          ...source,
+          data: nodeRecords[edge.source.nodeId],
+        },
+        target: {
+          kind: "node" as const,
+          ...target,
+          data: nodeRecords[edge.target.nodeId],
+        },
+      };
+    });
 };
 
 export const edgeStartEventData = (data: NewEdgeStartEventData, parentElement: HTMLElement | SVGSVGElement, nodeData: GUINodeData) => {
