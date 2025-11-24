@@ -10,7 +10,10 @@ export type NodePositionData = Position & {
   inputCenters?: number[];
 };
 
-export type GUINodeDataType = "computed" | "static";
+// Node type is fully customizable - use any string value
+// Note: Kept as a type alias for clarity and potential future constraints
+// eslint-disable-next-line sonarjs/redundant-type-aliases
+export type GUINodeDataType = string;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type GUINodeData<T = any> = {

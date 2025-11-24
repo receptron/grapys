@@ -2,10 +2,11 @@
 
 ## Overview
 
-VueWeave is a Vue 3 composable-based library for building node-based graph editors. It provides a minimal API surface with two approaches:
+VueWeave is a Vue 3 composable-based library for building node-based graph editors. It provides a minimal API surface with multiple approaches:
 
 1. **Zero-config approach**: Use `GraphCanvasBase` component directly with built-in state management
 2. **Flexible approach**: Use `useGraphCanvas` composable for custom state management or pass props explicitly
+3. **Customizable styling**: Use object-based or function-based node styling configuration
 
 ## Core Composable: `useGraphCanvas`
 
@@ -83,12 +84,18 @@ The main canvas component for rendering the graph.
 
 #### Props
 
-- `nodes`: Array of node data
-- `edges`: Array of edge data
-- `node-records`: Node lookup by ID
-- `update-position`: Handler for node drag operations
-- `save-position`: Handler for node drag end
-- `validate-connection`: Handler for edge creation validation
+All props are optional. When not provided, `GraphCanvasBase` uses internal state management.
+
+- `nodes`: Array of node data (optional)
+- `edges`: Array of edge data (optional)
+- `node-records`: Node lookup by ID (optional)
+- `update-position`: Handler for node drag operations (optional)
+- `save-position`: Handler for node drag end (optional)
+- `validate-connection`: Handler for edge creation validation (optional)
+- `node-styles`: Node styling configuration (optional) - See [Node Styling System](#node-styling-system)
+  - `colors`: Object-based color mapping
+  - `functions`: Function-based style configuration
+- `get-node-key`: Custom key function for node rendering (optional, default: `${nodeId}-${index}`)
 
 #### Slots
 
@@ -127,6 +134,266 @@ Base component for rendering individual nodes.
 
 - `#header`: Node header content
 - `#body-main`: Node body content
+
+## Node Styling System
+
+VueWeave provides a flexible styling system that supports three levels of customization:
+
+1. **Default styling** - Works out of the box without configuration (blue theme)
+2. **Object-based configuration** - Simple color mapping for node types
+3. **Function-based configuration** - Full control over styling logic
+
+### Default Styling (Zero Configuration)
+
+By default, all nodes use a blue color scheme. No configuration needed:
+
+```vue
+<template>
+  <GraphCanvasBase ref="graphCanvas">
+    <template #node="{ nodeData }">
+      <NodeBase :inputs="getInputs(nodeData)" :outputs="getOutputs(nodeData)">
+        <template #header>
+          <div class="w-full rounded-t-md py-2 text-center text-white">
+            {{ nodeData.nodeId }}
+          </div>
+        </template>
+      </NodeBase>
+    </template>
+  </GraphCanvasBase>
+</template>
+```
+
+### Object-Based Color Configuration (Recommended)
+
+Define colors for each node type using a simple object:
+
+```typescript
+import { type NodeColorConfig } from "vueweave";
+
+const nodeColors: NodeColorConfig = {
+  // Custom colors for 'source' node type
+  source: {
+    main: "bg-purple-400",           // Normal body background
+    header: "bg-purple-500",         // Normal header background
+    mainHighlight: "bg-purple-200",  // Highlighted body (during drag)
+    headerHighlight: "bg-purple-300", // Highlighted header (during drag)
+  },
+  // Custom colors for 'processor' node type
+  processor: {
+    main: "bg-green-400",
+    header: "bg-green-500",
+    mainHighlight: "bg-green-200",
+    headerHighlight: "bg-green-300",
+  },
+  // Custom colors for 'output' node type
+  output: {
+    main: "bg-blue-400",
+    header: "bg-blue-500",
+    mainHighlight: "bg-blue-200",
+    headerHighlight: "bg-blue-300",
+  },
+  // Optional default for unmatched types
+  default: {
+    main: "bg-gray-400",
+    header: "bg-gray-500",
+    mainHighlight: "bg-gray-200",
+    headerHighlight: "bg-gray-300",
+  },
+};
+```
+
+Pass to GraphCanvasBase:
+
+```vue
+<template>
+  <GraphCanvasBase :node-styles="{ colors: nodeColors }">
+    <!-- node template -->
+  </GraphCanvasBase>
+</template>
+```
+
+**Benefits:**
+- Simple object-based configuration
+- No need to write functions
+- Tailwind CSS class names
+- Automatic fallback to default colors
+
+### Function-Based Configuration (Advanced)
+
+For complete control, provide custom style functions:
+
+```typescript
+import { type NodeStyleConfig } from "vueweave";
+
+const customStyles: NodeStyleConfig = {
+  // Custom main body class
+  nodeMainClass: (expectNearNode, nodeData) => {
+    if (nodeData.type === "important") {
+      return expectNearNode ? "bg-red-200" : "bg-red-500";
+    }
+    return expectNearNode ? "bg-blue-200" : "bg-blue-400";
+  },
+
+  // Custom header class
+  nodeHeaderClass: (expectNearNode, nodeData) => {
+    if (nodeData.type === "important") {
+      return expectNearNode ? "bg-red-300" : "bg-red-600";
+    }
+    return expectNearNode ? "bg-blue-300" : "bg-blue-500";
+  },
+
+  // Custom output port class
+  nodeOutputClass: (expectNearNode, nodeData, isConnectable) => {
+    return expectNearNode
+      ? (isConnectable ? "bg-green-200" : "bg-red-600")
+      : "bg-green-500";
+  },
+
+  // Custom input port class
+  nodeInputClass: (expectNearNode, nodeData, input, isConnectable) => {
+    // Special styling for mapTo inputs
+    if (input.mapTo) {
+      return expectNearNode
+        ? (isConnectable ? "bg-red-200" : "bg-red-700")
+        : "bg-red-400";
+    }
+    return expectNearNode
+      ? (isConnectable ? "bg-blue-200" : "bg-red-600")
+      : "bg-blue-500";
+  },
+};
+```
+
+Pass to GraphCanvasBase:
+
+```vue
+<template>
+  <GraphCanvasBase :node-styles="{ functions: customStyles }">
+    <!-- node template -->
+  </GraphCanvasBase>
+</template>
+```
+
+### Type Definitions
+
+```typescript
+// Simple object-based configuration
+type NodeColorConfig = {
+  [nodeType: string]: {
+    main?: string;              // Main body background
+    header?: string;            // Header background
+    mainHighlight?: string;     // Body when highlighted
+    headerHighlight?: string;   // Header when highlighted
+  };
+};
+
+// Function-based configuration
+type NodeStyleFn = (expectNearNode: boolean, nodeData: GUINodeData) => string;
+type NodeOutputStyleFn = (expectNearNode: boolean, nodeData: GUINodeData, isConnectable?: boolean) => string;
+type NodeInputStyleFn = (expectNearNode: boolean, nodeData: GUINodeData, input: InputOutputData, isConnectable?: boolean) => string;
+
+type NodeStyleConfig = {
+  nodeMainClass?: NodeStyleFn;
+  nodeHeaderClass?: NodeStyleFn;
+  nodeOutputClass?: NodeOutputStyleFn;
+  nodeInputClass?: NodeInputStyleFn;
+};
+
+// Combined configuration
+type NodeStyleOptions = {
+  colors?: NodeColorConfig;      // Simple approach
+  functions?: NodeStyleConfig;   // Advanced approach
+};
+```
+
+### Complete Styling Example
+
+```vue
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import { GraphCanvasBase, NodeBase, type GUINodeData, type NodeColorConfig } from "vueweave";
+
+const graphCanvas = ref<InstanceType<typeof GraphCanvasBase>>();
+
+// Simple object-based color configuration
+const nodeColors: NodeColorConfig = {
+  source: {
+    main: "bg-purple-400",
+    header: "bg-purple-500",
+    mainHighlight: "bg-purple-200",
+    headerHighlight: "bg-purple-300",
+  },
+  processor: {
+    main: "bg-green-400",
+    header: "bg-green-500",
+    mainHighlight: "bg-green-200",
+    headerHighlight: "bg-green-300",
+  },
+  output: {
+    main: "bg-blue-400",
+    header: "bg-blue-500",
+    mainHighlight: "bg-blue-200",
+    headerHighlight: "bg-blue-300",
+  },
+};
+
+onMounted(() => {
+  graphCanvas.value?.initData(
+    [
+      { type: "source", nodeId: "input1", position: { x: 50, y: 100 }, data: { value: "Data A" } },
+      { type: "processor", nodeId: "process1", position: { x: 300, y: 100 }, data: { name: "Process" } },
+      { type: "output", nodeId: "output1", position: { x: 550, y: 100 }, data: { name: "Output" } },
+    ],
+    [
+      { type: "edge", source: { nodeId: "input1", index: 0 }, target: { nodeId: "process1", index: 0 } },
+      { type: "edge", source: { nodeId: "process1", index: 0 }, target: { nodeId: "output1", index: 0 } },
+    ],
+    {}
+  );
+});
+
+const getInputs = (nodeData: GUINodeData) => {
+  return nodeData.type === "source" ? [] : [{ name: "input" }];
+};
+
+const getOutputs = () => [{ name: "output" }];
+</script>
+
+<template>
+  <GraphCanvasBase ref="graphCanvas" :node-styles="{ colors: nodeColors }">
+    <template #node="{ nodeData }">
+      <NodeBase :inputs="getInputs(nodeData)" :outputs="getOutputs()">
+        <template #header>
+          <div class="w-full rounded-t-md py-2 text-center text-white">
+            {{ nodeData.nodeId }}
+          </div>
+        </template>
+        <template #body-main>
+          <div class="p-2 text-center">
+            <div class="font-semibold">{{ nodeData.type }}</div>
+          </div>
+        </template>
+      </NodeBase>
+    </template>
+  </GraphCanvasBase>
+</template>
+```
+
+### Styling Implementation Details
+
+The styling system uses Vue's provide/inject pattern:
+
+1. **GraphCanvasBase** receives `nodeStyles` prop
+2. Resolves configuration (colors → functions or uses provided functions)
+3. Provides resolved functions via `NODE_STYLE_KEY`
+4. **NodeBase** injects style functions with default fallback
+5. Applies classes dynamically based on node state
+
+This architecture allows:
+- Zero configuration (defaults work automatically)
+- Global style configuration via props
+- No prop drilling to child components
+- Complete style customization without modifying components
 
 ## Usage Approaches
 
@@ -297,12 +564,14 @@ These examples are now at the top of the document under "Usage Approaches".
 
 ```typescript
 type GUINodeData<T = unknown> = {
-  type: string;
+  type: string;  // Fully customizable - use any string value for node types
   nodeId: string;
   position: NodePositionData;
   data: T;
 };
 ```
+
+**Note:** The `type` field is fully customizable and accepts any string value. This allows you to define your own node types like `"source"`, `"processor"`, `"output"`, `"llm"`, `"database"`, etc. There are no restrictions on node type names.
 
 ### NodePositionData
 
@@ -503,6 +772,16 @@ If you were passing all props explicitly, you can now remove them:
 5. **Implement custom `validateConnection`** - For application-specific edge rules (pass as option or prop)
 6. **Keep node rendering logic in components** - Use slots for flexibility
 7. **Use TypeScript generics for node data** - `GUINodeData<MyDataType>` for type safety
+8. **Node Styling Best Practices**:
+   - Start with default styling (no configuration needed)
+   - Use object-based `colors` config for simple color customization
+   - Only use function-based styling when you need complex logic
+   - Define node types that match your domain (e.g., "source", "processor", "sink")
+   - Keep Tailwind classes in your safelist if using dynamic generation
+9. **Node Type Naming**:
+   - Use descriptive, domain-specific type names
+   - Consider namespacing for complex apps (e.g., "data:source", "llm:completion")
+   - Avoid generic names like "node1", "node2" - use meaningful types
 
 ## Error Handling
 

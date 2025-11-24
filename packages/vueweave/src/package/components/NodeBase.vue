@@ -58,10 +58,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watchEffect, computed, PropType, onMounted } from "vue";
+import { defineComponent, ref, watchEffect, computed, PropType, onMounted, inject } from "vue";
 import type { NewEdgeEventDirection } from "../utils/type";
 import { getClientPos, getNodeSize, getTransformStyle } from "../utils/gui";
-import { nodeMainClass, nodeHeaderClass, nodeOutputClass, nodeInputClass } from "../utils/classUtils";
+import { nodeMainClass as defaultNodeMainClass, nodeHeaderClass as defaultNodeHeaderClass, nodeOutputClass as defaultNodeOutputClass, nodeInputClass as defaultNodeInputClass } from "../utils/classUtils";
+import { NODE_STYLE_KEY } from "../utils/nodeStyles";
 import { useNodeContext } from "../composable/useNodeContext";
 
 export default defineComponent({
@@ -84,6 +85,18 @@ export default defineComponent({
     const thisRef = ref<HTMLElement | null>(null);
     const inputsRef = ref<HTMLElement[]>([]);
     const outputsRef = ref<HTMLElement[]>([]);
+
+    // Inject style functions with defaults
+    const providedStyles = inject<{
+      nodeMainClass?: typeof defaultNodeMainClass;
+      nodeHeaderClass?: typeof defaultNodeHeaderClass;
+      nodeOutputClass?: typeof defaultNodeOutputClass;
+      nodeInputClass?: typeof defaultNodeInputClass;
+    }>(NODE_STYLE_KEY, {});
+    const nodeMainClass = providedStyles.nodeMainClass ?? defaultNodeMainClass;
+    const nodeHeaderClass = providedStyles.nodeHeaderClass ?? defaultNodeHeaderClass;
+    const nodeOutputClass = providedStyles.nodeOutputClass ?? defaultNodeOutputClass;
+    const nodeInputClass = providedStyles.nodeInputClass ?? defaultNodeInputClass;
 
     const isDragging = ref(false);
     const isNewEdge = ref(false);
