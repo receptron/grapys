@@ -62,9 +62,9 @@ const isValidEdge = (edge: GUIEdgeData, nodeRecords: GUINodeDataRecord): boolean
     return false;
   }
 
-  // Check if source has outputs
+  // Check if source has outputs (only if outputCenters is initialized and not empty)
   const sourceOutputs = sourceNode.position.outputCenters || [];
-  if (edge.source.index >= sourceOutputs.length) {
+  if (sourceOutputs.length > 0 && edge.source.index >= sourceOutputs.length) {
     console.error(
       `[VueWeave] Invalid edge: source node "${edge.source.nodeId}" does not have output at index ${edge.source.index}. ` +
         `Available outputs: ${sourceOutputs.length}`,
@@ -72,9 +72,9 @@ const isValidEdge = (edge: GUIEdgeData, nodeRecords: GUINodeDataRecord): boolean
     return false;
   }
 
-  // Check if target has inputs
+  // Check if target has inputs (only if inputCenters is initialized and not empty)
   const targetInputs = targetNode.position.inputCenters || [];
-  if (edge.target.index >= targetInputs.length) {
+  if (targetInputs.length > 0 && edge.target.index >= targetInputs.length) {
     console.error(
       `[VueWeave] Invalid edge: target node "${edge.target.nodeId}" does not have input at index ${edge.target.index}. ` +
         `Available inputs: ${targetInputs.length}`,
