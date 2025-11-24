@@ -10,11 +10,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, PropType } from "vue";
+import { defineComponent, ref, computed, inject, PropType } from "vue";
 import { EdgeData2 } from "../utils/type";
 import { convEdgePath } from "../utils/gui";
+import { EDGE_COLOR_KEY, type EdgeColorConfig } from "../utils/nodeStyles";
 
-import { edgeColors } from "../utils/classUtils";
+const defaultEdgeColors: EdgeColorConfig = {
+  edge: "red",
+  hover: "blue",
+  notConnectable: "pink",
+};
 
 export default defineComponent({
   components: {},
@@ -40,6 +45,9 @@ export default defineComponent({
       const targetIndex = props.targetData.kind === "node" ? props.targetData.index : undefined;
       return convEdgePath(sourceIndex, props.sourceData.data.position, targetIndex, props.targetData.data.position);
     });
+
+    // Inject edge colors with defaults
+    const edgeColors = inject<EdgeColorConfig>(EDGE_COLOR_KEY, defaultEdgeColors);
 
     return {
       edgePath,

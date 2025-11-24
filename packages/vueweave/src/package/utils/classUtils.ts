@@ -10,19 +10,19 @@
   Tailwind configuration's safelist or used elsewhere in your code.
 */
 
-import { GUINodeData, InputOutputData } from "./type";
+import { defaultNodeColors, defaultPortColors, defaultEdgeColors } from "./nodeStyles";
+import { GUINodeData } from "./type";
 
 export type NodeStyleFn = (expectNearNode: boolean, nodeData: GUINodeData) => string;
 export type NodeOutputStyleFn = (expectNearNode: boolean, nodeData: GUINodeData, isConnectable?: boolean) => string;
-export type NodeInputStyleFn = (expectNearNode: boolean, nodeData: GUINodeData, input: InputOutputData, isConnectable?: boolean) => string;
+export type NodeInputStyleFn = (expectNearNode: boolean, nodeData: GUINodeData, isConnectable?: boolean) => string;
 
 /**
  * Default node body/main background color
  * Override this for custom node type colors
  */
 export const nodeMainClass: NodeStyleFn = (expectNearNode, __nodeData) => {
-  // Default: blue for all node types
-  return expectNearNode ? "bg-blue-200" : "bg-blue-400";
+  return (expectNearNode ? defaultNodeColors.default.mainHighlight : defaultNodeColors.default.main) ?? "";
 };
 
 /**
@@ -30,8 +30,7 @@ export const nodeMainClass: NodeStyleFn = (expectNearNode, __nodeData) => {
  * Override this for custom node type colors
  */
 export const nodeHeaderClass: NodeStyleFn = (expectNearNode, __nodeData) => {
-  // Default: blue for all node types
-  return expectNearNode ? "bg-blue-300" : "bg-blue-500";
+  return (expectNearNode ? defaultNodeColors.default.headerHighlight : defaultNodeColors.default.header) ?? "";
 };
 
 /**
@@ -39,21 +38,17 @@ export const nodeHeaderClass: NodeStyleFn = (expectNearNode, __nodeData) => {
  * Override this for custom styling
  */
 export const nodeOutputClass: NodeOutputStyleFn = (expectNearNode, nodeData, isConnectable = true) => {
-  // Red when not connectable, green otherwise
-  return expectNearNode ? (isConnectable ? "bg-green-200" : "bg-red-600") : "bg-green-500";
+  const { outputHighlight, notConnectable, output } = defaultPortColors;
+  return (expectNearNode ? (isConnectable ? outputHighlight : notConnectable) : output) ?? "";
 };
 
 /**
  * Default input port color
  * Override this for custom styling
  */
-export const nodeInputClass: NodeInputStyleFn = (expectNearNode, nodeData, input, isConnectable = true) => {
-  // Special styling for mapTo inputs
-  if (input.mapTo) {
-    return expectNearNode ? (isConnectable ? "bg-red-200" : "bg-red-700") : "bg-red-400";
-  }
-  // Red when not connectable, blue otherwise
-  return expectNearNode ? (isConnectable ? "bg-blue-200" : "bg-red-600") : "bg-blue-500";
+export const nodeInputClass: NodeInputStyleFn = (expectNearNode, nodeData, isConnectable = true) => {
+  const { inputHighlight, notConnectable, input } = defaultPortColors;
+  return (expectNearNode ? (isConnectable ? inputHighlight : notConnectable) : input) ?? "";
 };
 
 export const buttonColorVariants = {
@@ -76,11 +71,14 @@ export const buttonRoundedClasses = {
   full: "rounded-full",
 } as const;
 
-//
+/**
+ * Default edge colors
+ * Uses defaultEdgeColors from nodeStyles
+ */
 export const edgeColors = {
-  edge: "red",
-  hover: "blue",
-  notConnectable: "pink",
+  edge: defaultEdgeColors.edge ?? "red",
+  hover: defaultEdgeColors.hover ?? "blue",
+  notConnectable: defaultEdgeColors.notConnectable ?? "pink",
 };
 
 export const staticNodeOptions = [

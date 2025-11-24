@@ -11,6 +11,34 @@
 import type { NodeStyleFn, NodeOutputStyleFn, NodeInputStyleFn } from "./classUtils";
 
 /**
+ * Edge color configuration
+ */
+export type EdgeColorConfig = {
+  // Normal edge color
+  edge?: string;
+  // Hover edge color
+  hover?: string;
+  // Not connectable edge color
+  notConnectable?: string;
+};
+
+/**
+ * Port color configuration
+ */
+export type PortColorConfig = {
+  // Input port color
+  input?: string;
+  // Input port hover/highlight color
+  inputHighlight?: string;
+  // Output port color
+  output?: string;
+  // Output port hover/highlight color
+  outputHighlight?: string;
+  // Not connectable port color
+  notConnectable?: string;
+};
+
+/**
  * Simple object-based color configuration
  * Maps node types to Tailwind CSS class names
  */
@@ -24,6 +52,8 @@ export type NodeColorConfig = {
     mainHighlight?: string;
     // Header color when node is highlighted
     headerHighlight?: string;
+    // Port colors (optional, overrides global port colors for this node type)
+    ports?: PortColorConfig;
   };
 };
 
@@ -46,10 +76,36 @@ export type NodeStyleOptions = {
   colors?: NodeColorConfig;
   // Advanced approach: custom style functions
   functions?: NodeStyleConfig;
+  // Global port colors (can be overridden per node type)
+  portColors?: PortColorConfig;
+  // Edge colors
+  edgeColors?: EdgeColorConfig;
 };
 
 /**
- * Default color configuration
+ * Default port color configuration
+ * Can be used as a starting point for customization
+ */
+export const defaultPortColors: PortColorConfig = {
+  input: "bg-blue-500",
+  inputHighlight: "bg-blue-200",
+  output: "bg-green-500",
+  outputHighlight: "bg-green-200",
+  notConnectable: "bg-red-600",
+};
+
+/**
+ * Default edge color configuration
+ * Can be used as a starting point for customization
+ */
+export const defaultEdgeColors: EdgeColorConfig = {
+  edge: "red",
+  hover: "blue",
+  notConnectable: "pink",
+};
+
+/**
+ * Default node color configuration
  * Can be used as a starting point for customization
  */
 export const defaultNodeColors: NodeColorConfig = {
@@ -65,9 +121,14 @@ export const defaultNodeColors: NodeColorConfig = {
 /**
  * Create style functions from color configuration object
  */
-export const createStyleFunctionsFromColors = (colors: NodeColorConfig): NodeStyleConfig => {
+export const createStyleFunctionsFromColors = (colors: NodeColorConfig, globalPortColors?: PortColorConfig): NodeStyleConfig => {
   const getColors = (nodeType: string) => {
     return colors[nodeType] || colors.default || defaultNodeColors.default;
+  };
+
+  const getPortColors = (nodeType: string): PortColorConfig => {
+    const nodeColors = getColors(nodeType);
+    return nodeColors.ports || globalPortColors || defaultPortColors;
   };
 
   return {
@@ -79,17 +140,15 @@ export const createStyleFunctionsFromColors = (colors: NodeColorConfig): NodeSty
       const nodeColors = getColors(nodeData.type);
       return expectNearNode ? nodeColors.headerHighlight || nodeColors.header || "" : nodeColors.header || "";
     },
-    nodeOutputClass: (expectNearNode, __nodeData, isConnectable = true) => {
-      // Red when not connectable, green otherwise
-      return expectNearNode ? (isConnectable ? "bg-green-200" : "bg-red-600") : "bg-green-500";
+    nodeOutputClass: (expectNearNode, nodeData, isConnectable = true) => {
+      const portColors = getPortColors(nodeData.type);
+      const { outputHighlight, notConnectable, output } = defaultPortColors;
+      return (expectNearNode ? (isConnectable ? portColors.outputHighlight ?? outputHighlight : portColors.notConnectable ?? notConnectable) : portColors.output ?? output) ?? "";
     },
-    nodeInputClass: (expectNearNode, __nodeData, input, isConnectable = true) => {
-      // Special styling for mapTo inputs
-      if (input.mapTo) {
-        return expectNearNode ? (isConnectable ? "bg-red-200" : "bg-red-700") : "bg-red-400";
-      }
-      // Red when not connectable, blue otherwise
-      return expectNearNode ? (isConnectable ? "bg-blue-200" : "bg-red-600") : "bg-blue-500";
+    nodeInputClass: (expectNearNode, nodeData, isConnectable = true) => {
+      const portColors = getPortColors(nodeData.type);
+      const { inputHighlight, notConnectable, input } = defaultPortColors;
+      return (expectNearNode ? (isConnectable ? portColors.inputHighlight ?? inputHighlight : portColors.notConnectable ?? notConnectable) : portColors.input ?? input) ?? "";
     },
   };
 };
@@ -105,14 +164,26 @@ export const resolveStyleConfig = (options?: NodeStyleOptions): NodeStyleConfig 
 
   // If color config provided, convert to functions
   if (options?.colors) {
-    return createStyleFunctionsFromColors(options.colors);
+    return createStyleFunctionsFromColors(options.colors, options?.portColors);
   }
 
   // Otherwise use default
-  return createStyleFunctionsFromColors(defaultNodeColors);
+  return createStyleFunctionsFromColors(defaultNodeColors, options?.portColors);
 };
 
 /**
- * Vue provide/inject key for node styles
+ * Resolve edge colors with defaults
+ */
+export const resolveEdgeColors = (options?: NodeStyleOptions): EdgeColorConfig => {
+  return {
+    edge: options?.edgeColors?.edge || defaultEdgeColors.edge || "red",
+    hover: options?.edgeColors?.hover || defaultEdgeColors.hover || "blue",
+    notConnectable: options?.edgeColors?.notConnectable || defaultEdgeColors.notConnectable || "pink",
+  };
+};
+
+/**
+ * Vue provide/inject keys
  */
 export const NODE_STYLE_KEY = Symbol("nodeStyles");
+export const EDGE_COLOR_KEY = Symbol("edgeColors");

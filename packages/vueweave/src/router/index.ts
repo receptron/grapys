@@ -4,6 +4,7 @@ import Home from "../views/Home.vue";
 import MinimalExample from "../views/MinimalExample.vue";
 import SimpleExample from "../views/SimpleExample.vue";
 import InteractiveExample from "../views/InteractiveExample.vue";
+import StyledExample from "../views/StyledExample.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -24,6 +25,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/interactive",
     name: "InteractiveExample",
     component: InteractiveExample,
+  },
+  {
+    path: "/styled",
+    name: "StyledExample",
+    component: StyledExample,
   },
   {
     path: "/:page(.*)",

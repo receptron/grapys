@@ -43,7 +43,7 @@
         <!-- node slot - user provides their custom node component -->
         <slot name="node" :node-data="nodeData" :node-index="index">
           <!-- Default fallback: Simple NodeBase with single input/output -->
-          <NodeBase :inputs="getDefaultInputs(nodeData)" :outputs="getDefaultOutputs(nodeData)">
+          <NodeBase :inputs="getDefaultInputs()" :outputs="getDefaultOutputs()">
             <template #header>
               <div class="w-full rounded-t-md bg-gray-500 py-2 text-center text-white">
                 {{ nodeData.nodeId }}
@@ -76,7 +76,7 @@ import { useNewEdge } from "../composable/gui";
 import { usePanAndScroll } from "../composable/usePanAndScroll";
 import { useGraphCanvas } from "../composable/useGraphCanvas";
 import { guiEdgeData2edgeData } from "../utils/gui";
-import { NODE_STYLE_KEY, resolveStyleConfig, type NodeStyleOptions } from "../utils/nodeStyles";
+import { NODE_STYLE_KEY, EDGE_COLOR_KEY, resolveStyleConfig, resolveEdgeColors, type NodeStyleOptions } from "../utils/nodeStyles";
 import type { GUINodeData, NodePosition, GUIEdgeData, GUINodeDataRecord, ValidateConnectionFn } from "../utils/type";
 
 const props = defineProps<{
@@ -93,6 +93,10 @@ const props = defineProps<{
 // Resolve and provide style configuration
 const resolvedStyles = resolveStyleConfig(props.nodeStyles);
 provide(NODE_STYLE_KEY, resolvedStyles);
+
+// Resolve and provide edge colors
+const resolvedEdgeColors = resolveEdgeColors(props.nodeStyles);
+provide(EDGE_COLOR_KEY, resolvedEdgeColors);
 
 const getNodeKey = props.getNodeKey ?? ((nodeData: GUINodeData, index: number) => `${nodeData.nodeId}-${index}`);
 
