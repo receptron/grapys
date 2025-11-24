@@ -32,38 +32,77 @@ import { GraphCanvasBase, NodeBase, useFlowStore, type GUINodeData, type NodePos
 
 const store = useFlowStore();
 
-// Initialize with sample data
+// Initialize with sample data - Data Processing Pipeline
 store.initData(
   [
+    // Input nodes
     {
       type: "static",
-      nodeId: "input1",
-      position: { x: 100, y: 100 },
-      data: { value: "Hello" },
+      nodeId: "dataSource1",
+      position: { x: 50, y: 100 },
+      data: { value: "Data A" },
+    },
+    {
+      type: "static",
+      nodeId: "dataSource2",
+      position: { x: 50, y: 250 },
+      data: { value: "Data B" },
+    },
+    // Processing nodes
+    {
+      type: "computed",
+      nodeId: "merger",
+      position: { x: 300, y: 150 },
+      data: { name: "Merge" },
     },
     {
       type: "computed",
-      nodeId: "process1",
-      position: { x: 400, y: 100 },
-      data: { name: "Process" },
+      nodeId: "transformer",
+      position: { x: 550, y: 150 },
+      data: { name: "Transform" },
+    },
+    // Output nodes
+    {
+      type: "computed",
+      nodeId: "validator",
+      position: { x: 800, y: 100 },
+      data: { name: "Validate" },
     },
     {
-      type: "static",
-      nodeId: "output1",
-      position: { x: 700, y: 100 },
-      data: { value: "" },
+      type: "computed",
+      nodeId: "logger",
+      position: { x: 800, y: 250 },
+      data: { name: "Log" },
     },
   ],
   [
+    // Connect data sources to merger
     {
       type: "edge",
-      source: { nodeId: "input1", index: 0 },
-      target: { nodeId: "process1", index: 0 },
+      source: { nodeId: "dataSource1", index: 0 },
+      target: { nodeId: "merger", index: 0 },
     },
     {
       type: "edge",
-      source: { nodeId: "process1", index: 0 },
-      target: { nodeId: "output1", index: 0 },
+      source: { nodeId: "dataSource2", index: 0 },
+      target: { nodeId: "merger", index: 1 },
+    },
+    // Connect merger to transformer
+    {
+      type: "edge",
+      source: { nodeId: "merger", index: 0 },
+      target: { nodeId: "transformer", index: 0 },
+    },
+    // Connect transformer to outputs
+    {
+      type: "edge",
+      source: { nodeId: "transformer", index: 0 },
+      target: { nodeId: "validator", index: 0 },
+    },
+    {
+      type: "edge",
+      source: { nodeId: "transformer", index: 0 },
+      target: { nodeId: "logger", index: 0 },
     },
   ],
   {}
@@ -87,6 +126,11 @@ const validateConnection = () => {
 
 const getInputs = (nodeData: GUINodeData) => {
   if (nodeData.type === "computed") {
+    // Merger node has 2 inputs
+    if (nodeData.nodeId === "merger") {
+      return [{ name: "input1" }, { name: "input2" }];
+    }
+    // Other computed nodes have 1 input
     return [{ name: "input" }];
   }
   return [];

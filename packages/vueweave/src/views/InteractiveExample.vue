@@ -1,9 +1,11 @@
 <template>
   <div class="flex h-screen w-screen flex-col">
     <div class="flex gap-2 border-b bg-gray-100 p-4">
-      <button @click="addNode" class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">Add Node</button>
+      <button @click="addStaticNode" class="rounded bg-purple-500 px-4 py-2 text-white hover:bg-purple-600">Add Static Node</button>
+      <button @click="addComputedNode" class="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600">Add Computed Node</button>
+      <button @click="loadSampleGraph" class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">Load Sample</button>
       <button @click="clearAll" class="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600">Clear All</button>
-      <div class="ml-4 flex items-center gap-2">
+      <div class="ml-auto flex items-center gap-4">
         <span class="text-sm text-gray-600">Nodes: {{ nodes.length }}</span>
         <span class="text-sm text-gray-600">Edges: {{ edges.length }}</span>
       </div>
@@ -60,21 +62,92 @@ const nodes = computed(() => store.nodes);
 const edges = computed(() => store.edges);
 const nodeRecords = computed(() => store.nodeRecords);
 
-const addNode = () => {
+const addStaticNode = () => {
   const currentCount = nodeCounter.value;
   nodeCounter.value = currentCount + 1;
-  const nodeId = `node${currentCount}`;
-  const nodeType = currentCount % 2 === 0 ? "computed" : "static";
+  const nodeId = `static${currentCount}`;
 
   store.pushNode({
-    type: nodeType,
+    type: "static",
     nodeId,
     position: {
       x: 100 + (currentCount % 5) * 150,
       y: 100 + Math.floor(currentCount / 5) * 150,
     },
-    data: nodeType === "static" ? { value: `Value ${currentCount}` } : { name: `Node ${currentCount}` },
+    data: { value: `Value ${currentCount}` },
   });
+};
+
+const addComputedNode = () => {
+  const currentCount = nodeCounter.value;
+  nodeCounter.value = currentCount + 1;
+  const nodeId = `computed${currentCount}`;
+
+  store.pushNode({
+    type: "computed",
+    nodeId,
+    position: {
+      x: 100 + (currentCount % 5) * 150,
+      y: 100 + Math.floor(currentCount / 5) * 150,
+    },
+    data: { name: `Node ${currentCount}` },
+  });
+};
+
+const loadSampleGraph = () => {
+  // Clear existing data
+  store.initData(
+    [
+      // Input nodes
+      {
+        type: "static",
+        nodeId: "input1",
+        position: { x: 50, y: 100 },
+        data: { value: "Input A" },
+      },
+      {
+        type: "static",
+        nodeId: "input2",
+        position: { x: 50, y: 250 },
+        data: { value: "Input B" },
+      },
+      // Processing node
+      {
+        type: "computed",
+        nodeId: "processor",
+        position: { x: 300, y: 175 },
+        data: { name: "Process" },
+      },
+      // Output node
+      {
+        type: "computed",
+        nodeId: "output",
+        position: { x: 550, y: 175 },
+        data: { name: "Output" },
+      },
+    ],
+    [
+      // Connect inputs to processor
+      {
+        type: "edge",
+        source: { nodeId: "input1", index: 0 },
+        target: { nodeId: "processor", index: 0 },
+      },
+      {
+        type: "edge",
+        source: { nodeId: "input2", index: 0 },
+        target: { nodeId: "processor", index: 1 },
+      },
+      // Connect processor to output
+      {
+        type: "edge",
+        source: { nodeId: "processor", index: 0 },
+        target: { nodeId: "output", index: 0 },
+      },
+    ],
+    {}
+  );
+  nodeCounter.value = 1;
 };
 
 const clearAll = () => {
@@ -100,6 +173,11 @@ const handleNodeClick = (nodeData: GUINodeData) => {
 
 const getInputs = (nodeData: GUINodeData) => {
   if (nodeData.type === "computed") {
+    // Processor node has 2 inputs
+    if (nodeData.nodeId === "processor") {
+      return [{ name: "input1" }, { name: "input2" }];
+    }
+    // Other computed nodes have 1 input
     return [{ name: "input" }];
   }
   return [];
