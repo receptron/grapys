@@ -151,7 +151,7 @@ onMounted(() => {
       {
         type: "processor",
         nodeId: "ML Model",
-        position: { x: 380, y: 320 },
+        position: { x: 380, y: 380 },
         data: { description: "Inference engine" },
       },
       {
@@ -163,13 +163,13 @@ onMounted(() => {
       {
         type: "output",
         nodeId: "Warehouse",
-        position: { x: 680, y: 240 },
+        position: { x: 680, y: 280 },
         data: { description: "Long-term storage" },
       },
       {
         type: "output",
         nodeId: "Alerts",
-        position: { x: 680, y: 380 },
+        position: { x: 680, y: 460 },
         data: { description: "Notification system" },
       },
     ],

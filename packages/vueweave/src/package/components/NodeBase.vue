@@ -40,7 +40,7 @@
         <div v-for="(input, index) in inputs" :key="['in', input.key ?? input.name, index].join('-')" class="relative flex items-center" ref="inputsRef">
           <div
             class="absolute left-[-10px] h-4 w-4 min-w-[12px] rounded-full"
-            :class="nodeInputClass(isExpectNearPort('outbound', index), nodeData, input as any, isInputPortConnectable(index))"
+            :class="nodeInputClass(isExpectNearPort('outbound', index), nodeData, isInputPortConnectable(index))"
             @click.stop
             @mousedown.stop.prevent="(e) => onStartEdge(e, 'inbound', index)"
             @touchstart.stop.prevent="(e) => onStartEdge(e, 'inbound', index)"
