@@ -156,11 +156,11 @@ const closeMenu = () => {
 };
 
 // Default node rendering helpers
-const getDefaultInputs = (nodeData: GUINodeData) => {
+const getDefaultInputs = () => {
   return [{ name: "in" }];
 };
 
-const getDefaultOutputs = (nodeData: GUINodeData) => {
+const getDefaultOutputs = () => {
   return [{ name: "out" }];
 };
 
