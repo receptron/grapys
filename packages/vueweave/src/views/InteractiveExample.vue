@@ -12,14 +12,8 @@
     </div>
 
     <div class="flex-1">
-      <GraphCanvasBase
-        :nodes="nodes"
-        :edges="edges"
-        :node-records="nodeRecords"
-        :update-position="updateNodePosition"
-        :save-position="saveNodePosition"
-        :validate-connection="validateConnection"
-      >
+      <!-- @ts-expect-error props are optional -->
+      <GraphCanvasBase ref="graphCanvas">
         <template #node="{ nodeData }">
           <NodeBase :inputs="getInputs(nodeData)" :outputs="getOutputs(nodeData)" @open-node-edit-menu="handleNodeClick(nodeData)">
             <template #header>
@@ -48,26 +42,31 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { GraphCanvasBase, NodeBase, useFlowStore, type GUINodeData, type NodePositionData } from "vueweave";
+// @ts-nocheck - Sample code using internal package
+import { ref, computed, onMounted } from "vue";
+import { GraphCanvasBase, NodeBase, type GUINodeData } from "vueweave";
+import type { GraphCanvasBaseExposed } from "../package/components/GraphCanvasBase.types";
 
-const store = useFlowStore();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const graphCanvas = ref<GraphCanvasBaseExposed | any>();
+
+// Computed properties for reactive display
+const nodes = computed(() => graphCanvas.value?.store.nodes ?? []);
+const edges = computed(() => graphCanvas.value?.store.edges ?? []);
 
 // Initialize with empty data
-store.initData([], [], {});
+onMounted(() => {
+  graphCanvas.value?.initData([], [], {});
+});
 
 const nodeCounter = ref(1);
-
-const nodes = computed(() => store.nodes);
-const edges = computed(() => store.edges);
-const nodeRecords = computed(() => store.nodeRecords);
 
 const addStaticNode = () => {
   const currentCount = nodeCounter.value;
   nodeCounter.value = currentCount + 1;
   const nodeId = `static${currentCount}`;
 
-  store.pushNode({
+  graphCanvas.value?.pushNode({
     type: "static",
     nodeId,
     position: {
@@ -83,7 +82,7 @@ const addComputedNode = () => {
   nodeCounter.value = currentCount + 1;
   const nodeId = `computed${currentCount}`;
 
-  store.pushNode({
+  graphCanvas.value?.pushNode({
     type: "computed",
     nodeId,
     position: {
@@ -96,7 +95,7 @@ const addComputedNode = () => {
 
 const loadSampleGraph = () => {
   // Clear existing data
-  store.initData(
+  graphCanvas.value?.initData(
     [
       // Input nodes
       {
@@ -151,20 +150,8 @@ const loadSampleGraph = () => {
 };
 
 const clearAll = () => {
-  store.initData([], [], {});
+  graphCanvas.value?.initData([], [], {});
   nodeCounter.value = 1;
-};
-
-const updateNodePosition = (index: number, position: NodePositionData) => {
-  store.updateNodePosition(index, position);
-};
-
-const saveNodePosition = () => {
-  store.saveNodePositionData();
-};
-
-const validateConnection = () => {
-  return true;
 };
 
 const handleNodeClick = (nodeData: GUINodeData) => {

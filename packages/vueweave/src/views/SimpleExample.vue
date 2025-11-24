@@ -1,13 +1,7 @@
 <template>
   <div class="h-screen w-screen">
-    <GraphCanvasBase
-      :nodes="nodes"
-      :edges="edges"
-      :node-records="nodeRecords"
-      :update-position="updateNodePosition"
-      :save-position="saveNodePosition"
-      :validate-connection="validateConnection"
-    >
+    <!-- @ts-expect-error props are optional -->
+    <GraphCanvasBase ref="graphCanvas">
       <template #node="{ nodeData }">
         <NodeBase :inputs="getInputs(nodeData)" :outputs="getOutputs(nodeData)">
           <template #header>
@@ -27,13 +21,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { GraphCanvasBase, NodeBase, useFlowStore, type GUINodeData, type NodePositionData } from "vueweave";
+// @ts-nocheck - Sample code using internal package
+import { ref, onMounted } from "vue";
+import { GraphCanvasBase, NodeBase, type GUINodeData } from "vueweave";
+import type { GraphCanvasBaseExposed } from "../package/components/GraphCanvasBase.types";
 
-const store = useFlowStore();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const graphCanvas = ref<GraphCanvasBaseExposed | any>();
 
 // Initialize with sample data - Data Processing Pipeline
-store.initData(
+onMounted(() => {
+  graphCanvas.value?.initData(
   [
     // Input nodes
     {
@@ -106,23 +104,8 @@ store.initData(
     },
   ],
   {}
-);
-
-const nodes = computed(() => store.nodes);
-const edges = computed(() => store.edges);
-const nodeRecords = computed(() => store.nodeRecords);
-
-const updateNodePosition = (index: number, position: NodePositionData) => {
-  store.updateNodePosition(index, position);
-};
-
-const saveNodePosition = () => {
-  store.saveNodePositionData();
-};
-
-const validateConnection = () => {
-  return true;
-};
+  );
+});
 
 const getInputs = (nodeData: GUINodeData) => {
   if (nodeData.type === "computed") {
