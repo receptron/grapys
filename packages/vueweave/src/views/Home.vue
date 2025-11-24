@@ -5,7 +5,10 @@
       <p class="mb-8 text-gray-600">Interactive node-based graph editor examples</p>
 
       <div class="space-y-4">
-        <router-link to="/minimal" class="block rounded-lg border-2 border-purple-200 bg-purple-50 p-6 transition-all hover:border-purple-400 hover:bg-purple-100">
+        <router-link
+          to="/minimal"
+          class="block rounded-lg border-2 border-purple-200 bg-purple-50 p-6 transition-all hover:border-purple-400 hover:bg-purple-100"
+        >
           <div class="mb-2 flex items-center justify-between">
             <h2 class="text-xl font-semibold text-purple-800">Minimal Example</h2>
             <a

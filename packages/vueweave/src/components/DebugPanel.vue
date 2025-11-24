@@ -1,10 +1,7 @@
 <template>
   <div class="w-80 overflow-auto border-r bg-gray-50 p-4">
     <div class="mb-4">
-      <router-link
-        to="/"
-        class="flex items-center gap-1 rounded bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-700"
-      >
+      <router-link to="/" class="flex items-center gap-1 rounded bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-700">
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
