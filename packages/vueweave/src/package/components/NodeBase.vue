@@ -27,7 +27,7 @@
           <span class="mr-2 text-xs whitespace-nowrap">{{ output.name }}</span>
           <div
             class="absolute right-[-10px] h-4 w-4 min-w-[12px] rounded-full"
-            :class="nodeOutputClass(isExpectNearPort('inbound', index), nodeData, isOutputPortConnectable(index))"
+            :class="nodeOutputClass(isExpectNearPort('inbound', index), nodeData, isConnectable)"
             @click.stop
             @mousedown.stop.prevent="(e) => onStartEdge(e, 'outbound', index)"
             @touchstart.stop.prevent="(e) => onStartEdge(e, 'outbound', index)"
@@ -40,7 +40,7 @@
         <div v-for="(input, index) in inputs" :key="['in', input.key ?? input.name, index].join('-')" class="relative flex items-center" ref="inputsRef">
           <div
             class="absolute left-[-10px] h-4 w-4 min-w-[12px] rounded-full"
-            :class="nodeInputClass(isExpectNearPort('outbound', index), nodeData, isInputPortConnectable(index))"
+            :class="nodeInputClass(isExpectNearPort('outbound', index), nodeData, isConnectable)"
             @click.stop
             @mousedown.stop.prevent="(e) => onStartEdge(e, 'inbound', index)"
             @touchstart.stop.prevent="(e) => onStartEdge(e, 'inbound', index)"
@@ -233,21 +233,7 @@ const isExpectNearPort = (direction: NewEdgeEventDirection, index: number) => {
   return nearestData?.direction === direction && nearestData?.index === index;
 };
 
-const isInputPortConnectable = (index: number) => {
-  if (!isExpectNearPort('outbound', index)) {
-    return true; // Not highlighted, show normal color
-  }
-  return nodeContext.value.isConnectable;
-};
-
-const isOutputPortConnectable = (index: number) => {
-  if (!isExpectNearPort('inbound', index)) {
-    return true; // Not highlighted, show normal color
-  }
-  return nodeContext.value.isConnectable;
-};
-
-// const isConnectable = computed(() => nodeContext.value.isConnectable);
+const isConnectable = computed(() => nodeContext.value.isConnectable);
 
 let currentWidth = 0;
 let currentHeight = 0;
