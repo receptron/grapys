@@ -141,15 +141,9 @@ const openNodeMenu = (event: MouseEvent, nodeIndex: number) => {
   contextNodeMenu.value.openMenu(event, rect, nodeIndex);
 };
 
- 
+
 const closeMenu = () => {
   contextEdgeMenu.value?.closeMenu();
   contextNodeMenu.value?.closeMenu();
 };
-
-defineExpose({
-  mainContainer,
-  svgRef,
-  openNodeMenu,
-});
 </script>
