@@ -11,6 +11,10 @@
         <button @click="addOutputNode" class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">Add Output</button>
         <button @click="loadSampleGraph" class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">Load Sample</button>
         <button @click="clearAll" class="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600">Clear All</button>
+        <div class="border-l border-gray-300 pl-2">
+          <button @click="flowStore.undo()" :disabled="!flowStore.undoable" class="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600 disabled:cursor-not-allowed disabled:bg-gray-300">Undo</button>
+          <button @click="flowStore.redo()" :disabled="!flowStore.redoable" class="ml-2 rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600 disabled:cursor-not-allowed disabled:bg-gray-300">Redo</button>
+        </div>
         <div class="ml-auto flex items-center gap-4">
           <span class="text-sm text-gray-600">Nodes: {{ flowStore.nodes.length }}</span>
           <span class="text-sm text-gray-600">Edges: {{ flowStore.edges.length }}</span>

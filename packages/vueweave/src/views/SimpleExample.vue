@@ -191,7 +191,7 @@ onMounted(() => {
 });
 
 const getNodeTypeLabel = (type: string) => {
-  const labels = {
+  const labels: Record<string, string> = {
     source: "Data Source",
     processor: "Processor",
     output: "Output",
