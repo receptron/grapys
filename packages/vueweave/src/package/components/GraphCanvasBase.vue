@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, provide } from "vue";
 import NodeContextProvider from "./NodeContextProvider.vue";
 import Edge from "./Edge.vue";
 import ContextEdgeMenu from "./ContextEdgeMenu.vue";
@@ -64,6 +64,7 @@ import { useNewEdge } from "../composable/gui";
 import { usePanAndScroll } from "../composable/usePanAndScroll";
 import { useGraphCanvas } from "../composable/useGraphCanvas";
 import { guiEdgeData2edgeData } from "../utils/gui";
+import { NODE_STYLE_KEY, resolveStyleConfig, type NodeStyleOptions } from "../utils/nodeStyles";
 import type { GUINodeData, NodePosition, GUIEdgeData, GUINodeDataRecord, ValidateConnectionFn } from "../utils/type";
 
 const props = defineProps<{
@@ -74,7 +75,12 @@ const props = defineProps<{
   savePosition?: () => void;
   validateConnection?: ValidateConnectionFn;
   getNodeKey?: (nodeData: GUINodeData, index: number) => string;
+  nodeStyles?: NodeStyleOptions;
 }>();
+
+// Resolve and provide style configuration
+const resolvedStyles = resolveStyleConfig(props.nodeStyles);
+provide(NODE_STYLE_KEY, resolvedStyles);
 
 const getNodeKey = props.getNodeKey ?? ((nodeData: GUINodeData, index: number) => `${nodeData.nodeId}-${index}`);
 

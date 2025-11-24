@@ -46,17 +46,18 @@
 
     <!-- Canvas -->
     <div class="flex-1">
-      <GraphCanvasBase ref="graphCanvas">
+      <GraphCanvasBase ref="graphCanvas" :node-styles="{ colors: nodeColors }">
       <template #node="{ nodeData }">
         <NodeBase :inputs="getInputs(nodeData)" :outputs="getOutputs(nodeData)">
           <template #header>
-            <div class="w-full rounded-t-md bg-blue-500 py-2 text-center text-white">
+            <div class="w-full rounded-t-md py-2 text-center text-white">
               {{ nodeData.nodeId }}
             </div>
           </template>
           <template #body-main>
             <div class="p-2 text-sm">
-              {{ nodeData.type === "computed" ? "Computed Node" : "Static Node" }}
+              <div class="font-semibold">{{ getNodeTypeLabel(nodeData.type) }}</div>
+              <div class="text-xs text-gray-600">Type: {{ nodeData.type }}</div>
             </div>
           </template>
         </NodeBase>
@@ -68,7 +69,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import { GraphCanvasBase, NodeBase, type GUINodeData } from "../package";
+import { GraphCanvasBase, NodeBase, type GUINodeData, type NodeColorConfig } from "../package";
 import type { GraphCanvasBaseExposed } from "../package/components/GraphCanvasBase.types";
 
 const graphCanvas = ref<GraphCanvasBaseExposed>();
@@ -78,45 +79,68 @@ const nodes = computed(() => graphCanvas.value?.store.nodes ?? []);
 const edges = computed(() => graphCanvas.value?.store.edges ?? []);
 const nodeRecords = computed(() => graphCanvas.value?.store.nodeRecords ?? {});
 
+// Simple object-based color configuration
+const nodeColors: NodeColorConfig = {
+  source: {
+    main: "bg-purple-400",
+    header: "bg-purple-500",
+    mainHighlight: "bg-purple-200",
+    headerHighlight: "bg-purple-300",
+  },
+  processor: {
+    main: "bg-green-400",
+    header: "bg-green-500",
+    mainHighlight: "bg-green-200",
+    headerHighlight: "bg-green-300",
+  },
+  output: {
+    main: "bg-blue-400",
+    header: "bg-blue-500",
+    mainHighlight: "bg-blue-200",
+    headerHighlight: "bg-blue-300",
+  },
+};
+
 // Initialize with sample data - Data Processing Pipeline
+// Note: node.type can be any string value - fully customizable!
 onMounted(() => {
   graphCanvas.value?.initData(
   [
-    // Input nodes
+    // Input nodes - using "source" type
     {
-      type: "static",
+      type: "source",
       nodeId: "dataSource1",
       position: { x: 50, y: 100 },
       data: { value: "Data A" },
     },
     {
-      type: "static",
+      type: "source",
       nodeId: "dataSource2",
       position: { x: 50, y: 250 },
       data: { value: "Data B" },
     },
-    // Processing nodes
+    // Processing nodes - using "processor" type
     {
-      type: "computed",
+      type: "processor",
       nodeId: "merger",
       position: { x: 300, y: 150 },
       data: { name: "Merge" },
     },
     {
-      type: "computed",
+      type: "processor",
       nodeId: "transformer",
       position: { x: 550, y: 150 },
       data: { name: "Transform" },
     },
-    // Output nodes
+    // Output nodes - using "output" type
     {
-      type: "computed",
+      type: "output",
       nodeId: "validator",
       position: { x: 800, y: 100 },
       data: { name: "Validate" },
     },
     {
-      type: "computed",
+      type: "output",
       nodeId: "logger",
       position: { x: 800, y: 250 },
       data: { name: "Log" },
@@ -156,19 +180,34 @@ onMounted(() => {
   );
 });
 
-const getInputs = (nodeData: GUINodeData) => {
-  if (nodeData.type === "computed") {
-    // Merger node has 2 inputs
-    if (nodeData.nodeId === "merger") {
-      return [{ name: "input1" }, { name: "input2" }];
-    }
-    // Other computed nodes have 1 input
-    return [{ name: "input" }];
+const getNodeTypeLabel = (type: string) => {
+  switch (type) {
+    case "source":
+      return "Data Source";
+    case "processor":
+      return "Processor";
+    case "output":
+      return "Output";
+    default:
+      return type;
   }
-  return [];
+};
+
+const getInputs = (nodeData: GUINodeData) => {
+  // Source nodes have no inputs
+  if (nodeData.type === "source") {
+    return [];
+  }
+  // Merger node has 2 inputs
+  if (nodeData.nodeId === "merger") {
+    return [{ name: "input1" }, { name: "input2" }];
+  }
+  // Other processor/output nodes have 1 input
+  return [{ name: "input" }];
 };
 
 const getOutputs = (__nodeData: GUINodeData) => {
+  // All nodes have outputs in this example
   return [{ name: "output" }];
 };
 </script>
