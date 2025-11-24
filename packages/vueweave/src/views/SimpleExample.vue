@@ -1,6 +1,5 @@
 <template>
   <div class="h-screen w-screen">
-    <!-- @ts-expect-error props are optional -->
     <GraphCanvasBase ref="graphCanvas">
       <template #node="{ nodeData }">
         <NodeBase :inputs="getInputs(nodeData)" :outputs="getOutputs(nodeData)">
@@ -21,13 +20,11 @@
 </template>
 
 <script setup lang="ts">
-// @ts-nocheck - Sample code using internal package
 import { ref, onMounted } from "vue";
-import { GraphCanvasBase, NodeBase, type GUINodeData } from "vueweave";
+import { GraphCanvasBase, NodeBase, type GUINodeData } from "../package";
 import type { GraphCanvasBaseExposed } from "../package/components/GraphCanvasBase.types";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const graphCanvas = ref<GraphCanvasBaseExposed | any>();
+const graphCanvas = ref<GraphCanvasBaseExposed>();
 
 // Initialize with sample data - Data Processing Pipeline
 onMounted(() => {

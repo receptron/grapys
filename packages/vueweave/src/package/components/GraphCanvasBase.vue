@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, withDefaults } from "vue";
+import { ref, computed, onMounted } from "vue";
 import NodeContextProvider from "./NodeContextProvider.vue";
 import Edge from "./Edge.vue";
 import ContextEdgeMenu from "./ContextEdgeMenu.vue";
