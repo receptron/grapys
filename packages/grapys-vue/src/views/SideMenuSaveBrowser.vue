@@ -12,15 +12,18 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useStore } from "../store";
+import { useFlowStore } from "vueweave";
+import { useGraphAIStore } from "../store/graphai";
 
 export default defineComponent({
   components: {},
   setup() {
-    const store = useStore();
+    const store = useFlowStore();
+    const graphAIStore = useGraphAIStore();
 
     const save = () => {
-      const dataStr = JSON.stringify(store.graphData);
+      const graphData = graphAIStore.createGraphData(store.currentData);
+      const dataStr = JSON.stringify(graphData);
       window.localStorage.setItem("GRAPHAIGUI", dataStr);
     };
 
@@ -29,7 +32,9 @@ export default defineComponent({
       try {
         if (data) {
           const graphData = JSON.parse(data);
-          store.loadData(graphData.metadata.data);
+          // BACKWARD COMPATIBILITY: Support old format where loop was at root level
+          const loadedData = graphData.metadata.data;
+          store.loadData(loadedData);
         }
       } catch (error) {
         console.log(error);

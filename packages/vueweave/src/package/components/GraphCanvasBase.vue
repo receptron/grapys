@@ -38,6 +38,7 @@
         :on-new-edge-end="onNewEdgeEnd"
         :on-node-drag-start="handleNodeDragStart"
         :on-node-drag-end="handleNodeDragEnd"
+        :open-node-menu="openNodeMenu"
       >
         <!-- node slot - user provides their custom node component -->
         <slot name="node" :node-data="nodeData" :node-index="index">
@@ -61,8 +62,8 @@ import ContextEdgeMenu from "./ContextEdgeMenu.vue";
 import ContextNodeMenu from "./ContextNodeMenu.vue";
 import { useNewEdge } from "../composable/gui";
 import { usePanAndScroll } from "../composable/usePanAndScroll";
-import { guiEdgeData2edgeData } from "../utils/gui/utils";
-import type { GUINodeData, NodePosition, GUIEdgeData, GUINodeDataRecord } from "../utils/gui/type";
+import { guiEdgeData2edgeData } from "../utils/gui";
+import type { GUINodeData, NodePosition, GUIEdgeData, GUINodeDataRecord, ValidateConnectionFn } from "../utils/type";
 
 const props = defineProps({
   nodes: {
@@ -85,6 +86,11 @@ const props = defineProps({
     type: Function as PropType<() => void>,
     required: true,
   },
+  validateConnection: {
+    type: Function as PropType<ValidateConnectionFn>,
+    required: false,
+    default: undefined,
+  },
   getNodeKey: {
     type: Function as PropType<(nodeData: GUINodeData, index: number) => string>,
     default: (nodeData: GUINodeData, index: number) => `${nodeData.nodeId}-${index}`,
@@ -96,23 +102,23 @@ const contextEdgeMenu = ref();
 const contextNodeMenu = ref();
 
 // Edge management
-// eslint-disable-next-line no-useless-assignment
+ 
 const edgeDataList = computed(() => {
   return guiEdgeData2edgeData(props.edges, props.nodeRecords);
 });
 
-// eslint-disable-next-line no-useless-assignment
-const { svgRef, newEdgeData, onNewEdgeStart, onNewEdge, onNewEdgeEnd, nearestData, edgeConnectable } = useNewEdge();
+ 
+const { svgRef, newEdgeData, onNewEdgeStart, onNewEdge, onNewEdgeEnd, nearestData, edgeConnectable } = useNewEdge(props.validateConnection);
 
 // Node drag state management
 const isNodeDragging = ref(false);
 
-// eslint-disable-next-line no-useless-assignment
+ 
 const handleNodeDragStart = () => {
   isNodeDragging.value = true;
 };
 
-// eslint-disable-next-line no-useless-assignment
+ 
 const handleNodeDragEnd = () => {
   isNodeDragging.value = false;
 };
@@ -125,7 +131,7 @@ onMounted(() => {
 });
 
 // Context menu handlers
-// eslint-disable-next-line no-useless-assignment
+ 
 const openEdgeMenu = (event: MouseEvent, edgeIndex: number) => {
   if (!svgRef.value) return;
   const rect = svgRef.value.getBoundingClientRect();
@@ -138,7 +144,7 @@ const openNodeMenu = (event: MouseEvent, nodeIndex: number) => {
   contextNodeMenu.value.openMenu(event, rect, nodeIndex);
 };
 
-// eslint-disable-next-line no-useless-assignment
+ 
 const closeMenu = () => {
   contextEdgeMenu.value?.closeMenu();
   contextNodeMenu.value?.closeMenu();

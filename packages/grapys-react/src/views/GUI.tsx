@@ -17,7 +17,8 @@ import JsonViewer from "./JsonViewer";
 import { graphChat } from "../graph/chat_tinyswallow";
 
 import { useNewEdge } from "../composable/gui";
-import { graphToGUIData, guiEdgeData2edgeData, handleDownload } from "../utils/gui/utils";
+import { graphToGUIData, handleDownload } from "../utils/gui/utils";
+import { guiEdgeData2edgeData } from "../utils/utils/gui";
 import { GraphData, sleep } from "graphai";
 import { useLocalStore, node2Record, toGraph } from "../store/index";
 
@@ -47,7 +48,7 @@ const GUI: FC = () => {
 
   const updateGraph = (graph: GraphData) => {
     const { rawEdge, rawNode, loop } = graphToGUIData(graph);
-    initData(rawNode, rawEdge, loop);
+    initData(rawNode, rawEdge, { loop });
   };
   useEffect(() => {
     (async () => {
@@ -96,7 +97,7 @@ const GUI: FC = () => {
   };
 
   const setGraph = async (graph: GraphData) => {
-    resetGraph();
+    resetGraph({ loop: { loopType: "none" } });
     await sleep(1);
     updateGraph(graph);
     await sleep(1);
@@ -124,7 +125,7 @@ const GUI: FC = () => {
           </button>
           <hr />
           <div>
-            <button onClick={resetGraph} className="m-1 cursor-pointer items-center rounded-full bg-sky-500 px-4 py-2 font-bold text-white">
+            <button onClick={() => resetGraph({ loop: { loopType: "none" } })} className="m-1 cursor-pointer items-center rounded-full bg-sky-500 px-4 py-2 font-bold text-white">
               Clear Graph
             </button>
           </div>

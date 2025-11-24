@@ -6,7 +6,7 @@
     ref="thisRef"
     @mousedown="onStartNode"
     @touchstart="onStartNode"
-    @dblclick="(e) => emit('openNodeMenu', e)"
+    @dblclick="handleOpenNodeMenu"
     @click="(e) => openNodeEditMenu(e)"
   >
     <!-- HEAD -->
@@ -59,16 +59,16 @@
 
 <script lang="ts">
 import { defineComponent, ref, watchEffect, computed, PropType, onMounted } from "vue";
-import type { NewEdgeEventDirection } from "../utils/gui/type";
-import { getClientPos, getNodeSize, getTransformStyle } from "../utils/gui/utils";
-import { nodeMainClass, nodeHeaderClass, nodeOutputClass, nodeInputClass } from "../utils/gui/classUtils";
+import type { NewEdgeEventDirection } from "../utils/type";
+import { getClientPos, getNodeSize, getTransformStyle } from "../utils/gui";
+import { nodeMainClass, nodeHeaderClass, nodeOutputClass, nodeInputClass } from "../utils/classUtils";
 import { useNodeContext } from "../composable/useNodeContext";
 
 export default defineComponent({
   name: "NodeBase",
   props: {
     inputs: {
-      type: Array as PropType<{ name: string }[]>,
+      type: Array as PropType<{ name: string; key?: string }[]>,
       required: true,
     },
     outputs: {
@@ -76,7 +76,7 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ["openNodeMenu", "openNodeEditMenu"],
+  emits: ["openNodeEditMenu"],
   setup(props, { emit }) {
     const nodeContext = useNodeContext();
     const nodeData = computed(() => nodeContext.value.nodeData);
@@ -240,6 +240,9 @@ export default defineComponent({
       if (deltaDistance > deltaDistanceThredhold) return;
       emit("openNodeEditMenu", event);
     };
+    const handleOpenNodeMenu = (event: MouseEvent) => {
+      nodeContext.value.openNodeMenu(event, nodeIndex.value);
+    };
 
     return {
       nodeData,
@@ -262,6 +265,7 @@ export default defineComponent({
       isConnectable,
 
       openNodeEditMenu,
+      handleOpenNodeMenu,
       // helper
       nodeMainClass,
       nodeHeaderClass,

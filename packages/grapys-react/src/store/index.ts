@@ -3,12 +3,11 @@ import {
   GUINodeData,
   GUIEdgeData,
   GUINodeDataRecord,
-  UpdateStaticValue,
-  UpdateAgentValue,
   UpdateNodePositionData,
   HistoryData,
   HistoryPayload,
-  GUILoopData,
+} from "../package/utils";
+import {
   NestedGraphList,
 } from "../utils/gui/type";
 import { store2graphData } from "../utils/gui/graph";
@@ -19,34 +18,40 @@ export interface LocalState {
   index: number;
 
   // react
-  updateData: (nodeData: GUINodeData[], edgeData: GUIEdgeData[], loopData: GUILoopData, name: string, saveHistory: boolean) => void;
+  updateData: (nodeData: GUINodeData[], edgeData: GUIEdgeData[], extraData: Record<string, unknown>, name: string, saveHistory: boolean) => void;
 
   // methods
-  initData: (nodeData: GUINodeData[], edgeData: GUIEdgeData[], loopData: GUILoopData) => void;
+  initData: (nodeData: GUINodeData[], edgeData: GUIEdgeData[], extraData: Record<string, unknown>) => void;
   pushNode: (nodeData: GUINodeData) => void;
   pushEdge: (edgeData: GUIEdgeData) => void;
   deleteEdge: (edgeIndex: number) => void;
   deleteNode: (nodeIndex: number) => void;
 
   updateNodePosition: (positionIndex: number, pos: UpdateNodePositionData) => void;
-  updateNodeParam: (positionIndex: number, key: string, value: unknown) => void;
   pushDataToHistory: (name: string, data: HistoryPayload) => void;
   saveNodePositionData: () => void;
 
   loadData: (data: HistoryPayload) => void;
 
-  updateStaticNodeValue: (nodeIndex: number, value: UpdateStaticValue | UpdateAgentValue, saveHistory: boolean) => void;
-  updateLoop: (loopData: GUILoopData) => void;
+  // Low-level API for extensions
+  updateNodeAt: (nodeIndex: number, updater: (node: GUINodeData) => GUINodeData, name: string, saveHistory: boolean) => void;
+  updateNodesAndEdges: (
+    nodeUpdater: (nodes: GUINodeData[]) => GUINodeData[],
+    edgeUpdater: (edges: GUIEdgeData[]) => GUIEdgeData[],
+    name: string,
+    saveHistory: boolean,
+  ) => void;
+  updateExtra: (extraData: Record<string, unknown>) => void;
 
   undo: () => void;
   redo: () => void;
 
-  reset: () => void;
+  reset: (defaultExtra?: Record<string, unknown>) => void;
 
   // computed
   nodes: () => GUINodeData[];
   edges: () => GUIEdgeData[];
-  loop: () => GUILoopData;
+  extra: () => Record<string, unknown>;
   // nodeRecords,
   streamNodes: () => string[];
   resultNodes: () => string[];
@@ -60,7 +65,7 @@ export const useLocalStore = create<LocalState>((set, get) => ({
   currentData: {
     nodes: [],
     edges: [],
-    loop: { loopType: "none" },
+    extra: {},
   },
   index: 0,
 
@@ -72,8 +77,8 @@ export const useLocalStore = create<LocalState>((set, get) => ({
     return get().currentData.edges;
   },
 
-  loop: () => {
-    return get().currentData.loop;
+  extra: () => {
+    return get().currentData.extra ?? {};
   },
 
   streamNodes: () => {
@@ -94,26 +99,37 @@ export const useLocalStore = create<LocalState>((set, get) => ({
       .map((node) => node.nodeId);
   },
 
-  reset: () => {
+  reset: (defaultExtra: Record<string, unknown> = {}) => {
     const { updateData } = get();
-    updateData([], [], { loopType: "none" }, "reset", true);
+    updateData([], [], defaultExtra, "reset", true);
   },
 
   loadData: (data: HistoryPayload) => {
+    // BACKWARD COMPATIBILITY: Migrate old format (root.loop) to new format (extra.loop)
+    const migratedData = data.loop && !data.extra?.loop
+      ? {
+          nodes: data.nodes,
+          edges: data.edges,
+          extra: {
+            loop: data.loop,
+          },
+        }
+      : data;
+
     set((state) => {
-      state.pushDataToHistory("load", data);
-      return { currentData: data };
+      state.pushDataToHistory("load", migratedData);
+      return { currentData: migratedData };
     });
   },
 
-  initData: (nodeData: GUINodeData[], edgeData: GUIEdgeData[], loopData: GUILoopData) =>
+  initData: (nodeData: GUINodeData[], edgeData: GUIEdgeData[], extraData: Record<string, unknown>) =>
     set(() => ({
-      currentData: { nodes: nodeData, edges: edgeData, loop: loopData },
+      currentData: { nodes: nodeData, edges: edgeData, extra: extraData },
     })),
 
   pushNode: (nodeData: GUINodeData) => {
     const { updateData, currentData } = get();
-    updateData([...currentData.nodes, nodeData], [...currentData.edges], { ...currentData.loop }, "addNode", true);
+    updateData([...currentData.nodes, nodeData], [...currentData.edges], { ...currentData.extra }, "addNode", true);
   },
 
   updateNodePosition: (positionIndex: number, pos: UpdateNodePositionData) => {
@@ -129,45 +145,31 @@ export const useLocalStore = create<LocalState>((set, get) => ({
     });
   },
 
-  updateNodeParam: (positionIndex: number, key: string, value: unknown) => {
+  // Low-level API: Generic node updater
+  updateNodeAt: (nodeIndex: number, updater: (node: GUINodeData) => GUINodeData, name: string, saveHistory: boolean) => {
     const { updateData, currentData } = get();
-    const oldNode = currentData.nodes[positionIndex];
-    const newNode = {
-      ...oldNode,
-      data: {
-        ...oldNode.data,
-        params: oldNode.data.params ? { ...oldNode.data.params } : {},
-      },
-    };
-
-    if (value === "" || value === undefined || (value === null && newNode.data.params && newNode.data.params[key] !== undefined)) {
-      // delete operation
-      const { [key]: __, ...updatedParams } = newNode.data.params || {};
-      newNode.data.params = updatedParams;
-    } else {
-      // upsert
-      newNode.data.params = { ...(newNode.data.params || {}), [key]: value };
-    }
     const newNodes = [...currentData.nodes];
-    newNodes[positionIndex] = newNode;
-    updateData(newNodes, [...currentData.edges], { ...currentData.loop }, "updateParams", true);
+    newNodes[nodeIndex] = updater({ ...currentData.nodes[nodeIndex] });
+    updateData(newNodes, [...currentData.edges], { ...currentData.extra }, name, saveHistory);
   },
 
-  updateStaticNodeValue: (nodeIndex: number, value: UpdateStaticValue | UpdateAgentValue, saveHistory: boolean) => {
+  // Low-level API: Generic nodes and edges updater
+  updateNodesAndEdges: (
+    nodeUpdater: (nodes: GUINodeData[]) => GUINodeData[],
+    edgeUpdater: (edges: GUIEdgeData[]) => GUIEdgeData[],
+    name: string,
+    saveHistory: boolean,
+  ) => {
     const { updateData, currentData } = get();
-    const newNode = { ...currentData.nodes[nodeIndex] };
-    newNode.data = { ...newNode.data, ...value };
-    const newNodes = [...currentData.nodes];
-    newNodes[nodeIndex] = newNode;
-    updateData(newNodes, [...currentData.edges], { ...currentData.loop }, "updateStaticValue", saveHistory);
+    updateData(nodeUpdater([...currentData.nodes]), edgeUpdater([...currentData.edges]), { ...currentData.extra }, name, saveHistory);
   },
 
-  updateData: (nodeData: GUINodeData[], edgeData: GUIEdgeData[], loopData: GUILoopData, name: string, saveHistory: boolean) =>
+  updateData: (nodeData: GUINodeData[], edgeData: GUIEdgeData[], extraData: Record<string, unknown>, name: string, saveHistory: boolean) =>
     set((state) => {
       const newData = {
         nodes: nodeData,
         edges: edgeData,
-        loop: loopData,
+        extra: extraData,
       };
 
       if (saveHistory) {
@@ -192,18 +194,18 @@ export const useLocalStore = create<LocalState>((set, get) => ({
       return {};
     }),
 
-  updateLoop: (loopData: GUILoopData) => {
+  updateExtra: (extraData: Record<string, unknown>) => {
     const { currentData, updateData } = get();
-    updateData([...currentData.nodes], [...currentData.edges], { ...loopData }, "loopUpdate", true);
+    updateData([...currentData.nodes], [...currentData.edges], extraData, "extraUpdate", true);
   },
 
   pushEdge: (edgeData: GUIEdgeData) => {
     const { currentData, updateData } = get();
-    updateData([...currentData.nodes], [...currentData.edges, edgeData], { ...currentData.loop }, "addEdge", true);
+    updateData([...currentData.nodes], [...currentData.edges, edgeData], { ...currentData.extra }, "addEdge", true);
   },
   deleteEdge: (edgeIndex: number) => {
     const { currentData, updateData } = get();
-    updateData([...currentData.nodes], [...currentData.edges.filter((__, idx) => idx !== edgeIndex)], { ...currentData.loop }, "deleteEdge", true);
+    updateData([...currentData.nodes], [...currentData.edges.filter((__, idx) => idx !== edgeIndex)], { ...currentData.extra }, "deleteEdge", true);
   },
   deleteNode: (nodeIndex: number) => {
     const { currentData, updateData } = get();
@@ -216,7 +218,7 @@ export const useLocalStore = create<LocalState>((set, get) => ({
           return source.nodeId !== node.nodeId && target.nodeId !== node.nodeId;
         }),
       ],
-      { ...currentData.loop },
+      { ...currentData.extra },
       "deleteNode",
       true,
     );
@@ -260,6 +262,16 @@ export const node2Record = (nodes: GUINodeData[]): GUINodeDataRecord => {
 };
 
 export const toGraph = (currentData: HistoryPayload) => {
+  // BACKWARD COMPATIBILITY: Support both old (root.loop) and new (extra.loop) format
+  const extra = currentData.extra as { loop?: any } | undefined;
+  const loop = extra?.loop ?? currentData.loop ?? { loopType: "none" as const };
+
+  const dataWithLoop = {
+    nodes: currentData.nodes,
+    edges: currentData.edges,
+    loop: loop,
+  };
+
   const nestedGraphs: NestedGraphList = []; // TODO: for nested graph
-  return store2graphData(currentData, nestedGraphs);
+  return store2graphData(dataWithLoop, nestedGraphs);
 };

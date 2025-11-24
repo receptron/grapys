@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback, ChangeEventHandler } from "react";
-import type { GUINodeData, UpdateStaticValue, StaticNodeType } from "../utils/gui/type";
-import { staticNodeOptions } from "../utils/gui/classUtils";
+import type { GUINodeData } from "../package/utils";
+import type { UpdateStaticValue, StaticNodeType } from "../utils/gui/type";
+import { staticNodeOptions } from "../utils/utils/classUtils";
 import { isObject } from "graphai";
 
 interface NodeStaticValueProps {

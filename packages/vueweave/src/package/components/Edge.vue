@@ -11,10 +11,10 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed, PropType } from "vue";
-import { EdgeData2 } from "../utils/gui/type";
-import { convEdgePath } from "../utils/gui/utils";
+import { EdgeData2 } from "../utils/type";
+import { convEdgePath } from "../utils/gui";
 
-import { edgeColors } from "../utils/gui/classUtils";
+import { edgeColors } from "../utils/classUtils";
 
 export default defineComponent({
   components: {},
@@ -36,7 +36,9 @@ export default defineComponent({
   setup(props) {
     const isHover = ref(false);
     const edgePath = computed(() => {
-      return convEdgePath(props.sourceData.index, props.sourceData.data.position, props.targetData.index, props.targetData.data.position);
+      const sourceIndex = props.sourceData.kind === "node" ? props.sourceData.index : undefined;
+      const targetIndex = props.targetData.kind === "node" ? props.targetData.index : undefined;
+      return convEdgePath(sourceIndex, props.sourceData.data.position, targetIndex, props.targetData.data.position);
     });
 
     return {

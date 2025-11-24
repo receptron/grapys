@@ -1,0 +1,44 @@
+{
+  "name": "vueweave",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "lib/package/index.js",
+  "files": [
+    "./lib/package"
+  ],
+  "types": "./lib/package/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/package/index.d.ts",
+      "import": "./lib/package/index.js"
+    },
+    "./style.css": "./lib/package/style.css"
+  },
+  "directories": {
+    "lib": "lib/package"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "build:module": "vite build --config vite.config.lib.ts && vite build --config vite.config.css.ts",
+    "lint": "eslint src --fix",
+    "preview": "vite preview",
+    "format": "prettier --write '{src/**/*,*}.{js,ts,vue,json}'"
+  },
+  "dependencies": {
+    "pinia": "^3.0.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.17",
+    "@types/node": "^24.10.1",
+    "@vitejs/plugin-vue": "^6.0.2",
+    "prettier": "^3.6.2",
+    "prettier-plugin-tailwindcss": "^0.7.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.4",
+    "vite-plugin-dts": "^4.5.4",
+    "vue": "^3.5.22",
+    "vue-router": "^4.6.3",
+    "vue-tsc": "^3.1.2"
+  }
+}

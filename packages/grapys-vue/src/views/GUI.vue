@@ -9,12 +9,12 @@ import JsonViewer from "./JsonViewer.vue";
 
 import SideMenu from "./SideMenu.vue";
 
-import { UpdateStaticValue } from "../utils/gui/type";
-
 import { graphChat } from "../graph/chat_tinyswallow";
 
 import { useKeyboardShortcuts } from "../composable/useKeyboardShortcuts";
-import { useStore } from "../store";
+import { useFlowStore } from "vueweave";
+import { useGraphAIStore } from "../store/graphai";
+import { useNodeUpdate, type UpdateStaticValue } from "../composable/useNodeUpdate";
 
 export default defineComponent({
   components: {
@@ -25,11 +25,16 @@ export default defineComponent({
     GraphCanvas,
   },
   setup() {
-    const store = useStore();
+    const store = useFlowStore();
+    const graphAIStore = useGraphAIStore();
+    const { initFromGraphData, updateStaticNodeValue, updateNestedGraph } = useNodeUpdate();
+    const graphData = computed(() => {
+      return graphAIStore.createGraphData(store.currentData);
+    });
     const selectedNodeIndex = ref<number | null>(null);
     const isNodeEditorOpen = computed(() => selectedNodeIndex.value !== null);
     const panelKey = ref(0);
-    store.initFromGraphData(graphChat);
+    initFromGraphData(graphChat);
 
     const graphRunnerRef = ref();
     const { addShortcut } = useKeyboardShortcuts();
@@ -80,18 +85,25 @@ export default defineComponent({
       });
     });
 
-    const updateStaticNodeValue = (index: number, value: UpdateStaticValue, saveHistory: boolean) => {
-      store.updateStaticNodeValue(index, value, saveHistory);
-    };
-    const updateNestedGraph = (index: number, value: UpdateStaticValue) => {
-      store.updateNestedGraph(index, value);
-    };
 
     const openNodeEditor = (nodeIndex: number) => {
       // remount only if different node is clicked
       if (selectedNodeIndex.value === nodeIndex) return;
       selectedNodeIndex.value = nodeIndex;
       panelKey.value += 1;
+    };
+
+    // Handlers for node editor panel events
+    const handleUpdateStaticValue = (value: UpdateStaticValue) => {
+      if (selectedNodeIndex.value !== null) {
+        updateStaticNodeValue(selectedNodeIndex.value, value, true);
+      }
+    };
+
+    const handleUpdateNestedGraph = (value: UpdateStaticValue) => {
+      if (selectedNodeIndex.value !== null) {
+        updateNestedGraph(selectedNodeIndex.value, value);
+      }
     };
 
     const showChat = ref(false);
@@ -101,10 +113,11 @@ export default defineComponent({
     };
 
     return {
-      updateStaticNodeValue,
-      updateNestedGraph,
+      handleUpdateStaticValue,
+      handleUpdateNestedGraph,
 
       store,
+      graphData,
 
       openNodeEditor,
 
@@ -129,7 +142,7 @@ export default defineComponent({
       </aside>
       <main class="flex-1">
         <GraphCanvas v-if="viewerMode === 'graph'" @open-node-editor="openNodeEditor" />
-        <JsonViewer v-if="viewerMode === 'json'" :json-data="store.graphData" />
+        <JsonViewer v-if="viewerMode === 'json'" :json-data="graphData" />
         <div class="h-100vh pointer-events-none absolute top-0 right-0 z-10 flex max-h-screen flex-col items-end space-y-4 pt-4 pr-4 pb-4">
           <div class="flex flex-row items-start space-x-4">
             <button
@@ -163,10 +176,10 @@ export default defineComponent({
               v-if="isNodeEditorOpen"
               :node-index="selectedNodeIndex as number"
               @close="selectedNodeIndex = null"
-              @update-static-node-value="(v: UpdateStaticValue) => updateStaticNodeValue(selectedNodeIndex as number, v, true)"
-              @update-nested-graph="(v: UpdateStaticValue) => updateNestedGraph(selectedNodeIndex as number, v)"
+              @update-static-node-value="handleUpdateStaticValue"
+              @update-nested-graph="handleUpdateNestedGraph"
             />
-            <GraphRunner ref="graphRunnerRef" :class="{ hidden: !showChat }" :graph-data="store.graphData" @close="showChat = false" />
+            <GraphRunner ref="graphRunnerRef" :class="{ hidden: !showChat }" :graph-data="graphData" @close="showChat = false" />
           </div>
         </div>
       </main>

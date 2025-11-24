@@ -95,7 +95,8 @@
 import { defineComponent, ref, computed, watch, PropType } from "vue";
 import { GraphAI, GraphData, AgentFilterInfo, NodeState } from "graphai";
 
-import { useStore } from "../store";
+import { useFlowStore } from "vueweave";
+import { useGraphAIStore } from "../store/graphai";
 
 import { useStreamData } from "../utils/vue-plugin/stream";
 import { useChatPlugin } from "../utils/vue-plugin/chat";
@@ -132,7 +133,8 @@ export default defineComponent({
   setup(props, { emit }) {
     const isRunning = ref(false);
     const chatContainerRef = ref<HTMLElement | null>(null);
-    const store = useStore();
+    const store = useFlowStore();
+    const graphAIStore = useGraphAIStore();
 
     const { eventAgent, userInput, events, submitText, clearEvents } = textInputEvent();
     const { messages, chatMessagePlugin } = useChatPlugin();
@@ -177,9 +179,9 @@ export default defineComponent({
           config: getGraphConfigs(),
         },
       );
-      graphai.registerCallback(streamPlugin(store.streamNodes));
-      graphai.registerCallback(chatMessagePlugin(store.resultNodes));
-      graphai.registerCallback(graphAIResultPlugin(store.setResult));
+      graphai.registerCallback(streamPlugin(graphAIStore.getStreamNodes(store.nodes)));
+      graphai.registerCallback(chatMessagePlugin(graphAIStore.getResultNodes(store.nodes)));
+      graphai.registerCallback(graphAIResultPlugin(graphAIStore.setResult));
       graphai.onLogCallback = ({ nodeId, state, inputs, result, errorMessage }) => {
         if (state === NodeState.Failed) {
           messages.value.push({ role: "error", content: errorMessage ?? "", nodeId });
@@ -211,7 +213,7 @@ export default defineComponent({
     };
 
     const streamNodes = computed(() => {
-      return store.streamNodes;
+      return graphAIStore.getStreamNodes(store.nodes);
     });
 
     const loading = ref("");

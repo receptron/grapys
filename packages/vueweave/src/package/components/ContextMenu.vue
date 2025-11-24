@@ -7,7 +7,7 @@
 <script lang="ts">
 import { ref, defineComponent } from "vue";
 
-import { getClientPos } from "../utils/gui/utils";
+import { getClientPos } from "../utils/gui";
 
 export default defineComponent({
   setup() {

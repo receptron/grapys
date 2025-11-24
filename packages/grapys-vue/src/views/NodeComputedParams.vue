@@ -13,7 +13,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import type { GUINodeData } from "../utils/gui/type";
+import type { GUINodeData } from "vueweave";
 
 import { agentProfiles } from "../utils/gui/data";
 import NodeComputedParam from "./NodeComputedParam.vue";

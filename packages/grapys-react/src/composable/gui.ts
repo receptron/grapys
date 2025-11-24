@@ -1,7 +1,7 @@
 import { useRef, useState, useMemo, useCallback } from "react";
 import { useLocalStore, node2Record } from "../store/index";
-import type { Position, NewEdgeStartEventData, NewEdgeData, ClosestNodeData, GUINearestData, NestedGraphList } from "../utils/gui/type";
-import { edgeStartEventData, edgeUpdateEventData, edgeEndEventData, pickNearestNode, pickNearestConnect, isEdgeConnectale } from "../utils/gui/utils";
+import type { Position, NewEdgeStartEventData, NewEdgeData, ClosestNodeData, GUINearestData } from "../package/utils";
+import { edgeStartEventData, edgeUpdateEventData, edgeEndEventData, pickNearestNode, pickNearestConnect, isEdgeConnectable } from "../utils/utils/gui";
 
 export const useNewEdge = () => {
   const nodes = useLocalStore((state) => state.nodes());
@@ -15,12 +15,10 @@ export const useNewEdge = () => {
     x: 0,
     y: 0,
   });
-  const [targetNode, setTargetNode] = useState<string>("");
 
   const onNewEdgeStart = useCallback(
     (data: NewEdgeStartEventData) => {
       if (svgRef.current) {
-        setTargetNode(data.nodeId);
         const { mousePosition, startEdgeData } = edgeStartEventData(data, svgRef.current, nodeRecords[data.nodeId]);
         setMouseCurrentPosition(mousePosition);
         setNewEdgeData(startEdgeData);
@@ -42,8 +40,8 @@ export const useNewEdge = () => {
 
   const nearestNode = useMemo<ClosestNodeData | null>(() => {
     if (!nodes.length) return null;
-    return pickNearestNode(nodes, targetNode, mouseCurrentPosition);
-  }, [nodes, targetNode, mouseCurrentPosition]);
+    return pickNearestNode(nodes, mouseCurrentPosition);
+  }, [nodes, mouseCurrentPosition]);
 
   const nearestConnect = useMemo(() => {
     if (!newEdgeData || !nearestNode) return;
@@ -65,9 +63,8 @@ export const useNewEdge = () => {
   }, [nearestData, newEdgeData]);
 
   const edgeConnectable = useMemo(() => {
-    const nestedGraphs: NestedGraphList = []; // TODO: for nested graph
-    return isEdgeConnectale(expectEdge, edges, nodeRecords, nestedGraphs);
-  }, [expectEdge, edges, nodeRecords]);
+    return isEdgeConnectable(expectEdge, edges);
+  }, [expectEdge, edges]);
 
   const onNewEdgeEnd = useCallback(() => {
     if (expectEdge && edgeConnectable) {

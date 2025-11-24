@@ -1,5 +1,5 @@
 import { useState, useRef, forwardRef, useImperativeHandle } from "react";
-import { getClientPos } from "../utils/gui/utils";
+import { getClientPos } from "../utils/utils/gui";
 
 type ContextMenuHandle = {
   openMenu: (event: MouseEvent | TouchEvent, rect: DOMRect) => void;

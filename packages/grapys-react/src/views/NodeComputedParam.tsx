@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import type { ParamData, ApplicationData } from "../utils/gui/type";
-import { useLocalStore } from "../store/index";
+import { useNodeUpdate } from "../hooks/useNodeUpdate";
 
 interface NodeComputedParamProps {
   param: ParamData;
@@ -15,7 +15,7 @@ const NodeComputedParam: React.FC<NodeComputedParamProps> = ({ param, appData, n
   const [booleanValue, setBooleanValue] = useState(appData.params?.[param.name] === true ? "true" : "false");
   const [textAreaValue, setTextAreaValue] = useState(String(appData.params?.[param.name] ?? ""));
   const [rows, setRows] = useState(3);
-  const updateNodeParam = useLocalStore((state) => state.updateNodeParam);
+  const { updateNodeParam } = useNodeUpdate();
 
   const inputRef = useRef(null);
   const textareaRef = useRef(null);

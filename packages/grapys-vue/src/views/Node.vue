@@ -2,7 +2,6 @@
   <NodeBase
     :inputs="inputs"
     :outputs="outputs"
-    @open-node-menu="(e) => $emit('openNodeMenu', e)"
     @open-node-edit-menu="
       (e) => {
         if (outerMenu) {
@@ -40,7 +39,7 @@
       </div>
       <div v-if="(agentProfile.isNestedGraph || agentProfile.isMap) && innerMenu">
         <select v-model="nestedGraphIndex" @change="updateNestedGraphIndex">
-          <option :value="key" v-for="(graph, key) in nestedGraphs" :key="key">{{ graph.name }}</option>
+          <option :value="key" v-for="(graph, key) in graphAIStore.nestedGraphs" :key="key">{{ graph.name }}</option>
         </select>
       </div>
     </template>
@@ -49,13 +48,12 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed, PropType, watch } from "vue";
-import { useStore } from "../store";
-import type { GUINodeData, UpdateStaticValue } from "../utils/gui/type";
+import { useGraphAIStore } from "../store/graphai";
+import { nodeHeaderClass, NodeBase, type GUINodeData } from "vueweave";
+import type { UpdateStaticValue } from "../utils/gui/type";
 import { nestedGraphInputs } from "../utils/gui/utils";
 import { agentProfiles, staticNodeParams } from "../utils/gui/data";
-import { nodeHeaderClass } from "../utils/gui/classUtils";
 
-import NodeBase from "./NodeBase.vue";
 import NodeStaticValue from "./NodeStaticValue.vue";
 import NodeComputedParams from "./NodeComputedParams.vue";
 import NodeResult from "./NodeResult.vue";
@@ -78,9 +76,9 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ["updateStaticNodeValue", "updateNestedGraph", "openNodeMenu", "openNodeEditMenu"],
+  emits: ["updateStaticNodeValue", "updateNestedGraph", "openNodeEditMenu"],
   setup(props, { emit }) {
-    const store = useStore();
+    const graphAIStore = useGraphAIStore();
 
     // Agent profile
     const agentProfile = props.nodeData.type === "computed" ? agentProfiles[props.nodeData.data.guiAgentId ?? ""] : staticNodeParams;
@@ -108,7 +106,7 @@ export default defineComponent({
 
     // Nested graph handlers
     const nestedGraph = computed(() => {
-      return store.nestedGraphs[nestedGraphIndex.value];
+      return graphAIStore.nestedGraphs[nestedGraphIndex.value];
     });
 
     const updateNestedGraphIndex = () => {
@@ -161,7 +159,7 @@ export default defineComponent({
       inputs,
       outputs,
       nestedGraph,
-      nestedGraphs: store.nestedGraphs,
+      graphAIStore,
 
       // Handlers
       updateAgentIndex,

@@ -1,5 +1,5 @@
 import { Ref } from "vue";
-import { NewEdgeData } from "../utils/gui/type";
+import { NewEdgeData } from "../utils/type";
 
 export const usePanAndScroll = (mainContainer: Ref<HTMLElement | undefined>, isNodeDragging: Ref<boolean>, newEdgeData?: Ref<NewEdgeData | null>) => {
   const setupPanAndScroll = () => {
@@ -102,11 +102,9 @@ export const usePanAndScroll = (mainContainer: Ref<HTMLElement | undefined>, isN
 
       // フォーカスされたテキストエリア内でのスクロールの場合は、デフォルト動作を許可
       const focusedTextarea = document.activeElement as HTMLTextAreaElement;
-      if (focusedTextarea && focusedTextarea.tagName === "TEXTAREA") {
-        // イベントターゲットがフォーカスされたテキストエリア、またはその子要素の場合
-        if (target === focusedTextarea || focusedTextarea.contains(target)) {
-          return; // デフォルトのスクロール動作を許可
-        }
+      if (focusedTextarea && focusedTextarea.tagName === "TEXTAREA" &&
+          (target === focusedTextarea || focusedTextarea.contains(target))) {
+        return; // デフォルトのスクロール動作を許可
       }
 
       // テキストエリア内でのスクロールの場合は、デフォルト動作を許可

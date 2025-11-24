@@ -34,7 +34,7 @@
   <h2 class="text-left font-bold">Download</h2>
   <div>
     <button
-      @click="() => handleDownload(store.graphData)"
+      @click="() => handleDownload(graphData)"
       class="mb-1 w-full cursor-pointer items-center rounded-full bg-sky-500 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700"
     >
       GraphData
@@ -44,7 +44,7 @@
   <hr class="my-1 border-t border-gray-400" />
   <div>
     <button
-      @click="store.reset()"
+      @click="store.reset({ loop: { loopType: 'none' } })"
       class="mb-1 w-full cursor-pointer items-center rounded-full bg-red-400 px-4 py-2 text-sm font-medium text-white hover:bg-red-500"
     >
       Clear Graph
@@ -77,12 +77,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, nextTick } from "vue";
+import { defineComponent, nextTick, computed } from "vue";
 import type { GraphData } from "graphai";
+import { useFlowStore } from "vueweave";
 import { signOut } from "firebase/auth";
 
-import { useStore } from "../store";
+import { useGraphAIStore } from "../store/graphai";
 import { useFirebaseStore } from "../store/firebase";
+import { useNodeUpdate } from "../composable/useNodeUpdate";
 
 import AddNode from "./AddNode.vue";
 import SideMenuSaveBrowser from "./SideMenuSaveBrowser.vue";
@@ -108,13 +110,19 @@ export default defineComponent({
     DataLoader,
   },
   setup() {
-    const store = useStore();
+    const store = useFlowStore();
+    const graphAIStore = useGraphAIStore();
     const firebaseStore = useFirebaseStore();
+    const { initFromGraphData } = useNodeUpdate();
+
+    const graphData = computed(() => {
+      return graphAIStore.createGraphData(store.currentData);
+    });
 
     const setGraph = async (graph: GraphData) => {
-      store.reset();
+      store.reset({ loop: { loopType: "none" } });
       await nextTick(); // to reset edge position. Due to duplicate edge keys, the position will be incorrect.
-      store.initFromGraphData(graph);
+      initFromGraphData(graph);
     };
 
     const logout = () => {
@@ -130,6 +138,7 @@ export default defineComponent({
       setGraph,
       enableFirebase,
       logout,
+      graphData,
     };
   },
 });

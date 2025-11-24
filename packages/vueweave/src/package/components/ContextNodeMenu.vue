@@ -8,7 +8,7 @@
 import { ref, defineComponent } from "vue";
 
 import ContextMenu from "./ContextMenu.vue";
-import { useStore } from "../store";
+import { useFlowStore } from "../store";
 
 export default defineComponent({
   components: {
@@ -17,7 +17,7 @@ export default defineComponent({
   setup() {
     const contextMenu = ref();
 
-    const store = useStore();
+    const store = useFlowStore();
     const selectedNodeIndex = ref(0);
 
     const openMenu = (event: MouseEvent | TouchEvent, rect: DOMRect, nodeIndex: number) => {

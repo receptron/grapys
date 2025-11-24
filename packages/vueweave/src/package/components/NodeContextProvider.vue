@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { toRef, provide, computed } from "vue";
-import type { GUINodeData, GUINearestData, NodePosition, NewEdgeStartEventData } from "../utils/gui/type";
+import type { GUINodeData, GUINearestData, NodePosition, NewEdgeStartEventData } from "../utils/type";
 import { NodeContextKey } from "../composable/useNodeContext";
 
 const props = defineProps<{
@@ -19,6 +19,7 @@ const props = defineProps<{
   onNewEdgeEnd: () => void;
   onNodeDragStart: () => void;
   onNodeDragEnd: () => void;
+  openNodeMenu: (event: MouseEvent, nodeIndex: number) => void;
 }>();
 
 const nodeDataRef = toRef(props, "nodeData");
@@ -36,6 +37,7 @@ const context = computed(() => ({
   onNewEdgeEnd: props.onNewEdgeEnd,
   onNodeDragStart: props.onNodeDragStart,
   onNodeDragEnd: props.onNodeDragEnd,
+  openNodeMenu: props.openNodeMenu,
 }));
 
 provide(NodeContextKey, context);

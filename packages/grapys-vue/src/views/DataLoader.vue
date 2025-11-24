@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { useStore } from "../store";
+import { useNodeUpdate } from "../composable/useNodeUpdate";
 import SideMenuButton from "../components/SideMenuButton.vue";
 
 export default defineComponent({
@@ -27,7 +27,7 @@ export default defineComponent({
     SideMenuButton,
   },
   setup() {
-    const store = useStore();
+    const { initFromGraphData } = useNodeUpdate();
 
     let file: null | File = null;
     const fileName = ref<string | null>("");
@@ -60,7 +60,7 @@ export default defineComponent({
       reader.onload = (event: ProgressEvent<FileReader>) => {
         try {
           const json = JSON.parse(event?.target?.result as string);
-          store.initFromGraphData(json);
+          initFromGraphData(json);
           file = null;
           fileName.value = null;
         } catch (err) {
