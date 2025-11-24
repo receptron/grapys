@@ -151,9 +151,5 @@ defineExpose({
   mainContainer,
   svgRef,
   openNodeMenu,
-  // Expose store operations when using default graph
-  initData: defaultGraph.initData,
-  pushNode: defaultGraph.pushNode,
-  store: defaultGraph.store,
 });
 </script>

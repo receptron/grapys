@@ -46,7 +46,7 @@
 
     <!-- Canvas -->
     <div class="flex-1">
-      <GraphCanvasBase ref="graphCanvas" :node-styles="{ colors: nodeColors }">
+      <GraphCanvasBase :node-styles="{ colors: nodeColors }">
       <template #node="{ nodeData }">
         <NodeBase :inputs="getInputs(nodeData)" :outputs="getOutputs(nodeData)">
           <template #header>
@@ -68,16 +68,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import { GraphCanvasBase, NodeBase, type GUINodeData, type NodeColorConfig } from "../package";
-import type { GraphCanvasBaseExposed } from "../package/components/GraphCanvasBase.types";
+import { computed, onMounted } from "vue";
+import { useFlowStore, GraphCanvasBase, NodeBase, type GUINodeData, type NodeColorConfig } from "../package";
 
-const graphCanvas = ref<GraphCanvasBaseExposed>();
+const flowStore = useFlowStore();
 
 // Access reactive internal state for debugging
-const nodes = computed(() => graphCanvas.value?.store.nodes ?? []);
-const edges = computed(() => graphCanvas.value?.store.edges ?? []);
-const nodeRecords = computed(() => graphCanvas.value?.store.nodeRecords ?? {});
+const nodes = computed(() => flowStore.nodes);
+const edges = computed(() => flowStore.edges);
+const nodeRecords = computed(() => flowStore.nodeRecords);
 
 // Simple object-based color configuration
 const nodeColors: NodeColorConfig = {
@@ -104,7 +103,7 @@ const nodeColors: NodeColorConfig = {
 // Initialize with sample data - Data Processing Pipeline
 // Note: node.type can be any string value - fully customizable!
 onMounted(() => {
-  graphCanvas.value?.initData(
+  flowStore.initData(
   [
     // Input nodes - using "source" type
     {
