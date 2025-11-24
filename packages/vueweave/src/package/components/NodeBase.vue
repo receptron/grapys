@@ -259,7 +259,7 @@ const isOutputPortConnectable = (index: number) => {
   return nodeContext.value.isConnectable;
 };
 
-const isConnectable = computed(() => nodeContext.value.isConnectable);
+// const isConnectable = computed(() => nodeContext.value.isConnectable);
 
 let currentWidth = 0;
 let currentHeight = 0;
