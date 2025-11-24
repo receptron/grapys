@@ -27,7 +27,7 @@
           <span class="mr-2 text-xs whitespace-nowrap">{{ output.name }}</span>
           <div
             class="absolute right-[-10px] h-4 w-4 min-w-[12px] rounded-full"
-            :class="nodeOutputClass(isExpectNearOutputPort(index), nodeData, isOutputPortConnectable(index))"
+            :class="nodeOutputClass(isExpectNearPort('inbound', index), nodeData, isOutputPortConnectable(index))"
             @click.stop
             @mousedown.stop.prevent="(e) => onStartEdge(e, 'outbound', index)"
             @touchstart.stop.prevent="(e) => onStartEdge(e, 'outbound', index)"
@@ -40,7 +40,7 @@
         <div v-for="(input, index) in inputs" :key="['in', input.key ?? input.name, index].join('-')" class="relative flex items-center" ref="inputsRef">
           <div
             class="absolute left-[-10px] h-4 w-4 min-w-[12px] rounded-full"
-            :class="nodeInputClass(isExpectNearInputPort(index), nodeData, input as any, isInputPortConnectable(index))"
+            :class="nodeInputClass(isExpectNearPort('outbound', index), nodeData, input as any, isInputPortConnectable(index))"
             @click.stop
             @mousedown.stop.prevent="(e) => onStartEdge(e, 'inbound', index)"
             @touchstart.stop.prevent="(e) => onStartEdge(e, 'inbound', index)"
@@ -223,37 +223,25 @@ const expectNearNode = computed(() => {
 
 // Check if this specific input port should be highlighted
 // Input ports are highlighted when dragging FROM an output port
-const isExpectNearInputPort = (index: number) => {
+const isExpectNearPort = (direction: NewEdgeEventDirection, index: number) => {
   if (!expectNearNode.value) {
     return false;
   }
   const nearestData = nodeContext.value.nearestData;
   // nearestData.direction is the direction of the STARTING port
   // When dragging from OUTPUT (outbound), we want to highlight INPUT ports
-  return nearestData?.direction === 'outbound' && nearestData?.index === index;
-};
-
-// Check if this specific output port should be highlighted
-// Output ports are highlighted when dragging FROM an input port
-const isExpectNearOutputPort = (index: number) => {
-  if (!expectNearNode.value) {
-    return false;
-  }
-  const nearestData = nodeContext.value.nearestData;
-  // nearestData.direction is the direction of the STARTING port
-  // When dragging from INPUT (inbound), we want to highlight OUTPUT ports
-  return nearestData?.direction === 'inbound' && nearestData?.index === index;
+  return nearestData?.direction === direction && nearestData?.index === index;
 };
 
 const isInputPortConnectable = (index: number) => {
-  if (!isExpectNearInputPort(index)) {
+  if (!isExpectNearPort('outbound', index)) {
     return true; // Not highlighted, show normal color
   }
   return nodeContext.value.isConnectable;
 };
 
 const isOutputPortConnectable = (index: number) => {
-  if (!isExpectNearOutputPort(index)) {
+  if (!isExpectNearPort('inbound', index)) {
     return true; // Not highlighted, show normal color
   }
   return nodeContext.value.isConnectable;

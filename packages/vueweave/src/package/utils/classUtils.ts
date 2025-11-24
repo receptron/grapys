@@ -10,6 +10,7 @@
   Tailwind configuration's safelist or used elsewhere in your code.
 */
 
+import { defaultNodeColors } from "./nodeStyles";
 import { GUINodeData, InputOutputData } from "./type";
 
 export type NodeStyleFn = (expectNearNode: boolean, nodeData: GUINodeData) => string;
@@ -21,8 +22,7 @@ export type NodeInputStyleFn = (expectNearNode: boolean, nodeData: GUINodeData, 
  * Override this for custom node type colors
  */
 export const nodeMainClass: NodeStyleFn = (expectNearNode, __nodeData) => {
-  // Default: blue for all node types
-  return expectNearNode ? "bg-blue-200" : "bg-blue-400";
+  return expectNearNode ? defaultNodeColors.default.mainHighlight : defaultNodeColors.default.main;
 };
 
 /**
@@ -30,8 +30,7 @@ export const nodeMainClass: NodeStyleFn = (expectNearNode, __nodeData) => {
  * Override this for custom node type colors
  */
 export const nodeHeaderClass: NodeStyleFn = (expectNearNode, __nodeData) => {
-  // Default: blue for all node types
-  return expectNearNode ? "bg-blue-300" : "bg-blue-500";
+  return expectNearNode ? defaultNodeColors.default.headerHighlight : defaultNodeColors.default.header;
 };
 
 /**
