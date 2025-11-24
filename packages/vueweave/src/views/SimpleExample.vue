@@ -1,6 +1,38 @@
 <template>
-  <div class="h-screen w-screen">
-    <GraphCanvasBase ref="graphCanvas">
+  <div class="flex h-screen w-screen">
+    <!-- Debug Panel -->
+    <div class="w-80 overflow-auto border-r bg-gray-50 p-4">
+      <h2 class="mb-4 text-lg font-bold">Internal State</h2>
+
+      <div class="mb-4">
+        <h3 class="mb-2 font-semibold text-sm">Nodes ({{ nodes.length }})</h3>
+        <div class="space-y-2">
+          <details v-for="(node, index) in nodes" :key="index" class="rounded bg-white p-2 text-xs">
+            <summary class="cursor-pointer font-medium">{{ node.nodeId }}</summary>
+            <pre class="mt-2 overflow-auto text-xs">{{ JSON.stringify(node, null, 2) }}</pre>
+          </details>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <h3 class="mb-2 font-semibold text-sm">Edges ({{ edges.length }})</h3>
+        <div class="space-y-2">
+          <div v-for="(edge, index) in edges" :key="index" class="rounded bg-white p-2 text-xs">
+            <div class="font-medium">{{ edge.source.nodeId }}[{{ edge.source.index }}] → {{ edge.target.nodeId }}[{{ edge.target.index }}]</div>
+            <pre class="mt-1 overflow-auto text-xs">{{ JSON.stringify(edge, null, 2) }}</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <h3 class="mb-2 font-semibold text-sm">Node Records</h3>
+        <pre class="overflow-auto rounded bg-white p-2 text-xs">{{ JSON.stringify(nodeRecords, null, 2) }}</pre>
+      </div>
+    </div>
+
+    <!-- Canvas -->
+    <div class="flex-1">
+      <GraphCanvasBase ref="graphCanvas">
       <template #node="{ nodeData }">
         <NodeBase :inputs="getInputs(nodeData)" :outputs="getOutputs(nodeData)">
           <template #header>
@@ -16,15 +48,21 @@
         </NodeBase>
       </template>
     </GraphCanvasBase>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { GraphCanvasBase, NodeBase, type GUINodeData } from "../package";
 import type { GraphCanvasBaseExposed } from "../package/components/GraphCanvasBase.types";
 
 const graphCanvas = ref<GraphCanvasBaseExposed>();
+
+// Access reactive internal state for debugging
+const nodes = computed(() => graphCanvas.value?.store.nodes ?? []);
+const edges = computed(() => graphCanvas.value?.store.edges ?? []);
+const nodeRecords = computed(() => graphCanvas.value?.store.nodeRecords ?? {});
 
 // Initialize with sample data - Data Processing Pipeline
 onMounted(() => {

@@ -1,6 +1,38 @@
 <template>
-  <div class="flex h-screen w-screen flex-col">
-    <div class="flex gap-2 border-b bg-gray-100 p-4">
+  <div class="flex h-screen w-screen">
+    <!-- Debug Panel -->
+    <div class="w-80 overflow-auto border-r bg-gray-50 p-4">
+      <h2 class="mb-4 text-lg font-bold">Internal State</h2>
+
+      <div class="mb-4">
+        <h3 class="mb-2 font-semibold text-sm">Nodes ({{ nodes.length }})</h3>
+        <div class="space-y-2">
+          <details v-for="(node, index) in nodes" :key="index" class="rounded bg-white p-2 text-xs">
+            <summary class="cursor-pointer font-medium">{{ node.nodeId }}</summary>
+            <pre class="mt-2 overflow-auto text-xs">{{ JSON.stringify(node, null, 2) }}</pre>
+          </details>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <h3 class="mb-2 font-semibold text-sm">Edges ({{ edges.length }})</h3>
+        <div class="space-y-2">
+          <div v-for="(edge, index) in edges" :key="index" class="rounded bg-white p-2 text-xs">
+            <div class="font-medium">{{ edge.source.nodeId }}[{{ edge.source.index }}] → {{ edge.target.nodeId }}[{{ edge.target.index }}]</div>
+            <pre class="mt-1 overflow-auto text-xs">{{ JSON.stringify(edge, null, 2) }}</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <h3 class="mb-2 font-semibold text-sm">Node Records</h3>
+        <pre class="overflow-auto rounded bg-white p-2 text-xs">{{ JSON.stringify(nodeRecords, null, 2) }}</pre>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex flex-1 flex-col">
+      <div class="flex gap-2 border-b bg-gray-100 p-4">
       <button @click="addStaticNode" class="rounded bg-purple-500 px-4 py-2 text-white hover:bg-purple-600">Add Static Node</button>
       <button @click="addComputedNode" class="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600">Add Computed Node</button>
       <button @click="loadSampleGraph" class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">Load Sample</button>
@@ -37,6 +69,7 @@
         </template>
       </GraphCanvasBase>
     </div>
+    </div>
   </div>
 </template>
 
@@ -50,6 +83,7 @@ const graphCanvas = ref<GraphCanvasBaseExposed>();
 // Computed properties for reactive display
 const nodes = computed(() => graphCanvas.value?.store.nodes ?? []);
 const edges = computed(() => graphCanvas.value?.store.edges ?? []);
+const nodeRecords = computed(() => graphCanvas.value?.store.nodeRecords ?? {});
 
 // Initialize with empty data
 onMounted(() => {
