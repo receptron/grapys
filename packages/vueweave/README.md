@@ -28,7 +28,42 @@ First, import the VueWeave styles in your application entry point (e.g., `main.t
 import "vueweave/style.css";
 ```
 
-### 2. Basic Setup
+### 2. Minimal Setup (Zero Configuration)
+
+VueWeave works out of the box with zero configuration:
+
+```vue
+<template>
+  <GraphCanvasBase />
+</template>
+
+<script setup lang="ts">
+import { onMounted } from "vue";
+import { useFlowStore, GraphCanvasBase } from "vueweave";
+
+const flowStore = useFlowStore();
+
+onMounted(() => {
+  flowStore.initData(
+    [
+      { type: "node", nodeId: "A", position: { x: 100, y: 100 }, data: { label: "Node A" } },
+      { type: "node", nodeId: "B", position: { x: 400, y: 100 }, data: { label: "Node B" } },
+    ],
+    [
+      { type: "edge", source: { nodeId: "A", index: 0 }, target: { nodeId: "B", index: 0 } },
+    ],
+    {}
+  );
+});
+</script>
+```
+
+**GraphCanvasBase automatically renders:**
+- Default nodes with single input/output ports
+- Node ID as header
+- `data.label`, `data.type`, or "Node" as body text
+
+### 3. Custom Node Rendering
 
 VueWeave provides two main components: `GraphCanvasBase` and `NodeBase`.
 
@@ -88,7 +123,7 @@ function handleOpenMenu(event: MouseEvent) {
 </script>
 ```
 
-### 3. Using the Store
+### 4. Using the Store
 
 VueWeave includes a Pinia store for managing graph state:
 
@@ -101,12 +136,26 @@ const flowStore = useFlowStore();
 const nodes = flowStore.nodes;
 const edges = flowStore.edges;
 
-// Update node position
-flowStore.updateNodePosition(index, position);
+// Initialize data
+flowStore.initData(nodes, edges, extra);
+
+// Add/remove nodes
+flowStore.pushNode(node);
+flowStore.deleteNode(nodeIndex);
 
 // Add/remove edges
-flowStore.addEdge(edge);
-flowStore.removeEdge(edgeId);
+flowStore.pushEdge(edge);
+flowStore.deleteEdge(edgeIndex);
+
+// Update node position
+flowStore.updateNodePosition(index, position);
+flowStore.saveNodePositionData();
+
+// Undo/Redo
+flowStore.undo();
+flowStore.redo();
+const canUndo = flowStore.undoable;
+const canRedo = flowStore.redoable;
 ```
 
 ## Components
@@ -115,17 +164,26 @@ flowStore.removeEdge(edgeId);
 
 The main canvas component for rendering the graph.
 
-**Props:**
-- `nodes`: Array of node data
-- `edges`: Array of edge connections
-- `nodeRecords`: Record of node positions and metadata
-- `updatePosition`: Function to update node positions
-- `savePosition`: Function to save positions
-- `validateConnection`: Function to validate edge connections
+**Props (all optional):**
+- `nodes`: Array of node data (defaults to store)
+- `edges`: Array of edge connections (defaults to store)
+- `nodeRecords`: Record of node positions and metadata (defaults to store)
+- `updatePosition`: Function to update node positions (defaults to store)
+- `savePosition`: Function to save positions (defaults to store)
+- `validateConnection`: Function to validate edge connections (defaults to store)
+- `nodeStyles`: Node styling configuration (colors or functions)
+- `getNodeKey`: Custom key function for node rendering
 
 **Slots:**
 - `head`: Content to render above the canvas
 - `node`: Node template (receives `nodeData` and `nodeIndex`)
+  - **If not provided**: Automatically renders default nodes with NodeBase
+
+**Default Rendering:**
+When no `#node` slot is provided, GraphCanvasBase automatically renders:
+- Single input and output port per node
+- Node ID as header
+- `nodeData.data.label`, `nodeData.type`, or "Node" as body content
 
 ### NodeBase
 

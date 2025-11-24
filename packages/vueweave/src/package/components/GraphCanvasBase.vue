@@ -42,8 +42,19 @@
       >
         <!-- node slot - user provides their custom node component -->
         <slot name="node" :node-data="nodeData" :node-index="index">
-          <!-- Default fallback if no slot provided -->
-          <div>No node component provided</div>
+          <!-- Default fallback: Simple NodeBase with single input/output -->
+          <NodeBase :inputs="getDefaultInputs(nodeData)" :outputs="getDefaultOutputs(nodeData)">
+            <template #header>
+              <div class="w-full rounded-t-md bg-gray-500 py-2 text-center text-white">
+                {{ nodeData.nodeId }}
+              </div>
+            </template>
+            <template #body-main>
+              <div class="p-2 text-center text-sm">
+                {{ getDefaultLabel(nodeData) }}
+              </div>
+            </template>
+          </NodeBase>
         </slot>
       </NodeContextProvider>
 
@@ -57,6 +68,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, provide } from "vue";
 import NodeContextProvider from "./NodeContextProvider.vue";
+import NodeBase from "./NodeBase.vue";
 import Edge from "./Edge.vue";
 import ContextEdgeMenu from "./ContextEdgeMenu.vue";
 import ContextNodeMenu from "./ContextNodeMenu.vue";
@@ -141,5 +153,18 @@ const openNodeMenu = (event: MouseEvent, nodeIndex: number) => {
 const closeMenu = () => {
   contextEdgeMenu.value?.closeMenu();
   contextNodeMenu.value?.closeMenu();
+};
+
+// Default node rendering helpers
+const getDefaultInputs = () => {
+  return [{ name: "in" }];
+};
+
+const getDefaultOutputs = () => {
+  return [{ name: "out" }];
+};
+
+const getDefaultLabel = (nodeData: GUINodeData) => {
+  return nodeData.data?.label ?? nodeData.type ?? "Node";
 };
 </script>

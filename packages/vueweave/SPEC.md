@@ -58,6 +58,43 @@ const graph = useGraphCanvas({
 
 The main canvas component for rendering the graph.
 
+#### Zero Configuration Usage
+
+GraphCanvasBase works without any configuration:
+
+```vue
+<template>
+  <GraphCanvasBase />
+</template>
+
+<script setup lang="ts">
+import { onMounted } from "vue";
+import { useFlowStore, GraphCanvasBase } from "vueweave";
+
+const flowStore = useFlowStore();
+
+onMounted(() => {
+  flowStore.initData(
+    [
+      { type: "node", nodeId: "A", position: { x: 100, y: 100 }, data: { label: "Node A" } },
+      { type: "node", nodeId: "B", position: { x: 400, y: 100 }, data: { label: "Node B" } },
+    ],
+    [
+      { type: "edge", source: { nodeId: "A", index: 0 }, target: { nodeId: "B", index: 0 } },
+    ],
+    {}
+  );
+});
+</script>
+```
+
+Default nodes automatically include:
+- Single input and output port
+- Node ID as header
+- `data.label`, `type`, or "Node" as body
+
+#### Custom Node Rendering
+
 ```vue
 <template>
   <GraphCanvasBase
@@ -101,7 +138,16 @@ All props are optional. When not provided, `GraphCanvasBase` uses internal state
 #### Slots
 
 - `#node="{ nodeData, nodeIndex }"`: Custom node rendering
+  - **If not provided**: Automatically renders default nodes with single input/output
 - `#head`: Optional content above canvas
+
+#### Default Node Rendering
+
+When no `#node` slot is provided, GraphCanvasBase automatically renders nodes using NodeBase with:
+- Single input port: `{ name: "in" }`
+- Single output port: `{ name: "out" }`
+- Header: Displays `nodeData.nodeId`
+- Body: Displays `nodeData.data.label`, `nodeData.type`, or "Node" (in that priority)
 
 ### NodeBase
 
@@ -622,6 +668,53 @@ type ValidateConnectionFn = (
 
 ## Advanced Usage
 
+### History Management (Undo/Redo)
+
+VueWeave includes built-in history management:
+
+```vue
+<script setup lang="ts">
+import { useFlowStore } from "vueweave";
+
+const flowStore = useFlowStore();
+
+// Undo/Redo operations
+const handleUndo = () => {
+  if (flowStore.undoable) {
+    flowStore.undo();
+  }
+};
+
+const handleRedo = () => {
+  if (flowStore.redoable) {
+    flowStore.redo();
+  }
+};
+</script>
+
+<template>
+  <div>
+    <button @click="handleUndo" :disabled="!flowStore.undoable">Undo</button>
+    <button @click="handleRedo" :disabled="!flowStore.redoable">Redo</button>
+  </div>
+</template>
+```
+
+**History is automatically tracked for:**
+- Node addition (`pushNode`)
+- Node deletion (`deleteNode`)
+- Edge addition (`pushEdge`)
+- Edge deletion (`deleteEdge`)
+- Node position changes (on drag end via `saveNodePositionData`)
+- Data initialization (`initData`, `loadData`)
+- Extra data updates (`updateExtra`)
+
+**Store properties:**
+- `undoable` (computed): `true` if undo is available
+- `redoable` (computed): `true` if redo is available
+- `histories`: Array of history states
+- `currentData`: Current graph state
+
 ### Direct Store Access
 
 For advanced use cases, you can access the Pinia store directly:
@@ -767,8 +860,16 @@ VueWeave validates edges at runtime and logs errors to console:
 
 ```
 [VueWeave] Invalid edge: missing node. Source: node1, Target: node2
-[VueWeave] Invalid edge: source node "node1" does not have output at index 0. Available outputs: 0
+[VueWeave] Invalid edge: source node "node1" does not have output at index 0. Available outputs: 2
 [VueWeave] Invalid edge: target node "node2" does not have input at index 1. Available inputs: 1
 ```
 
+**Validation behavior:**
+- Missing nodes: Always triggers error
+- Port index validation: Only checked after nodes are rendered and ports are initialized
+- During initialization: Port validation is skipped (ports not yet rendered)
+- After rendering: Full validation including port index checks
+
 Invalid edges are automatically filtered out from rendering.
+
+**Note:** You may see port validation warnings during initial page load. These are harmless and occur because edge validation runs before nodes finish rendering their ports. The edges will display correctly once nodes are fully rendered.
