@@ -6,22 +6,28 @@
     <!-- Canvas -->
     <div class="flex-1">
       <GraphCanvasBase :node-styles="{ colors: nodeColors }">
-      <template #node="{ nodeData }">
-        <NodeBase :inputs="getInputs(nodeData)" :outputs="getOutputs(nodeData)">
-          <template #header>
-            <div class="w-full rounded-t-md py-2 text-center text-white">
-              {{ nodeData.nodeId }}
-            </div>
-          </template>
-          <template #body-main>
-            <div class="p-2 text-sm">
-              <div class="font-semibold">{{ getNodeTypeLabel(nodeData.type) }}</div>
-              <div class="text-xs text-gray-600">Type: {{ nodeData.type }}</div>
-            </div>
-          </template>
-        </NodeBase>
-      </template>
-    </GraphCanvasBase>
+        <template #node="{ nodeData }">
+          <NodeBase :inputs="getInputs(nodeData)" :outputs="getOutputs(nodeData)">
+            <template #header>
+              <div class="w-full rounded-t-md bg-blue-700 py-2 text-center text-white" v-if="nodeData.type === 'output'">
+                {{ nodeData.nodeId }}
+              </div>
+              <div class="w-full rounded-t-md bg-purple-700 py-2 text-center text-white" v-else-if="nodeData.type === 'source'">
+                {{ nodeData.nodeId }}
+              </div>
+              <div class="w-full rounded-t-md py-2 text-center text-white" v-else>
+                {{ nodeData.nodeId }}
+              </div>
+            </template>
+            <template #body-main>
+              <div class="p-2 text-sm">
+                <div class="font-semibold">{{ getNodeTypeLabel(nodeData.type) }}</div>
+                <div class="text-xs text-gray-600">Type: {{ nodeData.type }}</div>
+              </div>
+            </template>
+          </NodeBase>
+        </template>
+      </GraphCanvasBase>
     </div>
   </div>
 </template>
@@ -55,96 +61,142 @@ const nodeColors: NodeColorConfig = {
   },
 };
 
-// Initialize with sample data - Data Processing Pipeline
-// Note: node.type can be any string value - fully customizable!
+// Initialize with sample data - Complex Data Processing Pipeline
+// Demonstrates: single input, multiple inputs, multiple outputs
 onMounted(() => {
   flowStore.initData(
-  [
-    // Input nodes - using "source" type
-    {
-      type: "source",
-      nodeId: "dataSource1",
-      position: { x: 50, y: 100 },
-      data: { value: "Data A" },
-    },
-    {
-      type: "source",
-      nodeId: "dataSource2",
-      position: { x: 50, y: 250 },
-      data: { value: "Data B" },
-    },
-    // Processing nodes - using "processor" type
-    {
-      type: "processor",
-      nodeId: "merger",
-      position: { x: 300, y: 150 },
-      data: { name: "Merge" },
-    },
-    {
-      type: "processor",
-      nodeId: "transformer",
-      position: { x: 550, y: 150 },
-      data: { name: "Transform" },
-    },
-    // Output nodes - using "output" type
-    {
-      type: "output",
-      nodeId: "validator",
-      position: { x: 800, y: 100 },
-      data: { name: "Validate" },
-    },
-    {
-      type: "output",
-      nodeId: "logger",
-      position: { x: 800, y: 250 },
-      data: { name: "Log" },
-    },
-  ],
-  [
-    // Connect data sources to merger
-    {
-      type: "edge",
-      source: { nodeId: "dataSource1", index: 0 },
-      target: { nodeId: "merger", index: 0 },
-    },
-    {
-      type: "edge",
-      source: { nodeId: "dataSource2", index: 0 },
-      target: { nodeId: "merger", index: 1 },
-    },
-    // Connect merger to transformer
-    {
-      type: "edge",
-      source: { nodeId: "merger", index: 0 },
-      target: { nodeId: "transformer", index: 0 },
-    },
-    // Connect transformer to outputs
-    {
-      type: "edge",
-      source: { nodeId: "transformer", index: 0 },
-      target: { nodeId: "validator", index: 0 },
-    },
-    {
-      type: "edge",
-      source: { nodeId: "transformer", index: 0 },
-      target: { nodeId: "logger", index: 0 },
-    },
-  ],
-  {}
+    [
+      // Source nodes - single output
+      {
+        type: "source",
+        nodeId: "sensor1",
+        position: { x: 50, y: 80 },
+        data: { value: "Temperature" },
+      },
+      {
+        type: "source",
+        nodeId: "sensor2",
+        position: { x: 50, y: 230 },
+        data: { value: "Humidity" },
+      },
+      {
+        type: "source",
+        nodeId: "sensor3",
+        position: { x: 50, y: 380 },
+        data: { value: "Pressure" },
+      },
+      {
+        type: "source",
+        nodeId: "config",
+        position: { x: 50, y: 530 },
+        data: { value: "Settings" },
+      },
+
+      // Processor with multiple inputs (3 sensor inputs + 1 config)
+      {
+        type: "processor",
+        nodeId: "aggregator",
+        position: { x: 300, y: 200 },
+        data: { name: "Aggregator" },
+      },
+
+      // Processor with single input, multiple outputs
+      {
+        type: "processor",
+        nodeId: "analyzer",
+        position: { x: 550, y: 200 },
+        data: { name: "Analyzer" },
+      },
+
+      // Output nodes - single input each
+      {
+        type: "output",
+        nodeId: "dashboard",
+        position: { x: 800, y: 80 },
+        data: { name: "Dashboard" },
+      },
+      {
+        type: "output",
+        nodeId: "database",
+        position: { x: 800, y: 230 },
+        data: { name: "Database" },
+      },
+      {
+        type: "output",
+        nodeId: "alert",
+        position: { x: 800, y: 380 },
+        data: { name: "Alert System" },
+      },
+      {
+        type: "output",
+        nodeId: "logger",
+        position: { x: 800, y: 530 },
+        data: { name: "Logger" },
+      },
+    ],
+    [
+      // Multiple inputs to aggregator (4 inputs)
+      {
+        type: "edge",
+        source: { nodeId: "sensor1", index: 0 },
+        target: { nodeId: "aggregator", index: 0 },
+      },
+      {
+        type: "edge",
+        source: { nodeId: "sensor2", index: 0 },
+        target: { nodeId: "aggregator", index: 1 },
+      },
+      {
+        type: "edge",
+        source: { nodeId: "sensor3", index: 0 },
+        target: { nodeId: "aggregator", index: 2 },
+      },
+      {
+        type: "edge",
+        source: { nodeId: "config", index: 0 },
+        target: { nodeId: "aggregator", index: 3 },
+      },
+
+      // Single input to analyzer
+      {
+        type: "edge",
+        source: { nodeId: "aggregator", index: 0 },
+        target: { nodeId: "analyzer", index: 0 },
+      },
+
+      // Multiple outputs from analyzer (4 outputs)
+      {
+        type: "edge",
+        source: { nodeId: "analyzer", index: 0 },
+        target: { nodeId: "dashboard", index: 0 },
+      },
+      {
+        type: "edge",
+        source: { nodeId: "analyzer", index: 1 },
+        target: { nodeId: "database", index: 0 },
+      },
+      {
+        type: "edge",
+        source: { nodeId: "analyzer", index: 2 },
+        target: { nodeId: "alert", index: 0 },
+      },
+      {
+        type: "edge",
+        source: { nodeId: "analyzer", index: 3 },
+        target: { nodeId: "logger", index: 0 },
+      },
+    ],
+    {},
   );
 });
 
 const getNodeTypeLabel = (type: string) => {
-  switch (type) {
-    case "source":
-      return "Data Source";
-    case "processor":
-      return "Processor";
-    case "output":
-      return "Output";
-    default:
-      return type;
-  }
+  const labels = {
+    source: "Data Source",
+    processor: "Processor",
+    output: "Output",
+  };
+  return labels[type] ?? type;
 };
 
 const getInputs = (nodeData: GUINodeData) => {
@@ -152,16 +204,23 @@ const getInputs = (nodeData: GUINodeData) => {
   if (nodeData.type === "source") {
     return [];
   }
-  // Merger node has 2 inputs
-  if (nodeData.nodeId === "merger") {
-    return [{ name: "input1" }, { name: "input2" }];
+
+  // Aggregator has 4 inputs (multiple inputs example)
+  if (nodeData.nodeId === "aggregator") {
+    return [{ name: "temp" }, { name: "humidity" }, { name: "pressure" }, { name: "config" }];
   }
-  // Other processor/output nodes have 1 input
+
+  // All other processor/output nodes have single input
   return [{ name: "input" }];
 };
 
-const getOutputs = (__nodeData: GUINodeData) => {
-  // All nodes have outputs in this example
+const getOutputs = (nodeData: GUINodeData) => {
+  // Analyzer has 4 outputs (multiple outputs example)
+  if (nodeData.nodeId === "analyzer") {
+    return [{ name: "display" }, { name: "store" }, { name: "notify" }, { name: "log" }];
+  }
+
+  // All other nodes have single output
   return [{ name: "output" }];
 };
 </script>

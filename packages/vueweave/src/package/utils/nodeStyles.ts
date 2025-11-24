@@ -73,11 +73,11 @@ export const createStyleFunctionsFromColors = (colors: NodeColorConfig): NodeSty
   return {
     nodeMainClass: (expectNearNode, nodeData) => {
       const nodeColors = getColors(nodeData.type);
-      return expectNearNode ? (nodeColors.mainHighlight || nodeColors.main || "") : (nodeColors.main || "");
+      return expectNearNode ? nodeColors.mainHighlight || nodeColors.main || "" : nodeColors.main || "";
     },
     nodeHeaderClass: (expectNearNode, nodeData) => {
       const nodeColors = getColors(nodeData.type);
-      return expectNearNode ? (nodeColors.headerHighlight || nodeColors.header || "") : (nodeColors.header || "");
+      return expectNearNode ? nodeColors.headerHighlight || nodeColors.header || "" : nodeColors.header || "";
     },
     nodeOutputClass: (expectNearNode, __nodeData, isConnectable = true) => {
       // Red when not connectable, green otherwise

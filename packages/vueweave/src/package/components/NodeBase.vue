@@ -61,7 +61,12 @@
 import { ref, watchEffect, computed, onMounted, inject } from "vue";
 import type { NewEdgeEventDirection } from "../utils/type";
 import { getClientPos, getNodeSize, getTransformStyle } from "../utils/gui";
-import { nodeMainClass as defaultNodeMainClass, nodeHeaderClass as defaultNodeHeaderClass, nodeOutputClass as defaultNodeOutputClass, nodeInputClass as defaultNodeInputClass } from "../utils/classUtils";
+import {
+  nodeMainClass as defaultNodeMainClass,
+  nodeHeaderClass as defaultNodeHeaderClass,
+  nodeOutputClass as defaultNodeOutputClass,
+  nodeInputClass as defaultNodeInputClass,
+} from "../utils/classUtils";
 import { NODE_STYLE_KEY } from "../utils/nodeStyles";
 import { useNodeContext } from "../composable/useNodeContext";
 

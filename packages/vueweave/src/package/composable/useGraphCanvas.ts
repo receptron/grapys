@@ -46,11 +46,7 @@ export const useGraphCanvas = (options: UseGraphCanvasOptions = {}) => {
   const validateConnection = options.validateConnection || defaultValidateConnection;
 
   // Initialize graph data
-  const initData = (
-    initNodes: GUINodeData[],
-    initEdges: GUIEdgeData[],
-    extra: Record<string, unknown> = {}
-  ) => {
+  const initData = (initNodes: GUINodeData[], initEdges: GUIEdgeData[], extra: Record<string, unknown> = {}) => {
     store.initData(initNodes, initEdges, extra);
   };
 

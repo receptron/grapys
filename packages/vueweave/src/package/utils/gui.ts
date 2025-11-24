@@ -67,7 +67,7 @@ const isValidEdge = (edge: GUIEdgeData, nodeRecords: GUINodeDataRecord): boolean
   if (edge.source.index >= sourceOutputs.length) {
     console.error(
       `[VueWeave] Invalid edge: source node "${edge.source.nodeId}" does not have output at index ${edge.source.index}. ` +
-      `Available outputs: ${sourceOutputs.length}`
+        `Available outputs: ${sourceOutputs.length}`,
     );
     return false;
   }
@@ -77,7 +77,7 @@ const isValidEdge = (edge: GUIEdgeData, nodeRecords: GUINodeDataRecord): boolean
   if (edge.target.index >= targetInputs.length) {
     console.error(
       `[VueWeave] Invalid edge: target node "${edge.target.nodeId}" does not have input at index ${edge.target.index}. ` +
-      `Available inputs: ${targetInputs.length}`
+        `Available inputs: ${targetInputs.length}`,
     );
     return false;
   }
