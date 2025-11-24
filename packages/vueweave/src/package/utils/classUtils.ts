@@ -11,7 +11,7 @@
 */
 
 import { defaultNodeColors, defaultPortColors, defaultEdgeColors } from "./nodeStyles";
-import { GUINodeData, InputOutputData } from "./type";
+import { GUINodeData } from "./type";
 
 export type NodeStyleFn = (expectNearNode: boolean, nodeData: GUINodeData) => string;
 export type NodeOutputStyleFn = (expectNearNode: boolean, nodeData: GUINodeData, isConnectable?: boolean) => string;
