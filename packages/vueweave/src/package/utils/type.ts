@@ -96,7 +96,7 @@ export type NewEdgeData = NewEdgeData1 | NewEdgeData2;
 export type ClosestNodeData = { node: GUINodeData; distance: number };
 
 export type InputOutputType = "text" | "array" | "message" | "data" | "wait" | "boolean";
-export type InputOutputData = { name: string; type?: InputOutputType;};
+export type InputOutputData = { name: string; type?: InputOutputType };
 
 export type ValidateConnectionFn = (expectEdge: GUIEdgeData, existingEdges: GUIEdgeData[]) => boolean;
 

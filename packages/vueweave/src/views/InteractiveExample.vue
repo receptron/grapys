@@ -67,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 import { useFlowStore, GraphCanvasBase, NodeBase, type GUINodeData, type NodeColorConfig } from "../package";
 import DebugPanel from "../components/DebugPanel.vue";
 
@@ -150,8 +150,10 @@ const addOutputNode = () => {
   });
 };
 
-const loadSampleGraph = () => {
+const loadSampleGraph = async () => {
   // Clear existing data and load complex sample
+  flowStore.initData([], [], {});
+  await nextTick();
   flowStore.initData(
     [
       // Source nodes - demonstrate multiple sources

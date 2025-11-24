@@ -181,7 +181,7 @@ onMounted(() => {
       { type: "edge", source: { nodeId: "API Stream", index: 0 }, target: { nodeId: "ML Model", index: 0 } },
       { type: "edge", source: { nodeId: "ML Model", index: 0 }, target: { nodeId: "Alerts", index: 0 } },
     ],
-    {}
+    {},
   );
 });
 
