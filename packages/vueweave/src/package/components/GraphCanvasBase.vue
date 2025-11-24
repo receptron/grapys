@@ -104,18 +104,15 @@ const edgeDataList = computed(() => {
   return guiEdgeData2edgeData(edges.value, nodeRecords.value);
 });
 
-
 const { svgRef, newEdgeData, onNewEdgeStart, onNewEdge, onNewEdgeEnd, nearestData, edgeConnectable } = useNewEdge(validateConnection);
 
 // Node drag state management
 const isNodeDragging = ref(false);
 
- 
 const handleNodeDragStart = () => {
   isNodeDragging.value = true;
 };
 
- 
 const handleNodeDragEnd = () => {
   isNodeDragging.value = false;
 };
@@ -128,7 +125,7 @@ onMounted(() => {
 });
 
 // Context menu handlers
- 
+
 const openEdgeMenu = (event: MouseEvent, edgeIndex: number) => {
   if (!svgRef.value) return;
   const rect = svgRef.value.getBoundingClientRect();
@@ -141,19 +138,8 @@ const openNodeMenu = (event: MouseEvent, nodeIndex: number) => {
   contextNodeMenu.value.openMenu(event, rect, nodeIndex);
 };
 
- 
 const closeMenu = () => {
   contextEdgeMenu.value?.closeMenu();
   contextNodeMenu.value?.closeMenu();
 };
-
-defineExpose({
-  mainContainer,
-  svgRef,
-  openNodeMenu,
-  // Expose store operations when using default graph
-  initData: defaultGraph.initData,
-  pushNode: defaultGraph.pushNode,
-  store: defaultGraph.store,
-});
 </script>

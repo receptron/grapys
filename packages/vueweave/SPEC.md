@@ -2,11 +2,12 @@
 
 ## Overview
 
-VueWeave is a Vue 3 composable-based library for building node-based graph editors. It provides a minimal API surface with multiple approaches:
+VueWeave is a Vue 3 Pinia-based library for building node-based graph editors. It provides a minimal API surface with multiple approaches:
 
-1. **Zero-config approach**: Use `GraphCanvasBase` component directly with built-in state management
-2. **Flexible approach**: Use `useGraphCanvas` composable for custom state management or pass props explicitly
-3. **Customizable styling**: Use object-based or function-based node styling configuration
+1. **Direct store access** (Recommended): Use `useFlowStore()` directly for the most straightforward approach
+2. **Composable approach**: Use `useGraphCanvas()` for explicit prop management and custom validation
+3. **Props-based approach**: Pass all props explicitly for complete control
+4. **Customizable styling**: Use object-based or function-based node styling configuration
 
 ## Core Composable: `useGraphCanvas`
 
@@ -397,22 +398,26 @@ This architecture allows:
 
 ## Usage Approaches
 
-### Approach 1: Zero-Config (Recommended for Simple Cases)
+### Approach 1: Direct Store Access (Recommended)
 
-The simplest way to use VueWeave. `GraphCanvasBase` has built-in state management using Pinia store.
+The recommended way to use VueWeave. Use `useFlowStore()` directly.
 
 ```vue
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { GraphCanvasBase, NodeBase, type GUINodeData } from "vueweave";
+import { computed, onMounted } from "vue";
+import { useFlowStore, GraphCanvasBase, NodeBase, type GUINodeData } from "vueweave";
 
-const graphCanvas = ref<InstanceType<typeof GraphCanvasBase>>();
+const flowStore = useFlowStore();
+
+// Access reactive state
+const nodes = computed(() => flowStore.nodes);
+const edges = computed(() => flowStore.edges);
 
 onMounted(() => {
-  graphCanvas.value?.initData(
+  flowStore.initData(
     [
-      { type: "static", nodeId: "input", position: { x: 50, y: 100 }, data: { value: "Hello" } },
-      { type: "computed", nodeId: "output", position: { x: 300, y: 100 }, data: { name: "Output" } },
+      { type: "source", nodeId: "input", position: { x: 50, y: 100 }, data: { value: "Hello" } },
+      { type: "output", nodeId: "output", position: { x: 300, y: 100 }, data: { name: "Output" } },
     ],
     [
       { type: "edge", source: { nodeId: "input", index: 0 }, target: { nodeId: "output", index: 0 } },
@@ -422,28 +427,32 @@ onMounted(() => {
 });
 
 const getInputs = (nodeData: GUINodeData) => {
-  return nodeData.type === "computed" ? [{ name: "input" }] : [];
+  return nodeData.type === "output" ? [{ name: "input" }] : [];
 };
 
 const getOutputs = () => [{ name: "output" }];
 </script>
 
 <template>
-  <GraphCanvasBase ref="graphCanvas">
-    <template #node="{ nodeData }">
-      <NodeBase :inputs="getInputs(nodeData)" :outputs="getOutputs()">
-        <template #header>{{ nodeData.nodeId }}</template>
-        <template #body-main>{{ nodeData.type }}</template>
-      </NodeBase>
-    </template>
-  </GraphCanvasBase>
+  <div>
+    <div>Nodes: {{ nodes.length }}</div>
+    <GraphCanvasBase>
+      <template #node="{ nodeData }">
+        <NodeBase :inputs="getInputs(nodeData)" :outputs="getOutputs()">
+          <template #header>{{ nodeData.nodeId }}</template>
+          <template #body-main>{{ nodeData.type }}</template>
+        </NodeBase>
+      </template>
+    </GraphCanvasBase>
+  </div>
 </template>
 ```
 
 **Key benefits:**
-- No props required on `GraphCanvasBase`
-- Access store operations via ref: `graphCanvas.value.initData()`, `graphCanvas.value.pushNode()`, `graphCanvas.value.store`
-- Perfect for simple use cases
+- No component refs needed
+- Direct store access - most straightforward
+- Clean and simple
+- Reactive state for UI updates
 
 ### Approach 2: Using `useGraphCanvas` Composable
 
@@ -502,28 +511,28 @@ const getInputs = (nodeData: GUINodeData) => {
 - Can combine with other composables
 - Explicit prop passing for clarity
 
-### Approach 3: Hybrid (Zero-config + Reactive Access)
+### Approach 3: Direct Store Access (Most Flexible)
 
-Access the store for reactive values while keeping the component API simple.
+Use `useFlowStore()` directly for the most straightforward approach.
 
 ```vue
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import { GraphCanvasBase, NodeBase, type GUINodeData } from "vueweave";
+import { computed, onMounted } from "vue";
+import { useFlowStore, GraphCanvasBase, NodeBase, type GUINodeData } from "vueweave";
 
-const graphCanvas = ref<InstanceType<typeof GraphCanvasBase>>();
+const flowStore = useFlowStore();
 
-// Access reactive state via store
-const nodes = computed(() => graphCanvas.value?.store.nodes ?? []);
-const edges = computed(() => graphCanvas.value?.store.edges ?? []);
+// Access reactive state via computed
+const nodes = computed(() => flowStore.nodes);
+const edges = computed(() => flowStore.edges);
 
 onMounted(() => {
-  graphCanvas.value?.initData([], [], {});
+  flowStore.initData([], [], {});
 });
 
 const addNode = () => {
-  graphCanvas.value?.pushNode({
-    type: "computed",
+  flowStore.pushNode({
+    type: "processor",
     nodeId: `node${nodes.value.length + 1}`,
     position: { x: 100, y: 100 },
     data: { name: "New Node" },
@@ -531,14 +540,14 @@ const addNode = () => {
 };
 
 const getInputs = (nodeData: GUINodeData) => {
-  return nodeData.type === "computed" ? [{ name: "input" }] : [];
+  return nodeData.type === "output" ? [{ name: "input" }] : [];
 };
 </script>
 
 <template>
   <div>
     <button @click="addNode">Add Node (Count: {{ nodes.length }})</button>
-    <GraphCanvasBase ref="graphCanvas">
+    <GraphCanvasBase>
       <template #node="{ nodeData }">
         <NodeBase :inputs="getInputs(nodeData)" :outputs="getOutputs()">
           <template #header>{{ nodeData.nodeId }}</template>
@@ -550,9 +559,10 @@ const getInputs = (nodeData: GUINodeData) => {
 ```
 
 **Key benefits:**
-- Simple component API
-- Reactive state access for UI updates
-- Best of both worlds
+- No component refs needed
+- Direct store access - most straightforward
+- Clean and simple
+- Works great with reactive computed properties
 
 ## Complete Example
 
@@ -664,62 +674,28 @@ const { validateConnection, nodeRecords } = useGraphCanvas({
 
 ## Migration Guide
 
-### From Direct Store Usage to Zero-Config
+### From Component Refs to Direct Store Access
 
-#### Before (verbose with store)
+If you were using component refs, switch to direct store access:
 
-```vue
-<script setup lang="ts">
-import { computed } from "vue";
-import { GraphCanvasBase, useFlowStore } from "vueweave";
-
-const store = useFlowStore();
-
-const nodes = computed(() => store.nodes);
-const edges = computed(() => store.edges);
-const nodeRecords = computed(() => store.nodeRecords);
-
-const updateNodePosition = (index: number, position: NodePositionData) => {
-  store.updateNodePosition(index, position);
-};
-
-const saveNodePosition = () => {
-  store.saveNodePositionData();
-};
-
-const validateConnection = () => {
-  return true;
-};
-
-store.initData(myNodes, myEdges, {});
-</script>
-
-<template>
-  <GraphCanvasBase
-    :nodes="nodes"
-    :edges="edges"
-    :node-records="nodeRecords"
-    :update-position="updateNodePosition"
-    :save-position="saveNodePosition"
-    :validate-connection="validateConnection"
-  >
-    <!-- node template -->
-  </GraphCanvasBase>
-</template>
-```
-
-#### After (zero-config)
+#### Before (using component refs - NOT RECOMMENDED)
 
 ```vue
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { GraphCanvasBase } from "vueweave";
 
 const graphCanvas = ref<InstanceType<typeof GraphCanvasBase>>();
 
+const nodes = computed(() => graphCanvas.value?.store.nodes ?? []);
+
 onMounted(() => {
   graphCanvas.value?.initData(myNodes, myEdges, {});
 });
+
+const addNode = () => {
+  graphCanvas.value?.pushNode(newNode);
+};
 </script>
 
 <template>
@@ -729,46 +705,48 @@ onMounted(() => {
 </template>
 ```
 
-### From Props to Zero-Config
-
-If you were passing all props explicitly, you can now remove them:
-
-#### Before
+#### After (using useFlowStore - RECOMMENDED)
 
 ```vue
+<script setup lang="ts">
+import { computed, onMounted } from "vue";
+import { useFlowStore, GraphCanvasBase } from "vueweave";
+
+const flowStore = useFlowStore();
+
+const nodes = computed(() => flowStore.nodes);
+
+onMounted(() => {
+  flowStore.initData(myNodes, myEdges, {});
+});
+
+const addNode = () => {
+  flowStore.pushNode(newNode);
+};
+</script>
+
 <template>
-  <GraphCanvasBase
-    :nodes="nodes"
-    :edges="edges"
-    :node-records="nodeRecords"
-    :update-position="updateNodePosition"
-    :save-position="saveNodePosition"
-    :validate-connection="validateConnection"
-  >
-    <!-- content -->
+  <GraphCanvasBase>
+    <!-- node template -->
   </GraphCanvasBase>
 </template>
 ```
 
-#### After
-
-```vue
-<template>
-  <GraphCanvasBase ref="graphCanvas">
-    <!-- content -->
-  </GraphCanvasBase>
-</template>
-```
+**Benefits:**
+- No component refs needed
+- Cleaner code
+- Direct access to store
+- Better for testing
 
 ## Best Practices
 
-1. **Start with zero-config approach** - Use `GraphCanvasBase` without props for simple cases
-2. **Use hybrid approach for dynamic UIs** - Access `graphCanvas.value.store` for reactive state while keeping API simple
+1. **Use `useFlowStore()` directly** - Most straightforward approach for most use cases
+2. **Access store state via computed** - Always wrap store access in `computed()` for reactivity
 3. **Use `useGraphCanvas` composable when you need**:
-   - Multiple graph canvases with separate state
    - Custom validation logic
-   - Integration with other composables
-4. **Only pass props explicitly when you need custom handlers** - Props override default behavior
+   - Explicit prop passing for full control
+   - Integration with other state management
+4. **Avoid component refs** - Don't use `ref<GraphCanvasBase>()` unless absolutely necessary
 5. **Implement custom `validateConnection`** - For application-specific edge rules (pass as option or prop)
 6. **Keep node rendering logic in components** - Use slots for flexibility
 7. **Use TypeScript generics for node data** - `GUINodeData<MyDataType>` for type safety
