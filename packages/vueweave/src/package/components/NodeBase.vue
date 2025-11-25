@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect, computed, onMounted, inject } from "vue";
+import { ref, watchEffect, computed, onMounted, inject, nextTick } from "vue";
 import type { NewEdgeEventDirection } from "../utils/type";
 import { getClientPos, getNodeSize, getTransformStyle } from "../utils/gui";
 import {
@@ -76,7 +76,7 @@ interface Props {
   outputs: { name: string }[];
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 // Emits
 const emit = defineEmits<{
@@ -138,9 +138,44 @@ const sortedOutputs = computed(() => {
 const getWH = () => {
   return getNodeSize(thisRef.value, sortedInputs.value, sortedOutputs.value);
 };
-onMounted(() => {
+
+// Update node position with proper timing
+const updateNodePositionFromDOM = () => {
+  // Ensure we have the required DOM elements
+  if (!thisRef.value) return false;
+
+  // For nodes with inputs/outputs, ensure the refs are populated
+  const hasInputs = props.inputs.length > 0;
+  const hasOutputs = props.outputs.length > 0;
+
+  if (hasInputs && inputsRef.value.length !== props.inputs.length) return false;
+  if (hasOutputs && outputsRef.value.length !== props.outputs.length) return false;
+
   const position = { ...getWH(), x: nodeData.value.position.x, y: nodeData.value.position.y };
   nodeContext.value.updatePosition(nodeIndex.value, position);
+  return true;
+};
+
+onMounted(async () => {
+  // Wait for DOM to be ready
+  await nextTick();
+
+  // Try to update position immediately
+  if (updateNodePositionFromDOM()) {
+    return;
+  }
+
+  // If refs aren't ready, use requestAnimationFrame to wait for layout
+  requestAnimationFrame(() => {
+    if (updateNodePositionFromDOM()) {
+      return;
+    }
+
+    // Final fallback: try one more time after another frame
+    requestAnimationFrame(() => {
+      updateNodePositionFromDOM();
+    });
+  });
 });
 
 const onMoveNode = (event: MouseEvent | TouchEvent) => {
