@@ -207,25 +207,25 @@ const getOutputs = (nodeData: { type: string }) => {
 const loadSampleGraph = () => {
   store.initData(
     [
-      // Left column - Sources
-      { nodeId: "sourceA1", type: "typeA", position: { x: 100, y: 60 } },
-      { nodeId: "sourceA2", type: "typeA", position: { x: 100, y: 160 } },
-      { nodeId: "sourceB1", type: "typeB", position: { x: 100, y: 280 } },
-      { nodeId: "sourceB2", type: "typeB", position: { x: 100, y: 380 } },
-      { nodeId: "sourceMulti", type: "multiple", position: { x: 100, y: 500 } },
+      // Left column - Sources (spacing: 220px)
+      { nodeId: "sourceA1", type: "typeA", position: { x: 100, y: 50 } },
+      { nodeId: "sourceA2", type: "typeA", position: { x: 100, y: 270 } },
+      { nodeId: "sourceB1", type: "typeB", position: { x: 100, y: 490 } },
+      { nodeId: "sourceB2", type: "typeB", position: { x: 100, y: 710 } },
+      { nodeId: "sourceMulti", type: "multiple", position: { x: 100, y: 930 } },
 
-      // Middle column - Validation nodes
-      { nodeId: "single1", type: "singleInput", position: { x: 400, y: 60 } },
-      { nodeId: "perPort1", type: "onePerPort", position: { x: 400, y: 200 } },
-      { nodeId: "multiple1", type: "multiple", position: { x: 400, y: 360 } },
-      { nodeId: "typeA1", type: "typeA", position: { x: 400, y: 500 } },
+      // Middle column - Validation nodes (spacing: 280px)
+      { nodeId: "single1", type: "singleInput", position: { x: 450, y: 50 } },
+      { nodeId: "perPort1", type: "onePerPort", position: { x: 450, y: 330 } },
+      { nodeId: "multiple1", type: "multiple", position: { x: 450, y: 610 } },
+      { nodeId: "typeA1", type: "typeA", position: { x: 450, y: 890 } },
 
       // Right column - More typeA/B for testing
-      { nodeId: "typeA2", type: "typeA", position: { x: 700, y: 100 } },
-      { nodeId: "typeB1", type: "typeB", position: { x: 700, y: 280 } },
+      { nodeId: "typeA2", type: "typeA", position: { x: 800, y: 190 } },
+      { nodeId: "typeB1", type: "typeB", position: { x: 800, y: 750 } },
 
       // Far right - Output
-      { nodeId: "output", type: "output", position: { x: 1000, y: 200 } },
+      { nodeId: "output", type: "output", position: { x: 1150, y: 470 } },
     ],
     [
       // Initial connections to demonstrate validation
