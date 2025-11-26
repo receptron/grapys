@@ -80,7 +80,30 @@ const nodeStyleOptions: NodeStyleOptions = {
     edge: "#6366f1", // indigo-500 - default
     hover: "#818cf8", // indigo-400 - default hover
     notConnectable: "#f87171", // red-400
-    customColor: (sourceNodeId: string, targetNodeId: string) => {
+    customColor: (context) => {
+      const { sourceNodeId, targetNodeId, isNewEdge, hasTarget, isConnectable } = context;
+
+      // Handle new edges first (being drawn)
+      if (isNewEdge) {
+        // New edge without target (mouse in empty space): gray color
+        if (!hasTarget) {
+          return {
+            edge: "#9ca3af", // gray-400
+            hover: "#9ca3af",
+          };
+        }
+
+        // New edge with invalid target (cannot connect): red color
+        if (!isConnectable) {
+          return {
+            edge: "#f87171", // red-400
+            hover: "#fca5a5", // red-300
+          };
+        }
+
+        // New edge with valid target: continue to check node type colors below
+      }
+
       // Type A nodes: blue edges
       if (sourceNodeId.includes("typeA") || targetNodeId.includes("typeA")) {
         return {

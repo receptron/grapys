@@ -11,9 +11,22 @@
 import type { NodeStyleFn, NodeOutputStyleFn, NodeInputStyleFn } from "./classUtils";
 
 /**
- * Function type for custom edge color based on source and target node IDs
+ * Edge color function context - provides detailed information about the edge
  */
-export type EdgeColorFn = (sourceNodeId: string, targetNodeId: string) => {
+export type EdgeColorContext = {
+  sourceNodeId: string;
+  sourceIndex?: number;
+  targetNodeId: string;
+  targetIndex?: number;
+  isConnectable: boolean;
+  isNewEdge: boolean; // true if this is being drawn (not yet committed)
+  hasTarget: boolean; // true if hovering over a valid target port
+};
+
+/**
+ * Function type for custom edge color based on edge context
+ */
+export type EdgeColorFn = (context: EdgeColorContext) => {
   edge?: string;
   hover?: string;
 } | undefined;

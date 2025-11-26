@@ -221,7 +221,7 @@ export const pickNearestConnect = (nearestNode: ClosestNodeData, newEdgeData: Ne
   const isOutput = newEdgeData.direction === "outbound";
   const centers = (isOutput ? inputCenters : outputCenters) ?? [];
 
-  return centers.reduce((closest: null | { index: number; distance: number }, center: number, index: number) => {
+  const closest = centers.reduce((closest: null | { index: number; distance: number }, center: number, index: number) => {
     const nodeX = nodePos.x + (isOutput ? 0 : (nodePos?.width ?? 0));
     const nodeY = nodePos.y + center;
     const mouseX = mouseCurrentPosition.x;
@@ -234,6 +234,13 @@ export const pickNearestConnect = (nearestNode: ClosestNodeData, newEdgeData: Ne
 
     return closest;
   }, null);
+
+  // Only return a connection if within threshold distance (50px)
+  const CONNECT_THRESHOLD = 50;
+  if (closest && closest.distance < CONNECT_THRESHOLD) {
+    return closest;
+  }
+  return null;
 };
 
 const sameEdge = (edge1: EdgeData | GUIEdgeData, edge2: EdgeData | GUIEdgeData) => {

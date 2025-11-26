@@ -261,7 +261,7 @@ VueWeave provides flexible edge color customization:
 />
 ```
 
-#### Advanced Approach: Custom Colors per Node Pair
+#### Advanced Approach: Custom Colors with Full Context
 
 ```vue
 <script setup>
@@ -272,7 +272,19 @@ const nodeStyleOptions: NodeStyleOptions = {
     edge: '#6366f1',            // Default color
     hover: '#818cf8',           // Default hover color
     notConnectable: '#f87171',
-    customColor: (sourceNodeId: string, targetNodeId: string) => {
+    customColor: (context) => {
+      const { sourceNodeId, targetNodeId, isNewEdge, hasTarget, isConnectable } = context;
+
+      // New edge being drawn without target: gray
+      if (isNewEdge && !hasTarget) {
+        return { edge: '#9ca3af', hover: '#9ca3af' };
+      }
+
+      // New edge with invalid target: red
+      if (isNewEdge && !isConnectable) {
+        return { edge: '#f87171', hover: '#fca5a5' };
+      }
+
       // Custom color for specific node pairs
       if (sourceNodeId === 'input' && targetNodeId === 'process') {
         return {
@@ -280,6 +292,7 @@ const nodeStyleOptions: NodeStyleOptions = {
           hover: '#34d399'      // green-400
         };
       }
+
       // Return undefined to use default colors
       return undefined;
     }
@@ -292,9 +305,21 @@ const nodeStyleOptions: NodeStyleOptions = {
 </template>
 ```
 
+**EdgeColorContext properties:**
+- `sourceNodeId`: Source node ID
+- `sourceIndex`: Source port index
+- `targetNodeId`: Target node ID (empty for new edges without target)
+- `targetIndex`: Target port index
+- `isConnectable`: Whether the connection is valid
+- `isNewEdge`: `true` if edge is being drawn (not yet committed)
+- `hasTarget`: `true` if hovering over a valid target port
+
 **Features:**
 - Set default edge colors globally
-- Override colors for specific source/target node pairs
+- Full context for custom color decisions (node IDs, ports, connection state)
+- Customize colors for new edges being drawn
+- Different colors for valid/invalid connections
+- Different colors when hovering over ports vs empty space
 - Use any CSS color format (hex, rgb, hsl, color names)
 - Separate hover states for better interactivity
 - Fallback to defaults when custom function returns undefined

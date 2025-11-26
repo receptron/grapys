@@ -84,7 +84,17 @@ const nodeStyleOptions: NodeStyleOptions = {
     edge: "#ec4899", // pink-500 - default
     hover: "#8b5cf6", // violet-500 - default hover
     notConnectable: "#ef4444", // red-500
-    customColor: (sourceNodeId: string, targetNodeId: string) => {
+    customColor: (context) => {
+      const { sourceNodeId, targetNodeId, isNewEdge, hasTarget } = context;
+
+      // New edge without target: lighter pink
+      if (isNewEdge && !hasTarget) {
+        return {
+          edge: "#f9a8d4", // pink-300
+          hover: "#f9a8d4",
+        };
+      }
+
       // Data sources (Data Lake/API Stream) -> ETL: cyan edges
       if ((sourceNodeId === "Data Lake" || sourceNodeId === "API Stream") && targetNodeId === "ETL Pipeline") {
         return {
