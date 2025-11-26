@@ -66,52 +66,37 @@ export default defineComponent({
 
     // Compute actual edge colors based on source/target nodes
     const edgeColors = computed(() => {
-      // Use the explicit isNewEdge prop
-      const isNewEdge = props.isNewEdge;
-
       // Get source node ID and index
       // For new edges, we need to consider the direction:
       // - outbound: source is the node, target is mouse
       // - inbound: target is the node, source is mouse
-      let sourceNodeId = "";
-      let sourceIndex: number | undefined;
+      const sourceNodeId = props.isNewEdge && props.edgeDirection === "inbound"
+        ? (props.targetData.kind === "node" ? props.targetData.nodeId : "")
+        : (props.sourceData.kind === "node" ? props.sourceData.nodeId : "");
 
-      if (props.isNewEdge && props.edgeDirection === "inbound") {
-        // For inbound, the actual starting node is in targetData
-        sourceNodeId = props.targetData.kind === "node" ? props.targetData.nodeId : "";
-        sourceIndex = props.targetData.kind === "node" ? props.targetData.index : undefined;
-      } else {
-        // For outbound or existing edges, use sourceData
-        sourceNodeId = props.sourceData.kind === "node" ? props.sourceData.nodeId : "";
-        sourceIndex = props.sourceData.kind === "node" ? props.sourceData.index : undefined;
-      }
+      const sourceIndex = props.isNewEdge && props.edgeDirection === "inbound"
+        ? (props.targetData.kind === "node" ? props.targetData.index : undefined)
+        : (props.sourceData.kind === "node" ? props.sourceData.index : undefined);
 
       // For new edge (when nearestData is provided), use nearestData for stable color
       // Otherwise use targetData
       const hasTarget = Boolean(props.nearestData);
 
       // For new edges, nearestData contains the hover target (if any)
-      // For existing edges, use targetData or sourceData based on direction
-      let targetNodeId = "";
-      let targetIndex: number | undefined;
+      // For existing edges, use targetData
+      const targetNodeId = props.nearestData
+        ? props.nearestData.nodeId
+        : (props.isNewEdge
+          ? ""
+          : (props.targetData.kind === "node" ? props.targetData.nodeId : ""));
 
-      if (props.nearestData) {
-        // New edge hovering over a port
-        targetNodeId = props.nearestData.nodeId;
-        targetIndex = props.nearestData.index;
-      } else if (props.isNewEdge && props.edgeDirection === "inbound") {
-        // Inbound new edge without hover target - sourceData is mouse, no real target yet
-        targetNodeId = "";
-        targetIndex = undefined;
-      } else if (props.isNewEdge && props.edgeDirection === "outbound") {
-        // Outbound new edge without hover target - targetData is mouse, no real target yet
-        targetNodeId = "";
-        targetIndex = undefined;
-      } else {
-        // Existing edge
-        targetNodeId = props.targetData.kind === "node" ? props.targetData.nodeId : "";
-        targetIndex = props.targetData.kind === "node" ? props.targetData.index : undefined;
-      }
+      const targetIndex = props.nearestData
+        ? props.nearestData.index
+        : (props.isNewEdge
+          ? undefined
+          : (props.targetData.kind === "node" ? props.targetData.index : undefined));
+
+      const isNewEdge = props.isNewEdge;
 
       // Try custom color function first with full context
       const customColors = injectedEdgeColors.customColor?.({

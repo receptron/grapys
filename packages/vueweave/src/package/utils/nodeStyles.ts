@@ -25,6 +25,7 @@ export type EdgeColorContext = {
 
 /**
  * Function type for custom edge color based on edge context
+ * Returns CSS color strings (e.g., "#6366f1", "rgb(99, 102, 241)")
  */
 export type EdgeColorFn = (context: EdgeColorContext) => {
   edge?: string;
@@ -33,12 +34,12 @@ export type EdgeColorFn = (context: EdgeColorContext) => {
 
 /**
  * Edge color configuration
- * Can be either simple colors or advanced with custom function
+ * Uses CSS color strings (e.g., "#6366f1", "rgb(99, 102, 241)")
  */
 export type EdgeColorConfig = {
-  // Normal edge color (default)
+  // Normal edge color
   edge?: string;
-  // Hover edge color (default)
+  // Hover edge color
   hover?: string;
   // Not connectable edge color
   notConnectable?: string;
