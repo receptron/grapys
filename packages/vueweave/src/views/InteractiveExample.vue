@@ -43,15 +43,40 @@
                 </div>
               </template>
               <template #body-main>
-                <div class="p-2 text-center text-xs">
+                <div class="p-2 text-xs">
+                  <!-- Source node: editable value -->
                   <div v-if="nodeData.type === 'source'">
-                    <input
-                      v-model="(nodeData.data as { value?: string }).value"
-                      @mousedown.stop
-                      class="w-full rounded border px-2 py-1"
-                      placeholder="Enter value"
+                    <NodeParamInput
+                      v-for="param in getNodeParams(nodeData)"
+                      :key="param.name"
+                      :param="param"
+                      :model-value="(nodeData.data as Record<string, unknown>)[param.name]"
+                      @update:model-value="updateNodeParam(nodeData, param.name, $event)"
                     />
                   </div>
+
+                  <!-- Processor node: operation selector + parameters -->
+                  <div v-else-if="nodeData.type === 'processor'">
+                    <NodeParamInput
+                      v-for="param in getNodeParams(nodeData)"
+                      :key="param.name"
+                      :param="param"
+                      :model-value="(nodeData.data as Record<string, unknown>)[param.name]"
+                      @update:model-value="updateNodeParam(nodeData, param.name, $event)"
+                    />
+                  </div>
+
+                  <!-- Output node: display settings -->
+                  <div v-else-if="nodeData.type === 'output'">
+                    <NodeParamInput
+                      v-for="param in getNodeParams(nodeData)"
+                      :key="param.name"
+                      :param="param"
+                      :model-value="(nodeData.data as Record<string, unknown>)[param.name]"
+                      @update:model-value="updateNodeParam(nodeData, param.name, $event)"
+                    />
+                  </div>
+
                   <div v-else>
                     <div class="font-semibold">{{ getNodeTypeLabel(nodeData.type) }}</div>
                     <div class="text-xs text-gray-500">{{ nodeData.type }}</div>
@@ -67,9 +92,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from "vue";
+import { ref, onMounted, nextTick, computed } from "vue";
 import { useFlowStore, GraphCanvasBase, NodeBase, type GUINodeData, type NodeColorConfig } from "../package";
 import DebugPanel from "../components/DebugPanel.vue";
+import NodeParamInput from "../components/NodeParamInput.vue";
+import type { ParamData } from "../components/NodeParamInput.vue";
 
 const flowStore = useFlowStore();
 
@@ -114,7 +141,10 @@ const addSourceNode = () => {
       x: 100 + (currentCount % 5) * 150,
       y: 100 + Math.floor(currentCount / 5) * 150,
     },
-    data: { value: `Data ${currentCount}` },
+    data: {
+      value: `Data ${currentCount}`,
+      count: 10,
+    },
   });
 };
 
@@ -130,7 +160,12 @@ const addProcessorNode = () => {
       x: 100 + (currentCount % 5) * 150,
       y: 100 + Math.floor(currentCount / 5) * 150,
     },
-    data: { name: `Process ${currentCount}` },
+    data: {
+      name: `Process ${currentCount}`,
+      operation: "concat",
+      enabled: true,
+      description: "",
+    },
   });
 };
 
@@ -146,7 +181,11 @@ const addOutputNode = () => {
       x: 100 + (currentCount % 5) * 150,
       y: 100 + Math.floor(currentCount / 5) * 150,
     },
-    data: { name: `Output ${currentCount}` },
+    data: {
+      name: `Output ${currentCount}`,
+      format: "json",
+      showTimestamp: false,
+    },
   });
 };
 
@@ -161,19 +200,19 @@ const loadSampleGraph = async () => {
         type: "source",
         nodeId: "input1",
         position: { x: 80, y: 100 },
-        data: { value: "Data A" },
+        data: { value: "Data A", count: 5 },
       },
       {
         type: "source",
         nodeId: "input2",
         position: { x: 80, y: 220 },
-        data: { value: "Data B" },
+        data: { value: "Data B", count: 10 },
       },
       {
         type: "source",
         nodeId: "input3",
         position: { x: 80, y: 340 },
-        data: { value: "Data C" },
+        data: { value: "Data C", count: 15 },
       },
 
       // Processor with multiple inputs
@@ -181,7 +220,12 @@ const loadSampleGraph = async () => {
         type: "processor",
         nodeId: "merger",
         position: { x: 320, y: 200 },
-        data: { name: "Merge 3 Inputs" },
+        data: {
+          name: "Merge 3 Inputs",
+          operation: "aggregate",
+          enabled: true,
+          description: "Combines all inputs",
+        },
       },
 
       // Processor with multiple outputs
@@ -189,7 +233,12 @@ const loadSampleGraph = async () => {
         type: "processor",
         nodeId: "splitter",
         position: { x: 560, y: 200 },
-        data: { name: "Split to 3" },
+        data: {
+          name: "Split to 3",
+          operation: "transform",
+          enabled: true,
+          description: "Distributes to outputs",
+        },
       },
 
       // Output nodes
@@ -197,19 +246,31 @@ const loadSampleGraph = async () => {
         type: "output",
         nodeId: "result1",
         position: { x: 800, y: 100 },
-        data: { name: "Output A" },
+        data: {
+          name: "Output A",
+          format: "json",
+          showTimestamp: true,
+        },
       },
       {
         type: "output",
         nodeId: "result2",
         position: { x: 800, y: 220 },
-        data: { name: "Output B" },
+        data: {
+          name: "Output B",
+          format: "text",
+          showTimestamp: false,
+        },
       },
       {
         type: "output",
         nodeId: "result3",
         position: { x: 800, y: 340 },
-        data: { name: "Output C" },
+        data: {
+          name: "Output C",
+          format: "csv",
+          showTimestamp: true,
+        },
       },
     ],
     [
@@ -281,5 +342,50 @@ const getOutputs = (nodeData: GUINodeData) => {
 
   // All other nodes have single output
   return [{ name: "output" }];
+};
+
+// Get parameters for each node type
+const getNodeParams = (nodeData: GUINodeData): ParamData[] => {
+  switch (nodeData.type) {
+    case "source":
+      return [
+        { name: "value", type: "string" },
+        { name: "count", type: "number", min: 0, max: 100, step: 1 },
+      ];
+    case "processor":
+      return [
+        {
+          name: "operation",
+          type: "enum",
+          values: ["concat", "transform", "filter", "aggregate"],
+        },
+        { name: "enabled", type: "boolean" },
+        { name: "description", type: "text" },
+      ];
+    case "output":
+      return [
+        { name: "format", type: "enum", values: ["json", "text", "csv"] },
+        { name: "showTimestamp", type: "boolean" },
+      ];
+    default:
+      return [];
+  }
+};
+
+// Update node parameter
+const updateNodeParam = (nodeData: GUINodeData, paramName: string, value: unknown) => {
+  const nodeIndex = flowStore.nodes.findIndex((n) => n.nodeId === nodeData.nodeId);
+  if (nodeIndex === -1) return;
+
+  const updatedNode = {
+    ...nodeData,
+    data: {
+      ...nodeData.data,
+      [paramName]: value,
+    },
+  };
+
+  // Update the node in the store
+  flowStore.nodes[nodeIndex] = updatedNode;
 };
 </script>
