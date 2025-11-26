@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Blank from "../views/Blank.vue";
 import Home from "../views/Home.vue";
+import LandingPage from "../views/LandingPage.vue";
 import MinimalExample from "../views/MinimalExample.vue";
 import SimpleExample from "../views/SimpleExample.vue";
 import InteractiveExample from "../views/InteractiveExample.vue";
@@ -10,6 +11,10 @@ import ValidationExample from "../views/ValidationExample.vue";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
+    component: LandingPage,
+  },
+  {
+    path: "/old-home",
     component: Home,
   },
   {
