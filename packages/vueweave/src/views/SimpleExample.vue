@@ -118,19 +118,19 @@ onMounted(() => {
       {
         type: "output",
         nodeId: "database",
-        position: { x: 800, y: 230 },
+        position: { x: 800, y: 280 },
         data: { name: "Database" },
       },
       {
         type: "output",
         nodeId: "alert",
-        position: { x: 800, y: 380 },
+        position: { x: 800, y: 480 },
         data: { name: "Alert System" },
       },
       {
         type: "output",
         nodeId: "logger",
-        position: { x: 800, y: 530 },
+        position: { x: 800, y: 680 },
         data: { name: "Logger" },
       },
     ],
@@ -173,17 +173,17 @@ onMounted(() => {
       {
         type: "edge",
         source: { nodeId: "analyzer", index: 1 },
-        target: { nodeId: "database", index: 0 },
+        target: { nodeId: "database", index: 1 },
       },
       {
         type: "edge",
         source: { nodeId: "analyzer", index: 2 },
-        target: { nodeId: "alert", index: 0 },
+        target: { nodeId: "alert", index: 2 },
       },
       {
         type: "edge",
         source: { nodeId: "analyzer", index: 3 },
-        target: { nodeId: "logger", index: 0 },
+        target: { nodeId: "logger", index: 3 },
       },
     ],
     {},
@@ -211,7 +211,7 @@ const getInputs = (nodeData: GUINodeData) => {
   }
 
   // All other processor/output nodes have single input
-  return [{ name: "input" }];
+  return [{ name: "input1" }, { name: "input2" }, { name: "input3" }, { name: "input4" }];
 };
 
 const getOutputs = (nodeData: GUINodeData) => {
