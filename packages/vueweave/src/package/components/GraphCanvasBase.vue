@@ -76,7 +76,7 @@ import { useNewEdge } from "../composable/gui";
 import { usePanAndScroll } from "../composable/usePanAndScroll";
 import { useGraphCanvas } from "../composable/useGraphCanvas";
 import { guiEdgeData2edgeData } from "../utils/gui";
-import { NODE_STYLE_KEY, EDGE_COLOR_KEY, resolveStyleConfig, resolveEdgeColors, type NodeStyleOptions } from "../utils/nodeStyles";
+import { NODE_STYLE_KEY, EDGE_COLOR_KEY, EDGE_COLOR_OPTIONS_KEY, resolveStyleConfig, resolveEdgeColors, resolveEdgeColorOptions, type NodeStyleOptions } from "../utils/nodeStyles";
 import type { GUINodeData, NodePosition, GUIEdgeData, GUINodeDataRecord, ValidateConnectionFn } from "../utils/type";
 
 const props = defineProps<{
@@ -94,9 +94,13 @@ const props = defineProps<{
 const resolvedStyles = resolveStyleConfig(props.nodeStyles);
 provide(NODE_STYLE_KEY, resolvedStyles);
 
-// Resolve and provide edge colors
+// Resolve and provide edge colors (backward compatibility)
 const resolvedEdgeColors = resolveEdgeColors(props.nodeStyles);
 provide(EDGE_COLOR_KEY, resolvedEdgeColors);
+
+// Resolve and provide edge color options (new advanced API)
+const resolvedEdgeColorOptions = resolveEdgeColorOptions(props.nodeStyles);
+provide(EDGE_COLOR_OPTIONS_KEY, resolvedEdgeColorOptions);
 
 const getNodeKey = props.getNodeKey ?? ((nodeData: GUINodeData, index: number) => `${nodeData.nodeId}-${index}`);
 

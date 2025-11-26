@@ -241,6 +241,70 @@ The base component for individual nodes.
 - `body-head`: Content at the top of the node body
 - `body-main`: Main node body content
 
+## Styling
+
+### Edge Colors
+
+VueWeave provides flexible edge color customization with two approaches:
+
+#### Simple Approach: Default Colors
+
+```vue
+<GraphCanvasBase
+  :node-styles="{
+    edgeColors: {
+      edge: '#ec4899',        // pink-500 - normal edge
+      hover: '#8b5cf6',       // violet-500 - on hover
+      notConnectable: '#ef4444' // red-500 - invalid connection
+    }
+  }"
+/>
+```
+
+#### Advanced Approach: Custom Colors per Node Pair
+
+```vue
+<script setup>
+import { GraphCanvasBase, type NodeStyleOptions } from 'vueweave';
+
+const nodeStyleOptions: NodeStyleOptions = {
+  edgeColorOptions: {
+    default: {
+      edge: '#6366f1',        // Default color
+      hover: '#818cf8',       // Default hover color
+      notConnectable: '#f87171'
+    },
+    customColor: (sourceNodeId: string, targetNodeId: string) => {
+      // Custom color for specific node pairs
+      if (sourceNodeId === 'input' && targetNodeId === 'process') {
+        return {
+          edge: '#10b981',    // green-500
+          hover: '#34d399'    // green-400
+        };
+      }
+      // Return undefined to use default colors
+      return undefined;
+    }
+  }
+};
+</script>
+
+<template>
+  <GraphCanvasBase :node-styles="nodeStyleOptions" />
+</template>
+```
+
+**Features:**
+- Set default edge colors globally
+- Override colors for specific source/target node pairs
+- Use any CSS color format (hex, rgb, hsl, color names)
+- Separate hover states for better interactivity
+- Fallback to defaults when custom function returns undefined
+
+**Examples:**
+- See `/validation` route for validation-based edge coloring
+- See `/styled` route for data-flow-based edge coloring
+
 ## Utilities
 
 ### Class Utilities
