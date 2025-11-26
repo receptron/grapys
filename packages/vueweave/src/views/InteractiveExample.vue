@@ -204,13 +204,13 @@ const loadSampleGraph = async () => {
       {
         type: "source",
         nodeId: "input2",
-        position: { x: 80, y: 220 },
+        position: { x: 80, y: 320 },
         data: { value: "Data B", count: 10 },
       },
       {
         type: "source",
         nodeId: "input3",
-        position: { x: 80, y: 340 },
+        position: { x: 80, y: 540 },
         data: { value: "Data C", count: 15 },
       },
 
@@ -218,7 +218,7 @@ const loadSampleGraph = async () => {
       {
         type: "processor",
         nodeId: "merger",
-        position: { x: 320, y: 200 },
+        position: { x: 320, y: 310 },
         data: {
           name: "Merge 3 Inputs",
           operation: "aggregate",
@@ -231,7 +231,7 @@ const loadSampleGraph = async () => {
       {
         type: "processor",
         nodeId: "splitter",
-        position: { x: 560, y: 200 },
+        position: { x: 560, y: 310 },
         data: {
           name: "Split to 3",
           operation: "transform",
@@ -254,7 +254,7 @@ const loadSampleGraph = async () => {
       {
         type: "output",
         nodeId: "result2",
-        position: { x: 800, y: 220 },
+        position: { x: 800, y: 320 },
         data: {
           name: "Output B",
           format: "text",
@@ -264,7 +264,7 @@ const loadSampleGraph = async () => {
       {
         type: "output",
         nodeId: "result3",
-        position: { x: 800, y: 340 },
+        position: { x: 800, y: 540 },
         data: {
           name: "Output C",
           format: "csv",
@@ -376,15 +376,17 @@ const updateNodeParam = (nodeData: GUINodeData, paramName: string, value: unknow
   const nodeIndex = flowStore.nodes.findIndex((node) => node.nodeId === nodeData.nodeId);
   if (nodeIndex === -1) return;
 
-  const updatedNode = {
-    ...nodeData,
-    data: {
-      ...nodeData.data,
-      [paramName]: value,
-    },
-  };
-
-  // Update the node in the store
-  flowStore.nodes[nodeIndex] = updatedNode;
+  flowStore.updateNodeAt(
+    nodeIndex,
+    (node) => ({
+      ...node,
+      data: {
+        ...node.data,
+        [paramName]: value,
+      },
+    }),
+    "updateNodeParam",
+    true,
+  );
 };
 </script>
