@@ -183,6 +183,93 @@ const validateConnection = (expectEdge: GUIEdgeData, existingEdges: GUIEdgeData[
 - `body-head`: ノード本体の上部コンテンツ
 - `body-main`: ノード本体のメインコンテンツ
 
+## スタイリング
+
+### エッジの色
+
+VueWeave はエッジの色を柔軟にカスタマイズできます：
+
+#### シンプルなアプローチ: デフォルトの色
+
+```vue
+<GraphCanvasBase
+  :node-styles="{
+    edgeColors: {
+      edge: '#ec4899',          // pink-500 - 通常のエッジ
+      hover: '#8b5cf6',         // violet-500 - ホバー時
+      notConnectable: '#ef4444' // red-500 - 無効な接続
+    }
+  }"
+/>
+```
+
+#### 高度なアプローチ: 完全なコンテキストでのカスタムカラー
+
+```vue
+<script setup>
+import { GraphCanvasBase, type NodeStyleOptions } from 'vueweave';
+
+const nodeStyleOptions: NodeStyleOptions = {
+  edgeColors: {
+    edge: '#6366f1',            // デフォルトの色
+    hover: '#818cf8',           // デフォルトのホバー色
+    notConnectable: '#f87171',
+    customColor: (context) => {
+      const { sourceNodeId, targetNodeId, isNewEdge, hasTarget, isConnectable } = context;
+
+      // ターゲットなしで描画中の新しいエッジ: グレー
+      if (isNewEdge && !hasTarget) {
+        return { edge: '#9ca3af', hover: '#9ca3af' };
+      }
+
+      // 無効なターゲットの新しいエッジ: 赤
+      if (isNewEdge && !isConnectable) {
+        return { edge: '#f87171', hover: '#fca5a5' };
+      }
+
+      // 特定のノードペアのカスタムカラー
+      if (sourceNodeId === 'input' && targetNodeId === 'process') {
+        return {
+          edge: '#10b981',      // green-500
+          hover: '#34d399'      // green-400
+        };
+      }
+
+      // デフォルトの色を使う場合は undefined を返す
+      return undefined;
+    }
+  }
+};
+</script>
+
+<template>
+  <GraphCanvasBase :node-styles="nodeStyleOptions" />
+</template>
+```
+
+**EdgeColorContext プロパティ:**
+- `sourceNodeId`: ソースノードID
+- `sourceIndex`: ソースポートインデックス
+- `targetNodeId`: ターゲットノードID（ターゲットなしの新しいエッジの場合は空文字列）
+- `targetIndex`: ターゲットポートインデックス
+- `isConnectable`: 接続が有効かどうか
+- `isNewEdge`: エッジが描画中（未確定）の場合は `true`
+- `hasTarget`: 有効なターゲットポート上にホバーしている場合は `true`
+
+**機能:**
+- デフォルトのエッジカラーをグローバルに設定
+- カスタムカラー決定のための完全なコンテキスト（ノードID、ポート、接続状態）
+- 描画中の新しいエッジの色をカスタマイズ
+- 有効/無効な接続で異なる色
+- ポート上とポート外で異なる色
+- 任意のCSS色形式を使用可能（hex、rgb、hsl、色名）
+- より良いインタラクティビティのための個別のホバー状態
+- カスタム関数がundefinedを返した場合はデフォルトにフォールバック
+
+**例:**
+- `/validation` ルートでバリデーションベースのエッジカラーリング
+- `/styled` ルートでデータフローベースのエッジカラーリング
+
 ## ユーティリティ
 
 ### クラスユーティリティ

@@ -18,6 +18,9 @@
           v-if="newEdgeData"
           :source-data="newEdgeData.source"
           :target-data="newEdgeData.target"
+          :nearest-data="nearestData"
+          :is-new-edge="true"
+          :edge-direction="newEdgeData.direction"
           class="pointer-events-auto"
           :is-connectable="edgeConnectable"
         />

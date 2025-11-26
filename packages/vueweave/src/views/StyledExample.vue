@@ -5,7 +5,7 @@
 
     <!-- Canvas -->
     <div class="flex-1">
-      <GraphCanvasBase :node-styles="{ colors: nodeColors, portColors, edgeColors }">
+      <GraphCanvasBase :node-styles="nodeStyleOptions">
         <template #node="{ nodeData }">
           <NodeBase :inputs="getInputs(nodeData)" :outputs="getOutputs(nodeData)">
             <template #header>
@@ -35,31 +35,10 @@
 
 <script setup lang="ts">
 import { h, onMounted } from "vue";
-import { useFlowStore, GraphCanvasBase, NodeBase, type GUINodeData, type NodeColorConfig, type PortColorConfig, type EdgeColorConfig } from "../package";
+import { useFlowStore, GraphCanvasBase, NodeBase, type GUINodeData, type NodeColorConfig, type PortColorConfig, type NodeStyleOptions } from "../package";
 import DebugPanel from "../components/DebugPanel.vue";
 
 const flowStore = useFlowStore();
-
-// Port colors - distinct and modern gradient style
-const portColors: PortColorConfig = {
-  // Input ports: Cool tones (cyan/blue) - receiving data
-  input: "bg-gradient-to-br from-cyan-400 to-blue-500 shadow-md shadow-cyan-500/50 border-2 border-cyan-300",
-  inputHighlight: "bg-gradient-to-br from-cyan-200 to-blue-300 shadow-xl shadow-cyan-300/80 ring-4 ring-cyan-200 scale-125",
-
-  // Output ports: Warm tones (amber/orange) - sending data
-  output: "bg-gradient-to-br from-amber-400 to-orange-500 shadow-md shadow-amber-500/50 border-2 border-amber-300",
-  outputHighlight: "bg-gradient-to-br from-amber-200 to-orange-300 shadow-xl shadow-amber-300/80 ring-4 ring-amber-200 scale-125",
-
-  // Not connectable: Red with strong visual feedback
-  notConnectable: "bg-gradient-to-br from-red-500 to-rose-600 shadow-lg shadow-red-500/70 border-2 border-red-400 animate-pulse",
-};
-
-// Edge colors - vibrant gradient style
-const edgeColors: EdgeColorConfig = {
-  edge: "#ec4899", // pink-500
-  hover: "#8b5cf6", // violet-500
-  notConnectable: "#ef4444", // red-500
-};
 
 // Modern gradient-based color configuration with shadows
 const nodeColors: NodeColorConfig = {
@@ -80,6 +59,72 @@ const nodeColors: NodeColorConfig = {
     header: "bg-gradient-to-r from-blue-600 to-cyan-700",
     mainHighlight: "bg-gradient-to-br from-blue-300 to-cyan-400 shadow-xl shadow-blue-400/60 ring-2 ring-blue-300",
     headerHighlight: "bg-gradient-to-r from-blue-500 to-cyan-600",
+  },
+};
+
+// Port colors - distinct and modern gradient style
+const portColors: PortColorConfig = {
+  // Input ports: Cool tones (cyan/blue) - receiving data
+  input: "bg-gradient-to-br from-cyan-400 to-blue-500 shadow-md shadow-cyan-500/50 border-2 border-cyan-300",
+  inputHighlight: "bg-gradient-to-br from-cyan-200 to-blue-300 shadow-xl shadow-cyan-300/80 ring-4 ring-cyan-200 scale-125",
+
+  // Output ports: Warm tones (amber/orange) - sending data
+  output: "bg-gradient-to-br from-amber-400 to-orange-500 shadow-md shadow-amber-500/50 border-2 border-amber-300",
+  outputHighlight: "bg-gradient-to-br from-amber-200 to-orange-300 shadow-xl shadow-amber-300/80 ring-4 ring-amber-200 scale-125",
+
+  // Not connectable: Red with strong visual feedback
+  notConnectable: "bg-gradient-to-br from-red-500 to-rose-600 shadow-lg shadow-red-500/70 border-2 border-red-400 animate-pulse",
+};
+
+// Node style options with custom edge colors per node pair
+const nodeStyleOptions: NodeStyleOptions = {
+  colors: nodeColors,
+  portColors,
+  edgeColors: {
+    edge: "#ec4899", // pink-500 - default
+    hover: "#8b5cf6", // violet-500 - default hover
+    notConnectable: "#ef4444", // red-500
+    customColor: (context) => {
+      const { sourceNodeId, targetNodeId, isNewEdge, hasTarget } = context;
+
+      // New edge without target: lighter pink
+      if (isNewEdge && !hasTarget) {
+        return {
+          edge: "#f9a8d4", // pink-300
+          hover: "#f9a8d4",
+        };
+      }
+
+      // Data sources (Data Lake/API Stream) -> ETL: cyan edges
+      if ((sourceNodeId === "Data Lake" || sourceNodeId === "API Stream") && targetNodeId === "ETL Pipeline") {
+        return {
+          edge: "#06b6d4", // cyan-500
+          hover: "#22d3ee", // cyan-400
+        };
+      }
+      // ETL -> outputs: green edges
+      if (sourceNodeId === "ETL Pipeline" && (targetNodeId === "Dashboard" || targetNodeId === "Warehouse")) {
+        return {
+          edge: "#10b981", // emerald-500
+          hover: "#34d399", // emerald-400
+        };
+      }
+      // ML Model path: purple edges
+      if (sourceNodeId === "API Stream" && targetNodeId === "ML Model") {
+        return {
+          edge: "#a855f7", // purple-500
+          hover: "#c084fc", // purple-400
+        };
+      }
+      if (sourceNodeId === "ML Model" && targetNodeId === "Alerts") {
+        return {
+          edge: "#d946ef", // fuchsia-500
+          hover: "#e879f9", // fuchsia-400
+        };
+      }
+      // Default: use default colors
+      return undefined;
+    },
   },
 };
 

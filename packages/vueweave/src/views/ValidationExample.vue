@@ -2,7 +2,7 @@
   <div class="flex h-screen w-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900">
     <DebugPanel github-url="https://github.com/receptron/graphai/blob/main/packages/vueweave/src/views/ValidationExample.vue" />
     <div class="flex-1">
-      <GraphCanvasBase :node-styles="{ colors: nodeColors }" :validate-connection="validateConnection">
+      <GraphCanvasBase :node-styles="nodeStyleOptions" :validate-connection="validateConnection">
         <template #node="{ nodeData }">
           <NodeBase :inputs="getInputs(nodeData)" :outputs="getOutputs(nodeData)">
             <template #header>
@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { GraphCanvasBase, NodeBase, useFlowStore, type NodeColorConfig, type GUIEdgeData } from "../package";
+import { GraphCanvasBase, NodeBase, useFlowStore, type NodeColorConfig, type NodeStyleOptions, type GUIEdgeData } from "../package";
 import DebugPanel from "../components/DebugPanel.vue";
 
 const store = useFlowStore();
@@ -70,6 +70,71 @@ const nodeColors: NodeColorConfig = {
     header: "bg-gradient-to-r from-purple-600 to-violet-700",
     mainHighlight: "bg-gradient-to-br from-purple-300 to-violet-400",
     headerHighlight: "bg-gradient-to-r from-purple-500 to-violet-600",
+  },
+};
+
+// Edge color configuration with custom colors per node pair
+const nodeStyleOptions: NodeStyleOptions = {
+  colors: nodeColors,
+  edgeColors: {
+    edge: "#6366f1", // indigo-500 - default
+    hover: "#818cf8", // indigo-400 - default hover
+    notConnectable: "#f87171", // red-400
+    customColor: (context) => {
+      const { sourceNodeId, targetNodeId, isNewEdge, hasTarget, isConnectable } = context;
+
+      // Handle new edges first (being drawn)
+      if (isNewEdge) {
+        // New edge without target (mouse in empty space): gray color
+        if (!hasTarget) {
+          return {
+            edge: "#9ca3af", // gray-400
+            hover: "#9ca3af",
+          };
+        }
+
+        // New edge with invalid target (cannot connect): red color
+        if (!isConnectable) {
+          return {
+            edge: "#f87171", // red-400
+            hover: "#fca5a5", // red-300
+          };
+        }
+
+        // New edge with valid target: continue to check node type colors below
+      }
+
+      // Type A nodes: blue edges
+      if (sourceNodeId.includes("typeA") || targetNodeId.includes("typeA")) {
+        return {
+          edge: "#3b82f6", // blue-500
+          hover: "#60a5fa", // blue-400
+        };
+      }
+      // Type B nodes: orange edges
+      if (sourceNodeId.includes("typeB") || targetNodeId.includes("typeB")) {
+        return {
+          edge: "#f97316", // orange-500
+          hover: "#fb923c", // orange-400
+        };
+      }
+      // Multiple nodes: green edges
+      if (sourceNodeId.includes("Multi") || targetNodeId.includes("multiple")) {
+        return {
+          edge: "#10b981", // emerald-500
+          hover: "#34d399", // emerald-400
+        };
+      }
+      // SingleInput/OnePerPort: pink/rose edges
+      if (sourceNodeId.includes("source") && (targetNodeId.includes("single") || targetNodeId.includes("perPort"))) {
+        return {
+          edge: "#ec4899", // pink-500
+          hover: "#f472b6", // pink-400
+        };
+      }
+      // Default: use default colors
+      return undefined;
+    },
   },
 };
 

@@ -241,6 +241,93 @@ The base component for individual nodes.
 - `body-head`: Content at the top of the node body
 - `body-main`: Main node body content
 
+## Styling
+
+### Edge Colors
+
+VueWeave provides flexible edge color customization:
+
+#### Simple Approach: Default Colors
+
+```vue
+<GraphCanvasBase
+  :node-styles="{
+    edgeColors: {
+      edge: '#ec4899',          // pink-500 - normal edge
+      hover: '#8b5cf6',         // violet-500 - on hover
+      notConnectable: '#ef4444' // red-500 - invalid connection
+    }
+  }"
+/>
+```
+
+#### Advanced Approach: Custom Colors with Full Context
+
+```vue
+<script setup>
+import { GraphCanvasBase, type NodeStyleOptions } from 'vueweave';
+
+const nodeStyleOptions: NodeStyleOptions = {
+  edgeColors: {
+    edge: '#6366f1',            // Default color
+    hover: '#818cf8',           // Default hover color
+    notConnectable: '#f87171',
+    customColor: (context) => {
+      const { sourceNodeId, targetNodeId, isNewEdge, hasTarget, isConnectable } = context;
+
+      // New edge being drawn without target: gray
+      if (isNewEdge && !hasTarget) {
+        return { edge: '#9ca3af', hover: '#9ca3af' };
+      }
+
+      // New edge with invalid target: red
+      if (isNewEdge && !isConnectable) {
+        return { edge: '#f87171', hover: '#fca5a5' };
+      }
+
+      // Custom color for specific node pairs
+      if (sourceNodeId === 'input' && targetNodeId === 'process') {
+        return {
+          edge: '#10b981',      // green-500
+          hover: '#34d399'      // green-400
+        };
+      }
+
+      // Return undefined to use default colors
+      return undefined;
+    }
+  }
+};
+</script>
+
+<template>
+  <GraphCanvasBase :node-styles="nodeStyleOptions" />
+</template>
+```
+
+**EdgeColorContext properties:**
+- `sourceNodeId`: Source node ID
+- `sourceIndex`: Source port index
+- `targetNodeId`: Target node ID (empty for new edges without target)
+- `targetIndex`: Target port index
+- `isConnectable`: Whether the connection is valid
+- `isNewEdge`: `true` if edge is being drawn (not yet committed)
+- `hasTarget`: `true` if hovering over a valid target port
+
+**Features:**
+- Set default edge colors globally
+- Full context for custom color decisions (node IDs, ports, connection state)
+- Customize colors for new edges being drawn
+- Different colors for valid/invalid connections
+- Different colors when hovering over ports vs empty space
+- Use any CSS color format (hex, rgb, hsl, color names)
+- Separate hover states for better interactivity
+- Fallback to defaults when custom function returns undefined
+
+**Examples:**
+- See `/validation` route for validation-based edge coloring
+- See `/styled` route for data-flow-based edge coloring
+
 ## Utilities
 
 ### Class Utilities

@@ -11,7 +11,30 @@
 import type { NodeStyleFn, NodeOutputStyleFn, NodeInputStyleFn } from "./classUtils";
 
 /**
+ * Edge color function context - provides detailed information about the edge
+ */
+export type EdgeColorContext = {
+  sourceNodeId: string;
+  sourceIndex?: number;
+  targetNodeId: string;
+  targetIndex?: number;
+  isConnectable: boolean;
+  isNewEdge: boolean; // true if this is being drawn (not yet committed)
+  hasTarget: boolean; // true if hovering over a valid target port
+};
+
+/**
+ * Function type for custom edge color based on edge context
+ * Returns CSS color strings (e.g., "#6366f1", "rgb(99, 102, 241)")
+ */
+export type EdgeColorFn = (context: EdgeColorContext) => {
+  edge?: string;
+  hover?: string;
+} | undefined;
+
+/**
  * Edge color configuration
+ * Uses CSS color strings (e.g., "#6366f1", "rgb(99, 102, 241)")
  */
 export type EdgeColorConfig = {
   // Normal edge color
@@ -20,6 +43,8 @@ export type EdgeColorConfig = {
   hover?: string;
   // Not connectable edge color
   notConnectable?: string;
+  // Custom edge color function based on source/target node pair
+  customColor?: EdgeColorFn;
 };
 
 /**
@@ -78,7 +103,7 @@ export type NodeStyleOptions = {
   functions?: NodeStyleConfig;
   // Global port colors (can be overridden per node type)
   portColors?: PortColorConfig;
-  // Edge colors
+  // Edge colors (supports both simple colors and custom function)
   edgeColors?: EdgeColorConfig;
 };
 
@@ -191,6 +216,7 @@ export const resolveEdgeColors = (options?: NodeStyleOptions): EdgeColorConfig =
     edge: options?.edgeColors?.edge || defaultEdgeColors.edge || "red",
     hover: options?.edgeColors?.hover || defaultEdgeColors.hover || "blue",
     notConnectable: options?.edgeColors?.notConnectable || defaultEdgeColors.notConnectable || "pink",
+    customColor: options?.edgeColors?.customColor,
   };
 };
 
