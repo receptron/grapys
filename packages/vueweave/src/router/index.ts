@@ -5,6 +5,7 @@ import MinimalExample from "../views/MinimalExample.vue";
 import SimpleExample from "../views/SimpleExample.vue";
 import InteractiveExample from "../views/InteractiveExample.vue";
 import StyledExample from "../views/StyledExample.vue";
+import ValidationExample from "../views/ValidationExample.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -30,6 +31,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/styled",
     name: "StyledExample",
     component: StyledExample,
+  },
+  {
+    path: "/validation",
+    name: "ValidationExample",
+    component: ValidationExample,
   },
   {
     path: "/:page(.*)",
