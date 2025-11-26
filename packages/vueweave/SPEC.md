@@ -130,9 +130,10 @@ All props are optional. When not provided, `GraphCanvasBase` uses internal state
 - `update-position`: Handler for node drag operations (optional)
 - `save-position`: Handler for node drag end (optional)
 - `validate-connection`: Handler for edge creation validation (optional)
-- `node-styles`: Node styling configuration (optional) - See [Node Styling System](#node-styling-system)
-  - `colors`: Object-based color mapping
-  - `functions`: Function-based style configuration
+- `node-styles`: Node and edge styling configuration (optional) - See [Node Styling System](#node-styling-system) and [Edge Styling System](#edge-styling-system)
+  - `colors`: Object-based node color mapping
+  - `functions`: Function-based node style configuration
+  - `edgeColors`: Edge color mapping by node type or nodeId
 - `get-node-key`: Custom key function for node rendering (optional, default: `${nodeId}-${index}`)
 
 #### Slots
@@ -348,8 +349,9 @@ type NodeStyleConfig = {
 
 // Combined configuration
 type NodeStyleOptions = {
-  colors?: NodeColorConfig;      // Simple approach
-  functions?: NodeStyleConfig;   // Advanced approach
+  colors?: NodeColorConfig;      // Simple node colors
+  functions?: NodeStyleConfig;   // Advanced node styling
+  edgeColors?: EdgeColorConfig;  // Edge colors by node type/id
 };
 ```
 
@@ -441,6 +443,81 @@ This architecture allows:
 - Global style configuration via props
 - No prop drilling to child components
 - Complete style customization without modifying components
+
+## Edge Styling System
+
+VueWeave provides flexible edge (connection line) styling through the `edgeColors` configuration.
+
+### Default Edge Styling (Zero Configuration)
+
+By default, all edges use a gray color scheme (#9ca3af). No configuration needed.
+
+### Custom Edge Colors
+
+You can customize edge colors by node type or individual nodeId:
+
+```typescript
+import { type EdgeColorConfig } from "vueweave";
+
+const edgeColors: EdgeColorConfig = {
+  // By node type
+  source: "#a855f7",      // Purple for edges from source nodes
+  processor: "#22c55e",   // Green for edges from processor nodes
+  output: "#3b82f6",      // Blue for edges from output nodes
+
+  // By specific nodeId (takes precedence over type)
+  "node-123": "#ef4444",  // Red for edges from node-123
+
+  // Default fallback for unmatched types/ids
+  default: "#9ca3af",     // Gray (same as system default)
+};
+```
+
+Pass to GraphCanvasBase:
+
+```vue
+<template>
+  <GraphCanvasBase :node-styles="{ colors: nodeColors, edgeColors: edgeColors }">
+    <!-- node template -->
+  </GraphCanvasBase>
+</template>
+```
+
+### Edge Color Resolution
+
+Edge colors are resolved based on the **source node**:
+
+1. First checks for exact `nodeId` match in edgeColors
+2. Then checks for `type` match
+3. Falls back to `default` color if defined
+4. Finally falls back to system default (#9ca3af)
+
+**Example:**
+
+```typescript
+const edgeColors = {
+  processor: "#22c55e",     // Green
+  "special-node": "#ef4444", // Red
+  default: "#6b7280",       // Gray
+};
+
+// Edge from node { nodeId: "special-node", type: "processor" }
+// → Uses "#ef4444" (nodeId match takes precedence)
+
+// Edge from node { nodeId: "other-node", type: "processor" }
+// → Uses "#22c55e" (type match)
+
+// Edge from node { nodeId: "other", type: "unknown" }
+// → Uses "#6b7280" (default fallback)
+```
+
+### Type Definitions
+
+```typescript
+type EdgeColorConfig = {
+  [nodeTypeOrId: string]: string;  // Hex color code (e.g., "#3b82f6")
+};
+```
 
 ## Usage Approaches
 
@@ -715,20 +792,106 @@ const handleRedo = () => {
 - `histories`: Array of history states
 - `currentData`: Current graph state
 
-### Direct Store Access
+### Store Methods Reference
 
-For advanced use cases, you can access the Pinia store directly:
+The flow store provides several methods for manipulating graph data:
+
+#### Basic CRUD Operations
+
+```typescript
+const flowStore = useFlowStore();
+
+// Initialize data
+flowStore.initData(
+  nodes: GUINodeData[],
+  edges: GUIEdgeData[],
+  extra: Record<string, unknown>
+);
+
+// Add/Remove nodes
+flowStore.pushNode(node: GUINodeData);
+flowStore.deleteNode(index: number);
+
+// Add/Remove edges
+flowStore.pushEdge(edge: GUIEdgeData);
+flowStore.deleteEdge(index: number);
+
+// Update extra data
+flowStore.updateExtra(extra: Record<string, unknown>);
+
+// History operations
+flowStore.undo();
+flowStore.redo();
+```
+
+#### Advanced Update Methods
+
+**`updateNodeAt()`** - Update a single node with history tracking:
+
+```typescript
+flowStore.updateNodeAt(
+  index: number,                           // Node array index
+  updateFn: (node: GUINodeData) => GUINodeData,  // Updater function
+  actionName: string,                      // Action name for history
+  saveHistory: boolean                     // Whether to save to history
+);
+
+// Example: Update node data
+const nodeIndex = flowStore.nodes.findIndex((n) => n.nodeId === "node1");
+flowStore.updateNodeAt(
+  nodeIndex,
+  (node) => ({
+    ...node,
+    data: {
+      ...node.data,
+      value: newValue,
+    },
+  }),
+  "updateNodeParam",
+  true  // Save to history for undo/redo
+);
+```
+
+**`updateNodesAndEdges()`** - Update both nodes and edges atomically:
+
+```typescript
+flowStore.updateNodesAndEdges(
+  nodeUpdateFn: (nodes: GUINodeData[]) => GUINodeData[],
+  edgeUpdateFn: (edges: GUIEdgeData[]) => GUIEdgeData[],
+  actionName: string,
+  saveHistory: boolean
+);
+
+// Example: Batch update multiple nodes
+flowStore.updateNodesAndEdges(
+  (nodes) => nodes.map((node) =>
+    node.type === "processor"
+      ? { ...node, data: { ...node.data, enabled: true } }
+      : node
+  ),
+  (edges) => edges,  // No edge changes
+  "enableAllProcessors",
+  true
+);
+```
+
+**Key Points:**
+- Always use `updateNodeAt()` instead of direct array mutation
+- This ensures Vue reactivity and proper history tracking
+- `saveHistory: true` enables undo/redo for the operation
+- Use `updateNodesAndEdges()` for atomic updates to maintain consistency
+
+#### Direct Store Access
+
+For advanced use cases, you can access the Pinia store via `useGraphCanvas()`:
 
 ```typescript
 const { store } = useGraphCanvas();
 
-// Access store methods
-store.updateNodeAt(index, updateFn, actionName, saveHistory);
-store.updateNodesAndEdges(nodeUpdateFn, edgeUpdateFn, actionName, saveHistory);
-
 // Access raw state
 console.log(store.nodes);
 console.log(store.edges);
+console.log(store.extra);
 ```
 
 ### Custom Edge Validation Examples
