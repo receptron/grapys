@@ -369,7 +369,7 @@
         <div class="mt-12 text-center">
           <p class="mb-4 text-gray-600">That's it! You now have a working flow editor.</p>
           <a
-            href="https://github.com/receptron/graphai/tree/main/packages/vueweave"
+            href="https://github.com/receptron/grapys/tree/main/packages/vueweave"
             target="_blank"
             class="inline-block rounded-lg bg-indigo-600 px-8 py-3 font-semibold text-white transition hover:bg-indigo-700"
           >
@@ -616,10 +616,10 @@
             <h3 class="mb-4 text-xl font-bold">Community</h3>
             <ul class="space-y-2 text-gray-400">
               <li>
-                <a href="https://github.com/receptron/graphai/issues" target="_blank" class="hover:text-white">Report Issues</a>
+                <a href="https://github.com/receptron/grapys/issues" target="_blank" class="hover:text-white">Report Issues</a>
               </li>
               <li>
-                <a href="https://github.com/receptron/graphai/discussions" target="_blank" class="hover:text-white">Discussions</a>
+                <a href="https://discord.gg/XqmAYxm2Xf" target="_blank" class="hover:text-white">Discord(Singularity Society)</a>
               </li>
             </ul>
           </div>
