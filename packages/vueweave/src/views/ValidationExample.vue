@@ -123,8 +123,8 @@ const getDescription = (type: string): string[] => {
 
 // Custom validation function
 const validateConnection = (expectEdge: GUIEdgeData, existingEdges: GUIEdgeData[]): boolean => {
-  const sourceNode = store.nodes.find((n) => n.nodeId === expectEdge.source.nodeId);
-  const targetNode = store.nodes.find((n) => n.nodeId === expectEdge.target.nodeId);
+  const sourceNode = store.nodes.find((node) => node.nodeId === expectEdge.source.nodeId);
+  const targetNode = store.nodes.find((node) => node.nodeId === expectEdge.target.nodeId);
 
   if (!sourceNode || !targetNode) return false;
 
@@ -139,10 +139,7 @@ const validateConnection = (expectEdge: GUIEdgeData, existingEdges: GUIEdgeData[
   // Rule 2: One per port nodes can have one input per port (but multiple ports can have inputs)
   if (targetNode.type === "onePerPort") {
     const existingToSamePort = existingEdges.filter((edge) => edge.target.index === expectEdge.target.index);
-    if (existingToSamePort.length > 0) {
-      return false; // Already has an input on this specific port
-    }
-    return true;
+    return existingToSamePort.length === 0;
   }
 
   // Rule 3: Multiple nodes allow multiple inputs to the SAME port
@@ -154,11 +151,7 @@ const validateConnection = (expectEdge: GUIEdgeData, existingEdges: GUIEdgeData[
   // Rule 4: Type matching - typeA can only connect to typeA, typeB to typeB
   // Type matching nodes also allow multiple connections
   if (sourceNode.type === "typeA" || sourceNode.type === "typeB") {
-    if (targetNode.type !== "output" && sourceNode.type !== targetNode.type) {
-      return false; // Type mismatch
-    }
-    // Type matches, allow connection (multiple connections OK)
-    return true;
+    return targetNode.type === "output" || sourceNode.type === targetNode.type;
   }
 
   // Rule 5: Default behavior for other nodes - one input per port
@@ -208,33 +201,33 @@ const loadSampleGraph = () => {
   store.initData(
     [
       // Left column - Sources (spacing: 220px)
-      { nodeId: "sourceA1", type: "typeA", position: { x: 100, y: 50 } },
-      { nodeId: "sourceA2", type: "typeA", position: { x: 100, y: 270 } },
-      { nodeId: "sourceB1", type: "typeB", position: { x: 100, y: 490 } },
-      { nodeId: "sourceB2", type: "typeB", position: { x: 100, y: 710 } },
-      { nodeId: "sourceMulti", type: "multiple", position: { x: 100, y: 930 } },
+      { nodeId: "sourceA1", type: "typeA", position: { x: 100, y: 50 }, data: {} },
+      { nodeId: "sourceA2", type: "typeA", position: { x: 100, y: 270 }, data: {} },
+      { nodeId: "sourceB1", type: "typeB", position: { x: 100, y: 490 }, data: {} },
+      { nodeId: "sourceB2", type: "typeB", position: { x: 100, y: 710 }, data: {} },
+      { nodeId: "sourceMulti", type: "multiple", position: { x: 100, y: 930 }, data: {} },
 
       // Middle column - Validation nodes (spacing: 280px)
-      { nodeId: "single1", type: "singleInput", position: { x: 450, y: 50 } },
-      { nodeId: "perPort1", type: "onePerPort", position: { x: 450, y: 330 } },
-      { nodeId: "multiple1", type: "multiple", position: { x: 450, y: 610 } },
-      { nodeId: "typeA1", type: "typeA", position: { x: 450, y: 890 } },
+      { nodeId: "single1", type: "singleInput", position: { x: 450, y: 50 }, data: {} },
+      { nodeId: "perPort1", type: "onePerPort", position: { x: 450, y: 330 }, data: {} },
+      { nodeId: "multiple1", type: "multiple", position: { x: 450, y: 610 }, data: {} },
+      { nodeId: "typeA1", type: "typeA", position: { x: 450, y: 890 }, data: {} },
 
       // Right column - More typeA/B for testing
-      { nodeId: "typeA2", type: "typeA", position: { x: 800, y: 190 } },
-      { nodeId: "typeB1", type: "typeB", position: { x: 800, y: 750 } },
+      { nodeId: "typeA2", type: "typeA", position: { x: 800, y: 190 }, data: {} },
+      { nodeId: "typeB1", type: "typeB", position: { x: 800, y: 750 }, data: {} },
 
       // Far right - Output
-      { nodeId: "output", type: "output", position: { x: 1150, y: 470 } },
+      { nodeId: "output", type: "output", position: { x: 1150, y: 470 }, data: {} },
     ],
     [
       // Initial connections to demonstrate validation
-      { source: { nodeId: "sourceA1", index: 0 }, target: { nodeId: "single1", index: 0 } },
-      { source: { nodeId: "sourceB1", index: 0 }, target: { nodeId: "perPort1", index: 0 } },
-      { source: { nodeId: "sourceB2", index: 0 }, target: { nodeId: "perPort1", index: 1 } },
-      { source: { nodeId: "sourceMulti", index: 0 }, target: { nodeId: "multiple1", index: 0 } },
-      { source: { nodeId: "sourceA2", index: 0 }, target: { nodeId: "typeA1", index: 0 } },
-      { source: { nodeId: "typeA1", index: 0 }, target: { nodeId: "typeA2", index: 0 } },
+      { type: "edge", source: { nodeId: "sourceA1", index: 0 }, target: { nodeId: "single1", index: 0 } },
+      { type: "edge", source: { nodeId: "sourceB1", index: 0 }, target: { nodeId: "perPort1", index: 0 } },
+      { type: "edge", source: { nodeId: "sourceB2", index: 0 }, target: { nodeId: "perPort1", index: 1 } },
+      { type: "edge", source: { nodeId: "sourceMulti", index: 0 }, target: { nodeId: "multiple1", index: 0 } },
+      { type: "edge", source: { nodeId: "sourceA2", index: 0 }, target: { nodeId: "typeA1", index: 0 } },
+      { type: "edge", source: { nodeId: "typeA1", index: 0 }, target: { nodeId: "typeA2", index: 0 } },
     ],
     {}
   );
