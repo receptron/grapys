@@ -148,7 +148,7 @@
             <thead class="bg-gray-50">
               <tr>
                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Feature</th>
-                <th class="px-6 py-4 text-center text-sm font-semibold text-indigo-600">VueWeave</th>
+                <th class="px-6 py-4 text-center text-sm font-semibold text-indigo-600">🏆️VueWeave🏆️</th>
                 <th class="px-6 py-4 text-center text-sm font-semibold text-gray-600">React Flow</th>
                 <th class="px-6 py-4 text-center text-sm font-semibold text-gray-600">LiteGraph</th>
               </tr>

@@ -1,0 +1,42 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ogGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#ogGrad)"/>
+
+  <!-- Grid pattern (subtle) -->
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="0.5" opacity="0.05"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Text -->
+  <g transform="translate(600, 250)">
+    <!-- Title -->
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="100" font-weight="bold" fill="white" text-anchor="middle">
+      VueWeave
+    </text>
+
+    <!-- Subtitle -->
+    <text x="0" y="80" font-family="Arial, sans-serif" font-size="42" fill="white" opacity="0.9" text-anchor="middle">
+      Vue 3 Flow Editor
+    </text>
+
+    <!-- Description -->
+    <text x="0" y="140" font-family="Arial, sans-serif" font-size="28" fill="white" opacity="0.8" text-anchor="middle">
+      Modern node-based graph editor for building visual workflows
+    </text>
+  </g>
+
+  <!-- Footer badge -->
+  <g transform="translate(50, 560)">
+    <rect width="200" height="50" rx="25" fill="white" opacity="0.2"/>
+    <text x="100" y="33" font-family="Arial, sans-serif" font-size="20" font-weight="600" fill="white" text-anchor="middle">
+      Open Source
+    </text>
+  </g>
+</svg>
