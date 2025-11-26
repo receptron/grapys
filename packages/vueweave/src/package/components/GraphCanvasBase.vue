@@ -5,10 +5,10 @@
       <slot name="head"></slot>
 
       <!-- SVG for edges -->
-      <svg x="0" y="0" class="pointer-events-none absolute h-full w-full" ref="svgRef">
+      <svg class="pointer-events-none absolute h-full w-full" ref="svgRef" style="overflow: visible">
         <Edge
           v-for="(edge, index) in edgeDataList"
-          :key="['edge', edge.source, edge.target, index].join('-')"
+          :key="`edge-${edge.source.nodeId}-${edge.source.index}-${edge.target.nodeId}-${edge.target.index}`"
           :source-data="edge.source"
           :target-data="edge.target"
           class="pointer-events-auto"
