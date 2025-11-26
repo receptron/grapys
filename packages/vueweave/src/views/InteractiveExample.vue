@@ -95,7 +95,7 @@
 import { ref, onMounted, nextTick } from "vue";
 import { useFlowStore, GraphCanvasBase, NodeBase, type GUINodeData, type NodeColorConfig } from "../package";
 import DebugPanel from "../components/DebugPanel.vue";
-import  NodeParamInput from "../components/NodeParamInput.vue";
+import NodeParamInput, { type ParamData } from "../components/NodeParamInput.vue";
 
 const flowStore = useFlowStore();
 
@@ -344,7 +344,7 @@ const getOutputs = (nodeData: GUINodeData) => {
 };
 
 // Get parameters for each node type
-const getNodeParams = (nodeData: GUINodeData): NodeParamInput.ParamData[] => {
+const getNodeParams = (nodeData: GUINodeData): ParamData[] => {
   switch (nodeData.type) {
     case "source":
       return [
