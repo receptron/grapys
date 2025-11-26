@@ -387,11 +387,11 @@
         <div class="mb-12 text-center">
           <p class="mb-4 text-lg text-gray-600">Quick reference for the most commonly used APIs</p>
           <a
-            href="https://github.com/receptron/grapys/tree/main/packages/vueweave#readme"
+            href="https://github.com/receptron/grapys/blob/main/packages/vueweave/SPEC.md"
             target="_blank"
             class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 font-semibold text-white transition hover:bg-indigo-700"
           >
-            <span>View Full Documentation on GitHub</span>
+            <span>View Full API Specification on GitHub</span>
             <span>→</span>
           </a>
         </div>
@@ -580,11 +580,11 @@
 
         <div class="mt-12 text-center">
           <a
-            href="https://github.com/receptron/grapys/tree/main/packages/vueweave#readme"
+            href="https://github.com/receptron/grapys/blob/main/packages/vueweave/SPEC.md"
             target="_blank"
             class="inline-flex items-center gap-2 text-lg font-semibold text-indigo-600 hover:text-indigo-800"
           >
-            <span>View complete API documentation →</span>
+            <span>View complete API specification →</span>
           </a>
         </div>
       </div>
