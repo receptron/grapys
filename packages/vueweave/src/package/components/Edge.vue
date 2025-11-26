@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, inject, PropType, watch } from "vue";
+import { defineComponent, ref, computed, inject, PropType } from "vue";
 import { EdgeData2, GUINearestData } from "../utils/type";
 import { convEdgePath } from "../utils/gui";
 import { EDGE_COLOR_KEY, type EdgeColorConfig } from "../utils/nodeStyles";
@@ -64,38 +64,41 @@ export default defineComponent({
     // Inject edge colors with defaults
     const injectedEdgeColors = inject<EdgeColorConfig>(EDGE_COLOR_KEY, defaultEdgeColors);
 
+    // Helper: Get source node ID and index based on edge direction
+    const getSourceInfo = () => {
+      const isInbound = props.isNewEdge && props.edgeDirection === "inbound";
+      const data = isInbound ? props.targetData : props.sourceData;
+
+      return {
+        sourceNodeId: data.kind === "node" ? data.nodeId : "",
+        sourceIndex: data.kind === "node" ? data.index : undefined,
+      };
+    };
+
+    // Helper: Get target node ID and index
+    const getTargetInfo = () => {
+      if (props.nearestData) {
+        return {
+          targetNodeId: props.nearestData.nodeId,
+          targetIndex: props.nearestData.index,
+        };
+      }
+
+      if (props.isNewEdge) {
+        return { targetNodeId: "", targetIndex: undefined };
+      }
+
+      return {
+        targetNodeId: props.targetData.kind === "node" ? props.targetData.nodeId : "",
+        targetIndex: props.targetData.kind === "node" ? props.targetData.index : undefined,
+      };
+    };
+
     // Compute actual edge colors based on source/target nodes
     const edgeColors = computed(() => {
-      // Get source node ID and index
-      // For new edges, we need to consider the direction:
-      // - outbound: source is the node, target is mouse
-      // - inbound: target is the node, source is mouse
-      const sourceNodeId = props.isNewEdge && props.edgeDirection === "inbound"
-        ? (props.targetData.kind === "node" ? props.targetData.nodeId : "")
-        : (props.sourceData.kind === "node" ? props.sourceData.nodeId : "");
-
-      const sourceIndex = props.isNewEdge && props.edgeDirection === "inbound"
-        ? (props.targetData.kind === "node" ? props.targetData.index : undefined)
-        : (props.sourceData.kind === "node" ? props.sourceData.index : undefined);
-
-      // For new edge (when nearestData is provided), use nearestData for stable color
-      // Otherwise use targetData
+      const { sourceNodeId, sourceIndex } = getSourceInfo();
+      const { targetNodeId, targetIndex } = getTargetInfo();
       const hasTarget = Boolean(props.nearestData);
-
-      // For new edges, nearestData contains the hover target (if any)
-      // For existing edges, use targetData
-      const targetNodeId = props.nearestData
-        ? props.nearestData.nodeId
-        : (props.isNewEdge
-          ? ""
-          : (props.targetData.kind === "node" ? props.targetData.nodeId : ""));
-
-      const targetIndex = props.nearestData
-        ? props.nearestData.index
-        : (props.isNewEdge
-          ? undefined
-          : (props.targetData.kind === "node" ? props.targetData.index : undefined));
-
       const isNewEdge = props.isNewEdge;
 
       // Try custom color function first with full context
@@ -110,13 +113,11 @@ export default defineComponent({
       });
 
       // Return merged colors: custom > default > fallback
-      const finalColors = {
+      return {
         edge: customColors?.edge || injectedEdgeColors.edge || "red",
         hover: customColors?.hover || injectedEdgeColors.hover || "blue",
         notConnectable: injectedEdgeColors.notConnectable || "pink",
       };
-
-      return finalColors;
     });
 
     return {
