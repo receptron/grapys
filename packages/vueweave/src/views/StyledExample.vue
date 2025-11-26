@@ -80,12 +80,10 @@ const portColors: PortColorConfig = {
 const nodeStyleOptions: NodeStyleOptions = {
   colors: nodeColors,
   portColors,
-  edgeColorOptions: {
-    default: {
-      edge: "#ec4899", // pink-500
-      hover: "#8b5cf6", // violet-500
-      notConnectable: "#ef4444", // red-500
-    },
+  edgeColors: {
+    edge: "#ec4899", // pink-500 - default
+    hover: "#8b5cf6", // violet-500 - default hover
+    notConnectable: "#ef4444", // red-500
     customColor: (sourceNodeId: string, targetNodeId: string) => {
       // Data sources (Data Lake/API Stream) -> ETL: cyan edges
       if ((sourceNodeId === "Data Lake" || sourceNodeId === "API Stream") && targetNodeId === "ETL Pipeline") {

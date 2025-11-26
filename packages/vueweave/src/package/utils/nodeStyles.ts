@@ -11,18 +11,6 @@
 import type { NodeStyleFn, NodeOutputStyleFn, NodeInputStyleFn } from "./classUtils";
 
 /**
- * Edge color configuration
- */
-export type EdgeColorConfig = {
-  // Normal edge color
-  edge?: string;
-  // Hover edge color
-  hover?: string;
-  // Not connectable edge color
-  notConnectable?: string;
-};
-
-/**
  * Function type for custom edge color based on source and target node IDs
  */
 export type EdgeColorFn = (sourceNodeId: string, targetNodeId: string) => {
@@ -31,11 +19,16 @@ export type EdgeColorFn = (sourceNodeId: string, targetNodeId: string) => {
 } | undefined;
 
 /**
- * Extended edge color configuration with custom function support
+ * Edge color configuration
+ * Can be either simple colors or advanced with custom function
  */
-export type EdgeColorOptions = {
-  // Default edge colors
-  default?: EdgeColorConfig;
+export type EdgeColorConfig = {
+  // Normal edge color (default)
+  edge?: string;
+  // Hover edge color (default)
+  hover?: string;
+  // Not connectable edge color
+  notConnectable?: string;
   // Custom edge color function based on source/target node pair
   customColor?: EdgeColorFn;
 };
@@ -96,10 +89,8 @@ export type NodeStyleOptions = {
   functions?: NodeStyleConfig;
   // Global port colors (can be overridden per node type)
   portColors?: PortColorConfig;
-  // Edge colors (simple config for backward compatibility)
+  // Edge colors (supports both simple colors and custom function)
   edgeColors?: EdgeColorConfig;
-  // Edge color options (advanced config with custom function support)
-  edgeColorOptions?: EdgeColorOptions;
 };
 
 /**
@@ -211,32 +202,7 @@ export const resolveEdgeColors = (options?: NodeStyleOptions): EdgeColorConfig =
     edge: options?.edgeColors?.edge || defaultEdgeColors.edge || "red",
     hover: options?.edgeColors?.hover || defaultEdgeColors.hover || "blue",
     notConnectable: options?.edgeColors?.notConnectable || defaultEdgeColors.notConnectable || "pink",
-  };
-};
-
-/**
- * Resolve edge color options with defaults
- */
-export const resolveEdgeColorOptions = (options?: NodeStyleOptions): EdgeColorOptions => {
-  // If edgeColorOptions is provided, use it
-  if (options?.edgeColorOptions) {
-    return {
-      default: {
-        edge: options.edgeColorOptions.default?.edge || options?.edgeColors?.edge || defaultEdgeColors.edge,
-        hover: options.edgeColorOptions.default?.hover || options?.edgeColors?.hover || defaultEdgeColors.hover,
-        notConnectable: options.edgeColorOptions.default?.notConnectable || options?.edgeColors?.notConnectable || defaultEdgeColors.notConnectable,
-      },
-      customColor: options.edgeColorOptions.customColor,
-    };
-  }
-
-  // Otherwise, use simple edgeColors config or defaults
-  return {
-    default: {
-      edge: options?.edgeColors?.edge || defaultEdgeColors.edge,
-      hover: options?.edgeColors?.hover || defaultEdgeColors.hover,
-      notConnectable: options?.edgeColors?.notConnectable || defaultEdgeColors.notConnectable,
-    },
+    customColor: options?.edgeColors?.customColor,
   };
 };
 
@@ -245,4 +211,3 @@ export const resolveEdgeColorOptions = (options?: NodeStyleOptions): EdgeColorOp
  */
 export const NODE_STYLE_KEY = Symbol("nodeStyles");
 export const EDGE_COLOR_KEY = Symbol("edgeColors");
-export const EDGE_COLOR_OPTIONS_KEY = Symbol("edgeColorOptions");

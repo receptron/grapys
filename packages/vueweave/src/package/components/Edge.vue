@@ -13,16 +13,12 @@
 import { defineComponent, ref, computed, inject, PropType } from "vue";
 import { EdgeData2 } from "../utils/type";
 import { convEdgePath } from "../utils/gui";
-import { EDGE_COLOR_KEY, EDGE_COLOR_OPTIONS_KEY, type EdgeColorConfig, type EdgeColorOptions } from "../utils/nodeStyles";
+import { EDGE_COLOR_KEY, type EdgeColorConfig } from "../utils/nodeStyles";
 
 const defaultEdgeColors: EdgeColorConfig = {
   edge: "red",
   hover: "blue",
   notConnectable: "pink",
-};
-
-const defaultEdgeColorOptions: EdgeColorOptions = {
-  default: defaultEdgeColors,
 };
 
 export default defineComponent({
@@ -50,11 +46,8 @@ export default defineComponent({
       return convEdgePath(sourceIndex, props.sourceData.data.position, targetIndex, props.targetData.data.position);
     });
 
-    // Inject edge color options (new API) with defaults
-    const edgeColorOptions = inject<EdgeColorOptions>(EDGE_COLOR_OPTIONS_KEY, defaultEdgeColorOptions);
-
-    // Inject legacy edge colors for backward compatibility
-    const legacyEdgeColors = inject<EdgeColorConfig>(EDGE_COLOR_KEY, defaultEdgeColors);
+    // Inject edge colors with defaults
+    const injectedEdgeColors = inject<EdgeColorConfig>(EDGE_COLOR_KEY, defaultEdgeColors);
 
     // Compute actual edge colors based on source/target nodes
     const edgeColors = computed(() => {
@@ -63,13 +56,13 @@ export default defineComponent({
       const targetNodeId = props.targetData.kind === "node" ? props.targetData.nodeId : "";
 
       // Try custom color function first
-      const customColors = edgeColorOptions.customColor?.(sourceNodeId, targetNodeId);
+      const customColors = injectedEdgeColors.customColor?.(sourceNodeId, targetNodeId);
 
-      // Return merged colors: custom > options.default > legacy > fallback
+      // Return merged colors: custom > default > fallback
       return {
-        edge: customColors?.edge || edgeColorOptions.default?.edge || legacyEdgeColors.edge || "red",
-        hover: customColors?.hover || edgeColorOptions.default?.hover || legacyEdgeColors.hover || "blue",
-        notConnectable: edgeColorOptions.default?.notConnectable || legacyEdgeColors.notConnectable || "pink",
+        edge: customColors?.edge || injectedEdgeColors.edge || "red",
+        hover: customColors?.hover || injectedEdgeColors.hover || "blue",
+        notConnectable: injectedEdgeColors.notConnectable || "pink",
       };
     });
 

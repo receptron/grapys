@@ -187,7 +187,7 @@ const validateConnection = (expectEdge: GUIEdgeData, existingEdges: GUIEdgeData[
 
 ### エッジの色
 
-VueWeave は2つのアプローチでエッジの色を柔軟にカスタマイズできます：
+VueWeave はエッジの色を柔軟にカスタマイズできます：
 
 #### シンプルなアプローチ: デフォルトの色
 
@@ -195,8 +195,8 @@ VueWeave は2つのアプローチでエッジの色を柔軟にカスタマイ�
 <GraphCanvasBase
   :node-styles="{
     edgeColors: {
-      edge: '#ec4899',        // pink-500 - 通常のエッジ
-      hover: '#8b5cf6',       // violet-500 - ホバー時
+      edge: '#ec4899',          // pink-500 - 通常のエッジ
+      hover: '#8b5cf6',         // violet-500 - ホバー時
       notConnectable: '#ef4444' // red-500 - 無効な接続
     }
   }"
@@ -210,18 +210,16 @@ VueWeave は2つのアプローチでエッジの色を柔軟にカスタマイ�
 import { GraphCanvasBase, type NodeStyleOptions } from 'vueweave';
 
 const nodeStyleOptions: NodeStyleOptions = {
-  edgeColorOptions: {
-    default: {
-      edge: '#6366f1',        // デフォルトの色
-      hover: '#818cf8',       // デフォルトのホバー色
-      notConnectable: '#f87171'
-    },
+  edgeColors: {
+    edge: '#6366f1',            // デフォルトの色
+    hover: '#818cf8',           // デフォルトのホバー色
+    notConnectable: '#f87171',
     customColor: (sourceNodeId: string, targetNodeId: string) => {
       // 特定のノードペアのカスタムカラー
       if (sourceNodeId === 'input' && targetNodeId === 'process') {
         return {
-          edge: '#10b981',    // green-500
-          hover: '#34d399'    // green-400
+          edge: '#10b981',      // green-500
+          hover: '#34d399'      // green-400
         };
       }
       // デフォルトの色を使う場合は undefined を返す

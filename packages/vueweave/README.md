@@ -245,7 +245,7 @@ The base component for individual nodes.
 
 ### Edge Colors
 
-VueWeave provides flexible edge color customization with two approaches:
+VueWeave provides flexible edge color customization:
 
 #### Simple Approach: Default Colors
 
@@ -253,8 +253,8 @@ VueWeave provides flexible edge color customization with two approaches:
 <GraphCanvasBase
   :node-styles="{
     edgeColors: {
-      edge: '#ec4899',        // pink-500 - normal edge
-      hover: '#8b5cf6',       // violet-500 - on hover
+      edge: '#ec4899',          // pink-500 - normal edge
+      hover: '#8b5cf6',         // violet-500 - on hover
       notConnectable: '#ef4444' // red-500 - invalid connection
     }
   }"
@@ -268,18 +268,16 @@ VueWeave provides flexible edge color customization with two approaches:
 import { GraphCanvasBase, type NodeStyleOptions } from 'vueweave';
 
 const nodeStyleOptions: NodeStyleOptions = {
-  edgeColorOptions: {
-    default: {
-      edge: '#6366f1',        // Default color
-      hover: '#818cf8',       // Default hover color
-      notConnectable: '#f87171'
-    },
+  edgeColors: {
+    edge: '#6366f1',            // Default color
+    hover: '#818cf8',           // Default hover color
+    notConnectable: '#f87171',
     customColor: (sourceNodeId: string, targetNodeId: string) => {
       // Custom color for specific node pairs
       if (sourceNodeId === 'input' && targetNodeId === 'process') {
         return {
-          edge: '#10b981',    // green-500
-          hover: '#34d399'    // green-400
+          edge: '#10b981',      // green-500
+          hover: '#34d399'      // green-400
         };
       }
       // Return undefined to use default colors

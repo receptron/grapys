@@ -76,12 +76,10 @@ const nodeColors: NodeColorConfig = {
 // Edge color configuration with custom colors per node pair
 const nodeStyleOptions: NodeStyleOptions = {
   colors: nodeColors,
-  edgeColorOptions: {
-    default: {
-      edge: "#6366f1", // indigo-500
-      hover: "#818cf8", // indigo-400
-      notConnectable: "#f87171", // red-400
-    },
+  edgeColors: {
+    edge: "#6366f1", // indigo-500 - default
+    hover: "#818cf8", // indigo-400 - default hover
+    notConnectable: "#f87171", // red-400
     customColor: (sourceNodeId: string, targetNodeId: string) => {
       // Type A nodes: blue edges
       if (sourceNodeId.includes("typeA") || targetNodeId.includes("typeA")) {
