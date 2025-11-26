@@ -158,6 +158,46 @@ const canUndo = flowStore.undoable;
 const canRedo = flowStore.redoable;
 ```
 
+## Examples
+
+VueWeave includes several examples demonstrating different features:
+
+### Validation Example
+
+The Validation Example (`/validation` route) demonstrates custom edge connection validation with different node types:
+
+- **singleInput**: Only ONE connection allowed across ALL ports
+- **onePerPort**: ONE connection per port (multiple ports can have connections)
+- **multiple**: Unlimited connections to the same port
+- **typeA / typeB**: Type matching - only accepts same type, multiple connections allowed
+- **output**: Accepts any input type
+
+Each node displays its validation rules and behavior directly in the node UI, making it easy for developers to understand how custom validation works.
+
+```typescript
+// Custom validation function example
+const validateConnection = (expectEdge: GUIEdgeData, existingEdges: GUIEdgeData[]): boolean => {
+  const sourceNode = store.nodes.find((n) => n.nodeId === expectEdge.source.nodeId);
+  const targetNode = store.nodes.find((n) => n.nodeId === expectEdge.target.nodeId);
+
+  // Rule 1: Single input nodes - only one connection total
+  if (targetNode.type === "singleInput") {
+    const allEdgesToThisNode = store.edges.filter((edge) => edge.target.nodeId === expectEdge.target.nodeId);
+    return allEdgesToThisNode.length === 0;
+  }
+
+  // Rule 2: Type matching
+  if (sourceNode.type === "typeA" || sourceNode.type === "typeB") {
+    if (targetNode.type !== "output" && sourceNode.type !== targetNode.type) {
+      return false; // Type mismatch
+    }
+    return true; // Multiple connections OK
+  }
+
+  return true;
+};
+```
+
 ## Components
 
 ### GraphCanvasBase

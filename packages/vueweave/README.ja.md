@@ -109,6 +109,46 @@ flowStore.addEdge(edge);
 flowStore.removeEdge(edgeId);
 ```
 
+## サンプル
+
+VueWeave には様々な機能を実証するサンプルが含まれています：
+
+### Validation Example
+
+Validation Example（`/validation` ルート）は、異なるノードタイプでのカスタムエッジ接続検証を実演します：
+
+- **singleInput**: 全ポートを通じて1つの入力のみ許可
+- **onePerPort**: 各ポートに1つの入力（複数ポートへの同時接続OK）
+- **multiple**: 同じポートへの無制限の入力を許可
+- **typeA / typeB**: タイプマッチング - 同じタイプのみ受け入れ、複数接続OK
+- **output**: 任意の入力タイプを受け入れ
+
+各ノードはノードUI内に検証ルールと動作を直接表示するため、開発者がカスタム検証の動作を理解しやすくなっています。
+
+```typescript
+// カスタム検証関数の例
+const validateConnection = (expectEdge: GUIEdgeData, existingEdges: GUIEdgeData[]): boolean => {
+  const sourceNode = store.nodes.find((n) => n.nodeId === expectEdge.source.nodeId);
+  const targetNode = store.nodes.find((n) => n.nodeId === expectEdge.target.nodeId);
+
+  // ルール1: Single inputノード - 全体で1つの接続のみ
+  if (targetNode.type === "singleInput") {
+    const allEdgesToThisNode = store.edges.filter((edge) => edge.target.nodeId === expectEdge.target.nodeId);
+    return allEdgesToThisNode.length === 0;
+  }
+
+  // ルール2: タイプマッチング
+  if (sourceNode.type === "typeA" || sourceNode.type === "typeB") {
+    if (targetNode.type !== "output" && sourceNode.type !== targetNode.type) {
+      return false; // タイプ不一致
+    }
+    return true; // 複数接続OK
+  }
+
+  return true;
+};
+```
+
 ## コンポーネント
 
 ### GraphCanvasBase

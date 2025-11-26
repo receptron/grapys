@@ -731,7 +731,65 @@ console.log(store.nodes);
 console.log(store.edges);
 ```
 
-### Custom Edge Validation
+### Custom Edge Validation Examples
+
+#### Validation Example Demo
+
+VueWeave includes a comprehensive Validation Example (`/validation` route) demonstrating different connection rules:
+
+**Node Types:**
+- **singleInput**: Only ONE connection allowed across ALL ports
+  - Has 2 ports (input1, input2) but only one can have a connection
+  - Use case: Exclusive selection, single source nodes
+- **onePerPort**: ONE connection per port (multiple ports can have connections)
+  - Has 3 ports (port1, port2, port3), each can have one connection
+  - Use case: Multiple independent inputs
+- **multiple**: Unlimited connections to the same port
+  - Has 1 port (data) that accepts unlimited connections
+  - Use case: Aggregation, fan-in patterns
+- **typeA / typeB**: Type matching with multiple connections allowed
+  - Only accepts connections from same type
+  - Allows multiple connections if types match
+  - Use case: Type-safe data flow
+- **output**: Accepts any input type with no restrictions
+
+**Implementation Example:**
+
+```typescript
+const validateConnection = (expectEdge: GUIEdgeData, existingEdges: GUIEdgeData[]): boolean => {
+  const sourceNode = store.nodes.find((n) => n.nodeId === expectEdge.source.nodeId);
+  const targetNode = store.nodes.find((n) => n.nodeId === expectEdge.target.nodeId);
+
+  // Rule 1: Single input nodes - only one connection total
+  if (targetNode.type === "singleInput") {
+    const allEdgesToThisNode = store.edges.filter((edge) => edge.target.nodeId === expectEdge.target.nodeId);
+    return allEdgesToThisNode.length === 0;
+  }
+
+  // Rule 2: One per port - one connection per port
+  if (targetNode.type === "onePerPort") {
+    const existingToSamePort = existingEdges.filter((edge) => edge.target.index === expectEdge.target.index);
+    return existingToSamePort.length === 0;
+  }
+
+  // Rule 3: Multiple - unlimited connections
+  if (targetNode.type === "multiple") {
+    return true;
+  }
+
+  // Rule 4: Type matching - only same type, multiple OK
+  if (sourceNode.type === "typeA" || sourceNode.type === "typeB") {
+    if (targetNode.type !== "output" && sourceNode.type !== targetNode.type) {
+      return false; // Type mismatch
+    }
+    return true; // Multiple connections OK
+  }
+
+  return true;
+};
+```
+
+#### Simple Custom Validation
 
 The default validation allows one edge per target input. You can customize this:
 

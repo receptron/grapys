@@ -10,10 +10,14 @@
                 {{ nodeData.nodeId }}
               </div>
             </template>
-            <template #default>
-              <div class="p-2 text-xs text-gray-700">
-                <div class="font-semibold">{{ nodeData.type }}</div>
-                <div class="mt-1 text-[10px]">{{ getValidationRule(nodeData.type) }}</div>
+            <template #body-main>
+              <div class="p-2 text-xs text-white">
+                <div class="mb-1 text-center font-bold text-[11px]">{{ nodeData.type }}</div>
+                <div class="space-y-1 text-[9px] leading-tight">
+                  <div v-for="line in getDescription(nodeData.type)" :key="line" class="opacity-90">
+                    {{ line }}
+                  </div>
+                </div>
               </div>
             </template>
           </NodeBase>
@@ -69,21 +73,51 @@ const nodeColors: NodeColorConfig = {
   },
 };
 
-const getValidationRule = (type: string): string => {
+const getDescription = (type: string): string[] => {
   switch (type) {
     case "singleInput":
-      return "Only 1 input total (any port)";
+      return [
+        "Input: Only ONE connection allowed",
+        "across ALL ports (input1 OR input2)",
+        "Try: Connect to input1, then try",
+        "connecting to input2 - it will fail",
+      ];
     case "onePerPort":
-      return "1 input per port (multiple ports OK)";
+      return [
+        "Input: ONE connection per port",
+        "Multiple ports can have connections",
+        "Try: Connect to port1, port2, port3",
+        "Second edge to same port fails",
+      ];
     case "multiple":
-      return "Multiple inputs per port OK";
+      return [
+        "Input: UNLIMITED connections",
+        "to the same port allowed",
+        "Try: Connect multiple sources",
+        "to the 'data' port",
+      ];
     case "typeA":
+      return [
+        "Type Matching: Only accepts typeA",
+        "Multiple connections allowed",
+        "Try: Connect from typeA sources",
+        "Connecting from typeB will fail",
+      ];
     case "typeB":
-      return `Only same type, multiple OK`;
+      return [
+        "Type Matching: Only accepts typeB",
+        "Multiple connections allowed",
+        "Try: Connect from typeB sources",
+        "Connecting from typeA will fail",
+      ];
     case "output":
-      return "Accepts any input";
+      return [
+        "Output: Accepts any input type",
+        "No restrictions on connections",
+        "Try: Connect from any node",
+      ];
     default:
-      return "";
+      return [];
   }
 };
 
@@ -98,14 +132,8 @@ const validateConnection = (expectEdge: GUIEdgeData, existingEdges: GUIEdgeData[
   if (targetNode.type === "singleInput") {
     // Check ALL edges to this target node (not just same port)
     const allEdgesToThisNode = store.edges.filter((edge) => edge.target.nodeId === expectEdge.target.nodeId);
-    console.log("singleInput validation:", {
-      targetNodeId: expectEdge.target.nodeId,
-      allEdgesToThisNode: allEdgesToThisNode.length,
-      existingEdges: existingEdges.length,
-      edges: allEdgesToThisNode,
-    });
     // Already has an input, no more allowed
-    return (allEdgesToThisNode.length === 0);
+    return allEdgesToThisNode.length === 0;
   }
 
   // Rule 2: One per port nodes can have one input per port (but multiple ports can have inputs)
