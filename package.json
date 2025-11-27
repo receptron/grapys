@@ -42,11 +42,11 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@graphai/anthropic_agent": "^2.0.11",
+    "@graphai/anthropic_agent": "^2.0.12",
     "@graphai/browserless_agent": "^2.0.1",
     "@graphai/data_agents": "^1.0.0",
     "@graphai/gemini_agent": "^2.0.1",
-    "@graphai/openai_agent": "^2.0.7",
+    "@graphai/openai_agent": "^2.0.8",
     "@graphai/stream_agent_filter": "^2.0.2",
     "@graphai/vanilla": "^2.0.12",
     "@mlc-ai/web-llm": "^0.2.79",
