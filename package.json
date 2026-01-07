@@ -32,8 +32,8 @@
     "tailwindcss": "^4.1.18",
     "tsx": "^4.21.0",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.50.1",
-    "vite": "^7.3.0",
+    "typescript-eslint": "^8.52.0",
+    "vite": "^7.3.1",
     "vue-eslint-parser": "^10.2.0"
   },
   "workspaces": [
@@ -45,7 +45,7 @@
     "@graphai/anthropic_agent": "^2.0.12",
     "@graphai/browserless_agent": "^2.0.1",
     "@graphai/data_agents": "^1.0.0",
-    "@graphai/gemini_agent": "^2.0.1",
+    "@graphai/gemini_agent": "^2.0.2",
     "@graphai/openai_agent": "^2.0.8",
     "@graphai/stream_agent_filter": "^2.0.2",
     "@graphai/vanilla": "^2.0.12",
