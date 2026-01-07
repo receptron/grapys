@@ -1277,10 +1277,10 @@ firebase-admin@^13.6.0:
     "@google-cloud/firestore" "^7.11.0"
     "@google-cloud/storage" "^7.14.0"
 
-firebase-functions@^6.3.2:
-  version "6.3.2"
-  resolved "https://registry.yarnpkg.com/firebase-functions/-/firebase-functions-6.3.2.tgz#f26c379302788ca0ae25782d4a723065ca218c87"
-  integrity sha512-FC3A1/nhqt1ZzxRnj5HZLScQaozAcFSD/vSR8khqSoFNOfxuXgwJS6ZABTB7+v+iMD5z6Mmxw6OfqITUBuI7OQ==
+firebase-functions@^7.0.2:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/firebase-functions/-/firebase-functions-7.0.2.tgz#ac9bae3bd2fd5422a028151c61276074ff0c3a32"
+  integrity sha512-AFAZOn2iMp6X6lvCzEI92/J/JfT2ZAGSHKAfop4btWZdIqeHU40gFwVBGPl53bnqEpuv5VYKirmkxGuPu4OHpA==
   dependencies:
     "@types/cors" "^2.8.5"
     "@types/express" "^4.17.21"
@@ -1458,10 +1458,10 @@ gopd@^1.2.0:
   resolved "https://registry.yarnpkg.com/gopd/-/gopd-1.2.0.tgz#89f56b8217bdbc8802bd299df6d7f1081d7e51a1"
   integrity sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==
 
-graphai@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/graphai/-/graphai-1.0.4.tgz#b106708cccc48c90426db9e387a361dd5db5f380"
-  integrity sha512-4aMsQ3JvYuDJQbGOXdrgTiu3JumZcfIMCc2GVc23ZCe287/e3S06beTV6JLFmWhFMXaSDxgRZ9dSdmOacG/hXw==
+graphai@^2.0.16:
+  version "2.0.16"
+  resolved "https://registry.yarnpkg.com/graphai/-/graphai-2.0.16.tgz#c0665473f15656dc7b78fc66248553b0431a8603"
+  integrity sha512-fjA7dNelP32Lz+AXO1hMAcUdy/CJlAaDNW5nsrfxZ1s6vc8O1plzBiBf94EmBq7XgAUV3UxOz9w+SRszJbjRVA==
 
 gtoken@^7.0.0:
   version "7.1.0"
