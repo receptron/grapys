@@ -11,13 +11,13 @@
   "private": true,
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@tailwindcss/postcss": "^4.2.2",
-    "@tailwindcss/vite": "^4.2.2",
+    "@tailwindcss/postcss": "^4.3.1",
+    "@tailwindcss/vite": "^4.3.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.2",
-    "@vitejs/plugin-vue": "^6.0.3",
-    "@vue/tsconfig": "^0.8.1",
+    "@vitejs/plugin-vue": "^6.0.7",
+    "@vue/tsconfig": "^0.9.1",
     "autoprefixer": "^10.4.23",
     "eslint": "^10.5.0",
     "eslint-config-prettier": "^10.1.8",
@@ -26,15 +26,15 @@
     "eslint-plugin-sonarjs": "^4.1.0",
     "eslint-plugin-vue": "^10.9.2",
     "globals": "^17.6.0",
-    "postcss": "^8.5.10",
-    "prettier": "^3.8.1",
-    "prettier-plugin-tailwindcss": "^0.7.2",
-    "tailwindcss": "^4.2.2",
+    "postcss": "^8.5.15",
+    "prettier": "^3.8.4",
+    "prettier-plugin-tailwindcss": "^0.8.0",
+    "tailwindcss": "^4.3.1",
     "tsx": "^4.22.4",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.61.1",
-    "vite": "^7.3.2",
-    "vue-eslint-parser": "^10.2.0"
+    "vite": "^8.0.16",
+    "vue-eslint-parser": "^10.4.1"
   },
   "workspaces": [
     "packages/*"
@@ -51,6 +51,6 @@
     "@graphai/vanilla": "^2.0.12",
     "@mlc-ai/web-llm": "^0.2.79",
     "@receptron/event_agent_generator": "^0.0.6",
-    "graphai": "^2.0.16"
+    "graphai": "^2.0.18"
   }
 }
