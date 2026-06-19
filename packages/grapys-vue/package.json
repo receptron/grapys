@@ -21,6 +21,6 @@
     "vueweave": "0.0.3"
   },
   "devDependencies": {
-    "vue-tsc": "^3.2.4"
+    "vue-tsc": "^3.3.5"
   }
 }
