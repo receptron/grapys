@@ -14,12 +14,14 @@ export default defineConfig({
     tailwindcss(),
     dts({
       include: ["src/package/**/*"],
-      outDir: "lib/package",
+      // vite-plugin-dts v5 renamed "outDir" to "outDirs" and no longer derives
+      // the declaration rootDir from entryRoot, so pin rootDir explicitly to keep
+      // .d.ts emitting to lib/package (matching package.json "types").
+      outDirs: "lib/package",
       entryRoot: "src/package",
       compilerOptions: { rootDir: resolve(__dirname, "src/package") },
       insertTypesEntry: false,
       copyDtsFiles: true,
-      rollupTypes: false,
     }),
   ],
   build: {
