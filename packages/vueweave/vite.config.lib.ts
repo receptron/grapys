@@ -16,6 +16,7 @@ export default defineConfig({
       include: ["src/package/**/*"],
       outDir: "lib/package",
       entryRoot: "src/package",
+      compilerOptions: { rootDir: resolve(__dirname, "src/package") },
       insertTypesEntry: false,
       copyDtsFiles: true,
       rollupTypes: false,
@@ -25,16 +26,15 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, "src/package/index.ts"),
       formats: ["es"],
+      // Bundle the SFCs into a single entry. Under preserveModules, vite emits
+      // "?vue&type=script" sub-module references into the published output, which
+      // a consumer's vite/rolldown cannot resolve (the .vue sources are not shipped).
+      fileName: () => "package/index.js",
     },
     outDir: "lib",
     rollupOptions: {
       external: ["vue", "pinia"],
       output: {
-        preserveModules: true,
-        preserveModulesRoot: "src",
-        entryFileNames: ({ name }) => {
-          return `${name}.js`;
-        },
         assetFileNames: (assetInfo) => {
           return assetInfo.name || "assets/[name][extname]";
         },
