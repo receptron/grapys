@@ -11,9 +11,9 @@
     "format": "prettier --write '{src/**/*,*}.{js,ts,tsx}'"
   },
   "dependencies": {
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "react-router-dom": "^7.18.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.2",
     "zustand": "^5.0.14"
   },
   "devDependencies": {}

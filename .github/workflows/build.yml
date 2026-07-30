@@ -8,6 +8,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -18,15 +21,18 @@ jobs:
         node-version: [22.x, 24.x]
     steps:
     - uses: actions/checkout@v7
+      with:
+        persist-credentials: false
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v6
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        cache: 'yarn'
     - run: cp packages/grapys-vue/src/config/game-dev.ts packages/grapys-vue/src/config/project.ts
     - run: mkdir packages/grapys-react/src/config
     - run: cp packages/grapys-vue/src/config/game-dev.ts packages/grapys-react/src/config/project.ts
-    - run: yarn install
+    - run: yarn install --frozen-lockfile
+    - run: yarn test
     - run: yarn workspace vueweave run lint
     - run: yarn workspace vueweave run build:module
     - run: yarn workspace vueweave run build
