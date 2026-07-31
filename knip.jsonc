@@ -1,0 +1,26 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  // Yarn-workspace monorepo: knip auto-discovers each workspace from the root package.json
+  // "workspaces" field and derives that workspace's own entry points (vite/eslint config, the
+  // app/library index) plus its `src` project, so no per-workspace entry/project is listed here.
+  // packages/grapys-vue/functions is a separate Firebase package with its OWN lockfile (not a
+  // workspace) — excluded so its imports/deps are not analyzed against the monorepo graph.
+  "ignore": ["**/functions/**"],
+  "ignoreExportsUsedInFile": true,
+  "includeEntryExports": false,
+  "rules": {
+    // Warn mode: every rule is "warn" (reported, exit 0) or "off". Nothing gates CI here.
+    "files": "warn",
+    "dependencies": "warn",
+    "devDependencies": "warn",
+    "unlisted": "warn",
+    "exports": "warn",
+    "types": "warn",
+    "unresolved": "off",
+    "binaries": "off",
+    "nsExports": "off",
+    "nsTypes": "off",
+    "enumMembers": "off",
+    "duplicates": "off",
+  },
+}

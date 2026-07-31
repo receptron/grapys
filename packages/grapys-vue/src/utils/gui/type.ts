@@ -1,5 +1,5 @@
 import type { GraphData, DefaultParamsType } from "graphai";
-import type { GUINodeData, GUIEdgeData, InputOutputData, HistoryPayload } from "vueweave";
+import type { InputOutputData, HistoryPayload } from "vueweave";
 
 export type StaticNodeType = "text" | "data" | "number" | "boolean";
 
@@ -23,12 +23,6 @@ export type UpdateStaticValue = {
 export type UpdateAgentValue = {
   agentIndex: number;
   agent?: string;
-};
-
-export type NearestData = {
-  nodeId: string;
-  index: number;
-  direction: string;
 };
 
 export type ParamType = "string" | "text" | "data" | "boolean" | "float" | "int" | "enum";
@@ -62,14 +56,6 @@ export type GUILoopData = {
   loopType: LoopDataType;
   while?: string | true;
   count?: number;
-};
-
-export type AppHistoryPayload = {
-  nodes: GUINodeData[];
-  edges: GUIEdgeData[];
-  extra: {
-    loop: GUILoopData;
-  };
 };
 
 export type GUIMessage = {
