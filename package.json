@@ -6,7 +6,8 @@
     "test": "tsx --test ./tests/test_*.ts",
     "build": "yarn workspaces run build",
     "lint": "yarn workspaces run lint",
-    "format": "yarn workspaces run format"
+    "format": "yarn workspaces run format",
+    "knip": "knip"
   },
   "private": true,
   "devDependencies": {
@@ -17,8 +18,6 @@
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^6.0.5",
     "@vitejs/plugin-vue": "^6.0.8",
-    "@vue/tsconfig": "^0.9.1",
-    "autoprefixer": "^10.5.4",
     "eslint": "^10.8.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react-hooks": "^7.1.1",
@@ -26,6 +25,7 @@
     "eslint-plugin-sonarjs": "^4.2.0",
     "eslint-plugin-vue": "^10.10.0",
     "globals": "^17.8.0",
+    "knip": "^6",
     "postcss": "^8.5.25",
     "prettier": "^3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",

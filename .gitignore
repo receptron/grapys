@@ -11,3 +11,6 @@ node_modules
 packages/grapys-vue/.firebase/
 packages/grapys-vue/.firebaserc
 packages/grapys-vue/tsconfig.tsbuildinfo
+
+# jscpd duplication-scan output (see .github/workflows/duplication-scan.yaml)
+report/
