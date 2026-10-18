@@ -37,15 +37,15 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
-    "@types/node": "^26.1.2",
-    "@vitejs/plugin-vue": "^6.0.8",
-    "prettier": "^3.9.6",
+    "@types/node": "^26.6.5",
+    "@vitejs/plugin-vue": "^6.0.10",
+    "prettier": "^3.9.10",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "typescript": "^6.0.3",
-    "vite": "^8.2.0",
-    "vite-plugin-dts": "^5.0.3",
-    "vue": "^3.5.40",
-    "vue-router": "^5.2.0",
-    "vue-tsc": "^3.3.8"
+    "vite": "^8.3.4",
+    "vite-plugin-dts": "^5.1.2",
+    "vue": "^3.5.44",
+    "vue-router": "^5.4.0",
+    "vue-tsc": "^3.3.13"
   }
 }
