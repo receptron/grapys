@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-screen w-screen">
     <!-- Debug Panel -->
-    <DebugPanel github-url="https://github.com/receptron/grapys/blob/main/packages/vueweave/src/views/InteractiveExample.vue" />
+    <DebugPanel :github-url="githubUrl" />
 
     <!-- Main Content -->
     <div class="flex flex-1 flex-col">
@@ -98,6 +98,9 @@ import DebugPanel from "../components/DebugPanel.vue";
 import NodeParamInput, { type ParamData } from "../components/NodeParamInput.vue";
 
 const flowStore = useFlowStore();
+
+// vue-tsc 3.3.14 mis-generates a template whose attribute value contains `//` (vuejs/language-tools#6322)
+const githubUrl = "https://github.com/receptron/grapys/blob/main/packages/vueweave/src/views/InteractiveExample.vue";
 
 // Simple object-based color configuration
 const nodeColors: NodeColorConfig = {
